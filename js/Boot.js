@@ -2,7 +2,6 @@
 var Exiled = Exiled || {};
 
 Exiled.Boot = function(){};
-Exiled.
 Exiled.Boot.prototype = {
     preload: function() {
         this.load.image('logo', 'assets/images/logo.png');
