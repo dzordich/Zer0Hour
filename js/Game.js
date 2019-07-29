@@ -15,6 +15,7 @@ Exiled.Game.prototype = {
 
         this.game.camera.follow(this.player);
 
+        this.cursors = this.game.input.keyboard.createCursorKeys();
         this.generateCollectables();
         this.generateAsteroids();
         
@@ -31,10 +32,25 @@ Exiled.Game.prototype = {
         this.showLabels();
     },
     update: function() {
-        if(this.game.input.activePointer.justPressed()) {
+        this.player.body.velocity.x = 0;
+        this.player.body.velocity.y = 0;
 
-            this.game.physics.arcade.moveToPointer(this.player, this.playerSpeed);
+
+        if(this.cursors.up.isDown){
+            this.player.body.velocity.y -= 50;
+        } else if(this.cursors.down.isDown){
+            this.player.body.velocity.y = 50;
+        } else {
+            this.player.body.velocity.y = 0;
         }
+        if(this.cursors.left.isDown){
+            this.player.body.velocity.x -= 50;
+        } else if(this.cursors.right.isDown){
+            this.player.body.velocity.x = 50;
+        } else {
+            this.player.body.velocity.x = 0;
+        }
+
         this.game.physics.arcade.collide(this.player, this.asteroids, this.hitAsteroid, null, this);
         this.game.physics.arcade.overlap(this.player, this.collectables, this.collect, null, this);
     },
