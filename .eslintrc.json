@@ -1,0 +1,15 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": "eslint:recommended",
+    "globals": {
+        "ActiveXObject": false,
+        "CocoonJS": false,
+        "Phaser": true,
+        "PIXI": true,
+        "p2": true
+    }
+}

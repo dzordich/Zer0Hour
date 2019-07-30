@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "dependencies": {
+        "eslint": "^6.1.0",
+        "phaser-ce": "2.13.2",
+        "typescript": "^3.5.3"
+    }
+}
