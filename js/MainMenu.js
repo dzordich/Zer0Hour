@@ -5,12 +5,12 @@ var Exiled = Exiled || {};
 Exiled.MainMenu = function(){};
 
 Exiled.MainMenu.prototype = {
-  init: function(score) {
-    var score = score || 0;
-    this.highestScore = this.highestScore || 0;
+  // init: function(score) {
+  //   var score = score || 0;
+  //   this.highestScore = this.highestScore || 0;
 
-    this.highestScore = Math.max(score, this.highestScore);
-   },
+  //   this.highestScore = Math.max(score, this.highestScore);
+  //  },
   create: function() {
   	//show the space tile, repeated
     this.background = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
@@ -25,11 +25,11 @@ Exiled.MainMenu.prototype = {
     t.anchor.set(0.5);
 
     //highest score
-    text = "Highest score: "+this.highestScore;
-    style = { font: "15px Arial", fill: "#fff", align: "center" };
+    // text = "Highest score: "+this.highestScore;
+    // style = { font: "15px Arial", fill: "#fff", align: "center" };
   
-    var h = this.game.add.text(this.game.width/2, this.game.height/2 + 50, text, style);
-    h.anchor.set(0.5);
+    // var h = this.game.add.text(this.game.width/2, this.game.height/2 + 50, text, style);
+    // h.anchor.set(0.5);
   },
   update: function() {
     if(this.game.input.activePointer.justPressed()) {

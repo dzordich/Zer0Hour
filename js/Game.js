@@ -34,7 +34,7 @@ Exiled.Game.prototype = {
         // this.generateCollectables();
         // this.generateAsteroids();
         
-        this.playerScore = 0;
+        // this.playerScore = 0;
         
         this.game.physics.arcade.enable(this.player);
         this.playerSpeed = 120;
@@ -44,7 +44,7 @@ Exiled.Game.prototype = {
 
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
-        this.showLabels();
+        // this.showLabels();
     },
     findObjectsByType: function(type, map, layer){
         var result = new Array();
@@ -157,12 +157,12 @@ Exiled.Game.prototype = {
 
         collectable.destroy();
     },
-    showLabels: function(){
-        var text = '0';
-        var style = { font: '20px Arial', fill: '#fff', align: 'center' };
-        this.scoreLabel = this.game.add.text(this.game.width-50, this.game.height-50, text, style);
-        this.scoreLabel.fixedToCamera = true;
+    // showLabels: function(){
+    //     var text = '0';
+    //     var style = { font: '20px Arial', fill: '#fff', align: 'center' };
+    //     this.scoreLabel = this.game.add.text(this.game.width-50, this.game.height-50, text, style);
+    //     this.scoreLabel.fixedToCamera = true;
 
-    },
+    // },
     
 }

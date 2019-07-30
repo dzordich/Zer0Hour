@@ -1,6 +1,6 @@
 var Exiled = Exiled || {};
 
-Exiled.game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '');
+Exiled.game = new Phaser.Game(500, 350, Phaser.AUTO, '');
 
 Exiled.game.state.add('Boot', Exiled.Boot);
 Exiled.game.state.add('Preload', Exiled.Preload);
