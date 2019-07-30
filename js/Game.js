@@ -4,11 +4,22 @@ Exiled.Game = function(){};
 
 Exiled.Game.prototype = {
     create: function() {
-        this.game.world.setBounds(0, 0, 1920, 1920);
-        this.background = this.game.add.tileSprite(0, 0, this.game.world.width, this.game.world.height, 'space');
+        this.map = this.game.add.tilemap('test_room');
+        this.map.addTilesetImage('oryx_16bit_scifi_world', 'world');
+        this.map.addTilesetImage('oryx_16bit_scifi_creatures_trans', 'creatures');
+        this.backgroundLayer = this.map.createLayer('backgroundLayer');
+        this.groundLayer = this.map.createLayer('groundLayer');
+        this.blockedLayer = this.map.createLayer('blockedLayer');
+        this.objectLayer = this.map.createLayer('objectLayer');
 
-        this.player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'playership');
-        this.player.scale.setTo(1);
+        this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
+        this.backgroundLayer.resizeWorld();
+
+        var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
+
+
+        this.player = this.game.add.sprite(result[0].x, result[0].y, 'playership');
+        this.player.scale.setTo(0.7);
 
         // this.player.animations.add('fly', [0, 1, 2, 3], 5, true);
         // this.player.animations.play('fly');
@@ -20,7 +31,7 @@ Exiled.Game.prototype = {
         this.game.camera.follow(this.player);
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
-        this.generateCollectables();
+        // this.generateCollectables();
         // this.generateAsteroids();
         
         this.playerScore = 0;
@@ -35,36 +46,54 @@ Exiled.Game.prototype = {
         this.collectSound = this.game.add.audio('collect');
         this.showLabels();
     },
+    findObjectsByType: function(type, map, layer){
+        var result = new Array();
+        map.objects[layer].forEach(function(element){
+            if(element.type === type){
+                element.y -= map.tileHeight;
+                result.push(element);
+            }
+        });
+        return result;
+    },
+    createFromTiledObject: function(element, group){
+        var sprite = group.create(element.x, element.y, element.properties.sprite);
+
+        Object.keys(element.properties).forEach(function(key){
+            sprite[key] = element.properties[key];
+        });
+    },
     update: function() {
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
 
         if(this.cursors.up.isDown){
-            this.player.body.velocity.y -= 50;
+            this.player.body.velocity.y -= 100;
             if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
                 this.player.play('up');
             }
         } else if(this.cursors.down.isDown){
-            this.player.body.velocity.y = 50;
+            this.player.body.velocity.y = 100;
             if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
                 this.player.play('down');
             }
         } else {
-            this.player.body.velocity.y = 0;
+            this.player.body.acceleration.y = 0;
         }
         if(this.cursors.left.isDown){
-            this.player.body.velocity.x -= 50;
+            this.player.body.velocity.x -= 100;
             this.player.play('left');
         } else if(this.cursors.right.isDown){
-            this.player.body.velocity.x = 50;
+            this.player.body.velocity.x = 100;
             this.player.play('right');
         } else {
-            this.player.body.velocity.x = 0;
+            this.player.body.acceleration.x = 0;
         }
         if ( (this.player.body.velocity.x == 0) && (this.player.body.velocity.y == 0) ) {
             this.player.animations.stop();
         }
 
+        this.game.physics.arcade.collide(this.player, this.blockedLayer);
         this.game.physics.arcade.collide(this.player, this.asteroids, this.hitAsteroid, null, this);
         this.game.physics.arcade.overlap(this.player, this.collectables, this.collect, null, this);
     },

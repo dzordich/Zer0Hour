@@ -1,4 +1,3 @@
-/* global Phaser */
 var Exiled = Exiled || {};
 
 Exiled.Preload = function(){};
@@ -13,6 +12,9 @@ Exiled.Preload.prototype = {
 
         this.load.setPreloadSprite(this.preloadBar);
 
+        this.load.tilemap('test_room', 'assets/tilemaps/Map.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('world', 'assets/images/oryx_16bit_scifi_world.png');
+        this.load.image('creatures', 'assets/images/oryx_16bit_scifi_creatures_trans.png');
         this.load.image('space', 'assets/images/space.png');
         this.load.image('rock', 'assets/images/rock.png');
         // this.load.spritesheet('playership', 'assets/images/player.png', 12, 12);
