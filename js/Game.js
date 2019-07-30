@@ -8,16 +8,20 @@ Exiled.Game.prototype = {
         this.background = this.game.add.tileSprite(0, 0, this.game.world.width, this.game.world.height, 'space');
 
         this.player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'playership');
-        this.player.scale.setTo(2);
+        this.player.scale.setTo(1);
 
-        this.player.animations.add('fly', [0, 1, 2, 3], 5, true);
-        this.player.animations.play('fly');
+        // this.player.animations.add('fly', [0, 1, 2, 3], 5, true);
+        // this.player.animations.play('fly');
+        this.player.animations.add('left', [0,1], 10, true);
+        this.player.animations.add('right', [4,5], 10, true);
+        this.player.animations.add('up', [6,7], 10, true);
+        this.player.animations.add('down', [2,3], 10, true);
 
         this.game.camera.follow(this.player);
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.generateCollectables();
-        this.generateAsteroids();
+        // this.generateAsteroids();
         
         this.playerScore = 0;
         
@@ -35,20 +39,30 @@ Exiled.Game.prototype = {
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
 
-
         if(this.cursors.up.isDown){
             this.player.body.velocity.y -= 50;
+            if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
+                this.player.play('up');
+            }
         } else if(this.cursors.down.isDown){
             this.player.body.velocity.y = 50;
+            if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
+                this.player.play('down');
+            }
         } else {
             this.player.body.velocity.y = 0;
         }
         if(this.cursors.left.isDown){
             this.player.body.velocity.x -= 50;
+            this.player.play('left');
         } else if(this.cursors.right.isDown){
             this.player.body.velocity.x = 50;
+            this.player.play('right');
         } else {
             this.player.body.velocity.x = 0;
+        }
+        if ( (this.player.body.velocity.x == 0) && (this.player.body.velocity.y == 0) ) {
+            this.player.animations.stop();
         }
 
         this.game.physics.arcade.collide(this.player, this.asteroids, this.hitAsteroid, null, this);
