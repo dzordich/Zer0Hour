@@ -41,10 +41,14 @@ Exiled.Game.prototype = {
 
         if(this.cursors.up.isDown){
             this.player.body.velocity.y -= 50;
-            this.player.play('up');
+            if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
+                this.player.play('up');
+            }
         } else if(this.cursors.down.isDown){
             this.player.body.velocity.y = 50;
-            this.player.play('down');
+            if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
+                this.player.play('down');
+            }
         } else {
             this.player.body.velocity.y = 0;
         }
