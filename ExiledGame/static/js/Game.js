@@ -4,6 +4,8 @@ Exiled.Game = function(){};
 
 var random = new Phaser.RandomDataGenerator()
 
+
+
 Exiled.Game.prototype = {
     create: function() {
         // create map
@@ -22,7 +24,7 @@ Exiled.Game.prototype = {
         var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
 
         // create player
-        this.player = this.game.add.sprite(result[0].x, result[0].y, 'playership');
+        this.player = this.game.add.sprite(result[0].x, result[0].y, 'player');
         this.player.scale.setTo(0.7);
         this.player.animations.add('left', [0,1], 10, true);
         this.player.animations.add('right', [4,5], 10, true);
@@ -74,6 +76,7 @@ Exiled.Game.prototype = {
 
         this.activeGun = this.rifle;
     },
+
     findObjectsByType: function(type, map, layer){
         var result = new Array();
         map.objects[layer].forEach(function(element){
@@ -97,23 +100,26 @@ Exiled.Game.prototype = {
         this.player.body.velocity.y = 0;
 
         //player controls
+        const PLAYER_SPEED = 100
+        
         if(this.cursors.left.isDown || this.leftKey.isDown){
-            this.player.body.velocity.x -= 100;
+            this.player.body.velocity.x -= PLAYER_SPEED;
             this.player.play('left');
         } else if(this.cursors.right.isDown || this.rightKey.isDown){
-            this.player.body.velocity.x = 100;
+            this.player.body.velocity.x = PLAYER_SPEED;
             this.player.play('right');
         } else {
             this.player.body.acceleration.x = 0;
         }
+
         if(this.cursors.up.isDown || this.upKey.isDown){
-            this.player.body.velocity.y -= 100;
-            if( (!this.cursors.left.isDown || !this.leftKey.isDown) && (!this.cursors.right.isDown || !this.rightKey.isDown) ){
+            this.player.body.velocity.y -= PLAYER_SPEED;
+            if( !(this.cursors.left.isDown || this.leftKey.isDown) && !(this.cursors.right.isDown || this.rightKey.isDown) ){
                 this.player.play('up');
             }
         } else if(this.cursors.down.isDown || this.downKey.isDown){
-            this.player.body.velocity.y = 100;
-            if( (!this.cursors.left.isDown || !this.leftKey.isDown) && (!this.cursors.right.isDown || !this.rightKey.isDown) ){
+            this.player.body.velocity.y = PLAYER_SPEED;
+            if( !(this.cursors.left.isDown || this.leftKey.isDown) && !(this.cursors.right.isDown || this.rightKey.isDown) ){
                 this.player.play('down');
             }
         } else {
@@ -143,10 +149,8 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this)
         
         //call the enemy patrol function
-        this.enemies.forEachAlive(this.chase, this);
-        
-        
 
+        this.enemies.forEachAlive(this.chase, this);
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
@@ -166,6 +170,7 @@ Exiled.Game.prototype = {
             emitter.explode(100);
         }
     },
+
     // enemy movement
     chase: function(enemy){
         //max safe speed 30
