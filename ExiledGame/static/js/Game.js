@@ -50,12 +50,17 @@ Exiled.Game.prototype = {
         
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
+        this.rifleShot = this.game.add.audio('rifle_shot');
+        // this.rifleShot.override = true;
+        this.shellFalling = this.game.add.audio('shell_falling');
+        this.shellFalling.allowMultiple = false;
         
         // player's gun
         this.gun = this.add.weapon(10, 'playerParticle');
         this.gun.KILL_CAMERA_BOUNDS = 3;
         this.gun.trackSprite(this.player);
         this.gun.trackOffset.y = 13;
+        this.gun.bulletSpeed = 600;
 
         //crosshair
         this.crosshair = new Phaser.Line(this.player.centerX, this.player.centerY, this.enemy.centerX, this.enemy.centerY);
@@ -87,6 +92,18 @@ Exiled.Game.prototype = {
         
         
         //player controls
+        this.enemy.play('left');
+
+        
+        if(this.cursors.left.isDown || this.leftKey.isDown){
+            this.player.body.velocity.x -= 100;
+            this.player.play('left');
+        } else if(this.cursors.right.isDown || this.rightKey.isDown){
+            this.player.body.velocity.x = 100;
+            this.player.play('right');
+        } else {
+            this.player.body.acceleration.x = 0;
+        }
         if(this.cursors.up.isDown || this.upKey.isDown){
             this.player.body.velocity.y -= 100;
             if( (!this.cursors.left.isDown || !this.leftKey.isDown) && (!this.cursors.right.isDown || !this.rightKey.isDown) ){
@@ -100,21 +117,17 @@ Exiled.Game.prototype = {
         } else {
             this.player.body.acceleration.y = 0;
         }
-        if(this.cursors.left.isDown || this.leftKey.isDown){
-            this.player.body.velocity.x -= 100;
-            this.player.play('left');
-        } else if(this.cursors.right.isDown || this.rightKey.isDown){
-            this.player.body.velocity.x = 100;
-            this.player.play('right');
-        } else {
-            this.player.body.acceleration.x = 0;
-        }
         if ( (this.player.body.velocity.x == 0) && (this.player.body.velocity.y == 0) ) {
             this.player.animations.stop();
         }
         
         if(this.game.input.activePointer.isDown){
-            this.gun.fireAtPointer(this.game.input.activePointer);
+            this.shootGun(this.gun);
+            this.rifleShot.loopFull();
+            // this.shellFalling.loopFull();
+        }
+        else{
+            this.rifleShot.stop()
         }
         
         this.game.physics.arcade.overlap(this.gun.bullets, this.enemy, this.bulletHitEnemy, null, this)
@@ -137,6 +150,7 @@ Exiled.Game.prototype = {
         emitter.minParticleSpeed.setTo(-500, -500);
         emitter.maxParticleSpeed.setTo(500, 500);
         emitter.gravity = 0;
+        this.explosionSound.play();
         emitter.explode(100);
         this.enemy.kill();
     },
@@ -170,6 +184,8 @@ Exiled.Game.prototype = {
                 this.enemy.play('right');
             }
         }
-        
+    },
+    shootGun: function(gun){
+        this.gun.fireAtPointer(this.game.input.activePointer);
     },
 }
