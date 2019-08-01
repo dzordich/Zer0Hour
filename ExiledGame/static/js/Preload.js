@@ -17,7 +17,7 @@ Exiled.Preload.prototype = {
         this.load.image('creatures', 'staic/assets/images/oryx_16bit_scifi_creatures_trans.png');
         this.load.image('space', 'static/assets/images/space.png');
         this.load.image('rock', 'static/assets/images/rock.png');
-        this.load.spritesheet('player', 'static/assets/images/CandycePlayerSprite.png', 32, 32);
+        this.load.spritesheet('player', 'static/assets/images/pc1_cropped.png', 32, 32);
         this.load.spritesheet('power', 'static/assets/images/power.png', 12, 12);
         this.load.spritesheet('enemy', 'static/assets/images/BadGuySprite.png', 32, 32);
         this.load.spritesheet('white_fireball', 'static/assets/images/white_fireball.png', 32, 32);
