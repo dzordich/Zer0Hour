@@ -26,10 +26,10 @@ Exiled.Game.prototype = {
         // create player
         this.player = this.game.add.sprite(result[0].x, result[0].y, 'player');
         this.player.scale.setTo(0.7);
-        this.player.animations.add('left', [0,1], 10, true);
-        this.player.animations.add('right', [4,5], 10, true);
-        this.player.animations.add('up', [6,7], 10, true);
-        this.player.animations.add('down', [2,3], 10, true);
+        this.player.animations.add('left', [6,14], 10, true);
+        this.player.animations.add('right', [2,10], 10, true);
+        this.player.animations.add('up', [5,13], 10, true);
+        this.player.animations.add('down', [0,8], 10, true);
         this.game.physics.arcade.enable(this.player);
         this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
