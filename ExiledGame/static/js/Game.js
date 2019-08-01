@@ -95,7 +95,7 @@ Exiled.Game.prototype = {
         
         
         //player controls
-        PLAYER_SPEED = 100
+        const PLAYER_SPEED = 100
         
         if(this.cursors.left.isDown || this.leftKey.isDown){
             this.player.body.velocity.x -= PLAYER_SPEED;
@@ -162,7 +162,7 @@ Exiled.Game.prototype = {
     },
     chase: function(){
         //max safe speed 30
-        CHASE_SPEED = 30
+        const CHASE_SPEED = 30
         //random.integerInRange(1,4)
         if (Math.round(this.enemy.y) == Math.round(this.player.y)) {
             this.enemy.body.velocity.y = 0;
