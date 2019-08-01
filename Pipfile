@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 django = "*"
 prospector = "==1.1.6.2"
+django-heroku = "*"
 
 [requires]
 python_version = "3.7"
