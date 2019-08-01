@@ -131,13 +131,16 @@ Exiled.Game.prototype = {
         }
         
         this.game.physics.arcade.overlap(this.gun.bullets, this.enemy, this.bulletHitEnemy, null, this)
+
         this.game.physics.arcade.collide(this.player, this.blockedLayer);
         this.game.physics.arcade.collide(this.enemy, this.blockedLayer);
+
         this.game.physics.arcade.collide(this.player, this.asteroids, this.hitAsteroid, null, this);
         this.game.physics.arcade.overlap(this.player, this.collectables, this.collect, null, this);
 
         //call the enemy patrol function
         this.chase(this.enemy);
+
     },
     
     bulletHitBlock: function(bullet, block){
