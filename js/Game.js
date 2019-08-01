@@ -122,8 +122,9 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.enemy, this.blockedLayer);
         this.game.physics.arcade.collide(this.player, this.asteroids, this.hitAsteroid, null, this);
         this.game.physics.arcade.overlap(this.player, this.collectables, this.collect, null, this);
-        
-        this.patrol(this.enemy);
+
+        //call the enemy patrol function
+        this.chase(this.enemy);
     },
     
     bulletHitBlock: function(bullet, block){
@@ -139,8 +140,22 @@ Exiled.Game.prototype = {
         emitter.explode(100);
         this.enemy.kill();
     },
-    patrol: function(enemy){
-        random.integerInRange(1,4)
-        this.enemy.body.velocity.y = 10;
+    chase: function(enemy){
+        //random.integerInRange(1,4)
+        if (Math.round(this.enemy.y) > Math.round(this.player.y)){
+            this.enemy.body.velocity.y = -50;
+        } else if (Math.round(this.enemy.y) < Math.round(this.player.y)){
+            this.enemy.body.velocity.y = 50;
+        } else {
+            this.enemy.body.velocity.y = 0;
+        }
+        if (Math.round(this.enemy.x) > Math.round(this.player.x)){
+            this.enemy.body.velocity.x = -50;
+        } else if (Math.round(this.enemy.x) < Math.round(this.player.x)){
+            this.enemy.body.velocity.x = 50;
+        } else {
+            this.enemy.body.velocity.x = 0;
+        }
+        
     },
 }
