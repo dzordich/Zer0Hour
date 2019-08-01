@@ -17,34 +17,38 @@ Exiled.Game.prototype = {
 
         var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
 
-
+        // create player
         this.player = this.game.add.sprite(result[0].x, result[0].y, 'playership');
         this.player.scale.setTo(0.7);
-
         this.player.animations.add('left', [0,1], 10, true);
         this.player.animations.add('right', [4,5], 10, true);
         this.player.animations.add('up', [6,7], 10, true);
         this.player.animations.add('down', [2,3], 10, true);
-
-        this.enemy = this.game.add.sprite(result[0].x, result[0].y, 'rock');
-        this.enemy.scale.setTo(0.5);
-        this.game.physics.arcade.enable(this.enemy);
-
-
-        this.game.camera.follow(this.player);
-
-        this.cursors = this.game.input.keyboard.createCursorKeys();
-        // this.generateCollectables();
-        // this.generateAsteroids();
-        
-        // this.playerScore = 0;
-        
         this.game.physics.arcade.enable(this.player);
         this.playerSpeed = 120;
         this.player.body.collideWorldBounds = true;
+        this.game.camera.follow(this.player);
 
+        // create enemy
+        this.enemy = this.game.add.sprite(result[0].x, result[0].y, 'enemy');
+        this.enemy.scale.setTo(0.5);
+        this.enemy.animations.add('left', [0,1], 10, true);
+        this.enemy.animations.add('right', [4,5], 10, true);
+        this.enemy.animations.add('up', [6,7], 10, true);
+        this.enemy.animations.add('down', [2,3], 10, true);
+        this.game.physics.arcade.enable(this.enemy);
+
+        // create controls
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.upKey = this.game.input.keyboard.addKey(Phaser.KeyCode.W);
+        this.downKey = this.game.input.keyboard.addKey(Phaser.KeyCode.S);
+        this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
+        this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
         
-
+        // this.generateCollectables();
+        // this.generateAsteroids();
+        // this.playerScore = 0;
+        
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
         
@@ -90,26 +94,26 @@ Exiled.Game.prototype = {
         this.crosshair.setTo(this.player.centerX, this.player.centerY, this.game.input.x, this.game.input.y);
 
         this.game.physics.arcade.collide(this.blockedLayer, this.gun.bullets, this.bulletHitBlock, null, this);
+        this.enemy.play('left');
 
-
-        if(this.cursors.up.isDown){
+        if(this.cursors.up.isDown || this.upKey.isDown){
             console.log('ahhhhh')
             this.player.body.velocity.y -= 100;
-            if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
+            if( (!this.cursors.left.isDown || !this.leftKey.isDown) && (!this.cursors.right.isDown || !this.rightKey.isDown) ){
                 this.player.play('up');
             }
-        } else if(this.cursors.down.isDown){
+        } else if(this.cursors.down.isDown || this.downKey.isDown){
             this.player.body.velocity.y = 100;
-            if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
+            if( (!this.cursors.left.isDown || !this.leftKey.isDown) && (!this.cursors.right.isDown || !this.rightKey.isDown) ){
                 this.player.play('down');
             }
         } else {
             this.player.body.acceleration.y = 0;
         }
-        if(this.cursors.left.isDown){
+        if(this.cursors.left.isDown || this.leftKey.isDown){
             this.player.body.velocity.x -= 100;
             this.player.play('left');
-        } else if(this.cursors.right.isDown){
+        } else if(this.cursors.right.isDown || this.rightKey.isDown){
             this.player.body.velocity.x = 100;
             this.player.play('right');
         } else {
