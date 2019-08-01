@@ -21,12 +21,15 @@ Exiled.Game.prototype = {
         this.player = this.game.add.sprite(result[0].x, result[0].y, 'playership');
         this.player.scale.setTo(0.7);
 
-        // this.player.animations.add('fly', [0, 1, 2, 3], 5, true);
-        // this.player.animations.play('fly');
         this.player.animations.add('left', [0,1], 10, true);
         this.player.animations.add('right', [4,5], 10, true);
         this.player.animations.add('up', [6,7], 10, true);
         this.player.animations.add('down', [2,3], 10, true);
+
+        this.enemy = this.game.add.sprite(result[0].x, result[0].y, 'rock');
+        this.enemy.scale.setTo(0.5);
+        this.game.physics.arcade.enable(this.enemy);
+
 
         this.game.camera.follow(this.player);
 
@@ -44,6 +47,17 @@ Exiled.Game.prototype = {
 
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
+        
+        // player's gun
+        this.gun = this.add.weapon(10, 'playerParticle');
+        this.gun.KILL_CAMERA_BOUNDS = 3;
+        this.gun.trackSprite(this.player);
+        this.gun.trackOffset.y = 13;
+
+        //crosshair
+        this.crosshair = new Phaser.Line(this.player.centerX, this.player.centerY, this.enemy.centerX, this.enemy.centerY);
+        this.targetPoint = new Phaser.Point();
+        this.targetFromPoint = new Phaser.Point();
         // this.showLabels();
     },
     findObjectsByType: function(type, map, layer){
@@ -67,7 +81,19 @@ Exiled.Game.prototype = {
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
 
+        // this.crosshair2 = new Phaser.Line(this.player.centerX, this.player.centerY, this.enemy.centerX, this.enemy.centerY);
+        // this.crosshair2.fromSprite(this.player, this.enemy, true);
+        // this.targetFromPoint.copyFrom(this.player);
+        // this.targetPoint.copyFrom(this.game.input.activePointer);
+        // this.crosshair.fromPoints(this.targetFromPoint, this.targetPoint);
+
+        this.crosshair.setTo(this.player.centerX, this.player.centerY, this.game.input.x, this.game.input.y);
+
+        this.game.physics.arcade.collide(this.blockedLayer, this.gun.bullets, this.bulletHitBlock, null, this);
+
+
         if(this.cursors.up.isDown){
+            console.log('ahhhhh')
             this.player.body.velocity.y -= 100;
             if( (!this.cursors.left.isDown) && (!this.cursors.right.isDown) ){
                 this.player.play('up');
@@ -93,70 +119,89 @@ Exiled.Game.prototype = {
             this.player.animations.stop();
         }
 
+        if(this.game.input.activePointer.isDown){
+            this.gun.fireAtPointer(this.game.input.activePointer);
+        }
+
+        this.game.physics.arcade.overlap(this.gun.bullets, this.enemy, this.bulletHitEnemy, null, this)
         this.game.physics.arcade.collide(this.player, this.blockedLayer);
         this.game.physics.arcade.collide(this.player, this.asteroids, this.hitAsteroid, null, this);
         this.game.physics.arcade.overlap(this.player, this.collectables, this.collect, null, this);
     },
-    generateCollectables: function() {
-        this.collectables = this.game.add.group();
+    // generateCollectables: function() {
+    //     this.collectables = this.game.add.group();
 
-        this.collectables.enableBody = true;
-        this.collectables.physicsBodyType = Phaser.Physics.ARCADE;
+    //     this.collectables.enableBody = true;
+    //     this.collectables.physicsBodyType = Phaser.Physics.ARCADE;
 
-        var numCollectables = this.game.rnd.integerInRange(100, 150)
-        var collectable;
+    //     var numCollectables = this.game.rnd.integerInRange(100, 150)
+    //     var collectable;
 
-        for (var i = 0; i < numCollectables; i++){
-            collectable = this.collectables.create(this.game.world.randomX, this.game.world.randomY, 'power');
-            collectable.animations.add('fly', [0, 1, 2, 3], 5, true);
-            collectable.animations.play('fly');
+    //     for (var i = 0; i < numCollectables; i++){
+    //         collectable = this.collectables.create(this.game.world.randomX, this.game.world.randomY, 'power');
+    //         collectable.animations.add('fly', [0, 1, 2, 3], 5, true);
+    //         collectable.animations.play('fly');
 
-        }
-    },
-    generateAsteroids: function() {
-        this.asteroids = this.game.add.group();
+    //     }
+    // },
+    // generateAsteroids: function() {
+    //     this.asteroids = this.game.add.group();
 
-        //enable physics
-        this.asteroids.enableBody = true;
-        this.asteroids.physicsBodyType = Phaser.Physics.ARCADE;
+    //     //enable physics
+    //     this.asteroids.enableBody = true;
+    //     this.asteroids.physicsBodyType = Phaser.Physics.ARCADE;
 
-        var numAsteroids = this.game.rnd.integerInRange(150, 200)
-        var asteroid;
+    //     var numAsteroids = this.game.rnd.integerInRange(150, 200)
+    //     var asteroid;
 
-        for (var i = 0; i < numAsteroids; i++) {
-            asteroid = this.asteroids.create(this.game.world.randomX, this.game.world.randomY, 'rock');
-            asteroid.scale.setTo(this.game.rnd.integerInRange(10, 40)/10);
+    //     for (var i = 0; i < numAsteroids; i++) {
+    //         asteroid = this.asteroids.create(this.game.world.randomX, this.game.world.randomY, 'rock');
+    //         asteroid.scale.setTo(this.game.rnd.integerInRange(10, 40)/10);
             
-            asteroid.body.velocity.x = this.game.rnd.integerInRange(-20, 20);
-            asteroid.body.velocity.y = this.game.rnd.integerInRange(-20, 20);
-            asteroid.body.immovable = true;
-            asteroid.body.collideWorldBounds = true;
-        };
+    //         asteroid.body.velocity.x = this.game.rnd.integerInRange(-20, 20);
+    //         asteroid.body.velocity.y = this.game.rnd.integerInRange(-20, 20);
+    //         asteroid.body.immovable = true;
+    //         asteroid.body.collideWorldBounds = true;
+    //     };
+    // },
+    bulletHitBlock: function(bullet, block){
+        bullet.kill();
     },
-    hitAsteroid: function(player, asteroid) {
-        this.explosionSound.play();
-
-        var emitter = this.game.add.emitter(this.player.x, this.player.y, 100);
+    bulletHitEnemy: function(bullet, enemy){
+        bullet.kill();
+        var emitter = this.game.add.emitter(this.enemy.x, this.enemy.y, 50);
         emitter.makeParticles('playerParticle');
-        emitter.minParticleSpeed.setTo(-200, -200);
-        emitter.maxParticleSpeed.setTo(200, 200);
+        emitter.minParticleSpeed.setTo(-500, -500);
+        emitter.maxParticleSpeed.setTo(500, 500);
         emitter.gravity = 0;
-        emitter.start(true, 1000, null, 100);
-        this.player.kill();
-        this.game.time.events.add(800, this.gameOver, this);
+        // emitter.scale.setTo(0.5);
+        emitter.explode(100);
+        this.enemy.kill();
     },
+    // hitAsteroid: function(player, asteroid) {
+    //     this.explosionSound.play();
+
+    //     var emitter = this.game.add.emitter(this.player.x, this.player.y, 100);
+    //     emitter.makeParticles('playerParticle');
+    //     emitter.minParticleSpeed.setTo(-200, -200);
+    //     emitter.maxParticleSpeed.setTo(200, 200);
+    //     emitter.gravity = 0;
+    //     emitter.start(true, 1000, null, 10);
+    //     this.player.kill();
+    //     this.game.time.events.add(800, this.gameOver, this);
+    // },
     gameOver: function(){
         this.game.state.start('MainMenu', true, false, this.playerScore);
     },
-    collect: function(player, collectable){
-        this.collectSound.play();
+    // collect: function(player, collectable){
+    //     this.collectSound.play();
 
-        this.playerScore++;
+    //     this.playerScore++;
 
-        this.scoreLabel.text = this.playerScore;
+    //     this.scoreLabel.text = this.playerScore;
 
-        collectable.destroy();
-    },
+    //     collectable.destroy();
+    // },
     // showLabels: function(){
     //     var text = '0';
     //     var style = { font: '20px Arial', fill: '#fff', align: 'center' };

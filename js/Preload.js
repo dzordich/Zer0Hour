@@ -24,6 +24,8 @@ Exiled.Preload.prototype = {
         this.load.audio('collect', 'assets/audio/collect.oog');
         this.load.audio('explosion', 'asssets/audio/explosion.oog');
 
+        this.load.image('gun', 'assets/images/player.png');
+
     },
     create: function() {
         this.state.start('MainMenu');
