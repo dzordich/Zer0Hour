@@ -141,20 +141,34 @@ Exiled.Game.prototype = {
         this.enemy.kill();
     },
     chase: function(enemy){
+        //max safe speed 30
+        CHASE_SPEED = 30
         //random.integerInRange(1,4)
-        if (Math.round(this.enemy.y) > Math.round(this.player.y)){
-            this.enemy.body.velocity.y = -50;
-        } else if (Math.round(this.enemy.y) < Math.round(this.player.y)){
-            this.enemy.body.velocity.y = 50;
-        } else {
+        if (Math.round(this.enemy.y) == Math.round(this.player.y)) {
             this.enemy.body.velocity.y = 0;
-        }
-        if (Math.round(this.enemy.x) > Math.round(this.player.x)){
-            this.enemy.body.velocity.x = -50;
-        } else if (Math.round(this.enemy.x) < Math.round(this.player.x)){
-            this.enemy.body.velocity.x = 50;
+        } else if (Math.round(this.enemy.y) > Math.round(this.player.y)){
+            this.enemy.body.velocity.y = -CHASE_SPEED;
+            if (this.enemy.body.velocity.x == 0){
+                this.enemy.play('up');
+            }
         } else {
+            this.enemy.body.velocity.y = CHASE_SPEED;
+            if (this.enemy.body.velocity.x == 0){
+                this.enemy.play('down');
+            }
+        }
+        if (Math.round(this.enemy.x) == Math.round(this.player.x)) {
             this.enemy.body.velocity.x = 0;
+        } else if (Math.round(this.enemy.x) > Math.round(this.player.x)){
+            this.enemy.body.velocity.x = -CHASE_SPEED;
+            if (this.enemy.body.velocity.y == 0){
+                this.enemy.play('left');
+            }
+        } else {
+            this.enemy.body.velocity.x = CHASE_SPEED;
+            if (this.enemy.body.velocity.y == 0){
+                this.enemy.play('right');
+            }
         }
         
     },
