@@ -2,10 +2,11 @@ var Exiled = Exiled || {};
 
 Exiled.Game = function(){};
 
-random = new Phaser.RandomDataGenerator()
+var random = new Phaser.RandomDataGenerator()
 
 Exiled.Game.prototype = {
     create: function() {
+        // create map
         this.map = this.game.add.tilemap('test_room');
         this.map.addTilesetImage('oryx_16bit_scifi_world', 'world');
         this.map.addTilesetImage('oryx_16bit_scifi_creatures_trans', 'creatures');
@@ -17,6 +18,7 @@ Exiled.Game.prototype = {
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
         this.backgroundLayer.resizeWorld();
 
+        // find player spawn point
         var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
 
         // create player
@@ -27,19 +29,26 @@ Exiled.Game.prototype = {
         this.player.animations.add('up', [6,7], 10, true);
         this.player.animations.add('down', [2,3], 10, true);
         this.game.physics.arcade.enable(this.player);
-        this.playerSpeed = 120;
         this.player.body.collideWorldBounds = true;
+        this.playerSpeed = 120;
+        this.player.health = 100;
         this.game.camera.follow(this.player);
 
-        // create enemy
-        this.enemy = this.game.add.sprite(result[0].x+24, result[0].y+24, 'enemy');
-        this.enemy.scale.setTo(0.7);
-        this.enemy.animations.add('left', [0,1], 5, true);
-        this.enemy.animations.add('right', [4,5], 5, true);
-        this.enemy.animations.add('up', [6,7], 5, true);
-        this.enemy.animations.add('down', [2,3], 5, true);
-        this.enemy.collideWorldBounds = true;
-        this.game.physics.arcade.enable(this.enemy);
+        // create enemies
+        var num_enemies = 5;
+        this.enemies = this.game.add.group();
+        this.enemies.enableBody = true;
+        this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
+        let newEnemy;
+        for(let i=0; i<=num_enemies; i++){
+            newEnemy = this.enemies.create(result[0].x+random.integerInRange(-24, 24), result[0].y+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
 
         // create controls
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -48,6 +57,7 @@ Exiled.Game.prototype = {
         this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
         
+        // create sounds
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
         this.rifleShot = this.game.add.audio('rifle_shot');
@@ -56,16 +66,13 @@ Exiled.Game.prototype = {
         this.shellFalling.allowMultiple = false;
         
         // player's gun
-        this.gun = this.add.weapon(10, 'playerParticle');
-        this.gun.KILL_CAMERA_BOUNDS = 3;
-        this.gun.trackSprite(this.player);
-        this.gun.trackOffset.y = 13;
-        this.gun.bulletSpeed = 600;
+        this.rifle = this.add.weapon(10, 'playerParticle');
+        this.rifle.KILL_CAMERA_BOUNDS = 3;
+        this.rifle.trackSprite(this.player);
+        this.rifle.trackOffset.y = 13;
+        this.rifle.bulletSpeed = 800;
 
-        //crosshair
-        this.crosshair = new Phaser.Line(this.player.centerX, this.player.centerY, this.enemy.centerX, this.enemy.centerY);
-        this.targetPoint = new Phaser.Point();
-        this.targetFromPoint = new Phaser.Point();
+        this.activeGun = this.rifle;
     },
     findObjectsByType: function(type, map, layer){
         var result = new Array();
@@ -85,16 +92,11 @@ Exiled.Game.prototype = {
         });
     },
     update: function() {
+        
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
 
-        this.game.physics.arcade.collide(this.blockedLayer, this.gun.bullets, this.bulletHitBlock, null, this);
-        
-        
         //player controls
-        this.enemy.play('left');
-
-        
         if(this.cursors.left.isDown || this.leftKey.isDown){
             this.player.body.velocity.x -= 100;
             this.player.play('left');
@@ -122,7 +124,7 @@ Exiled.Game.prototype = {
         }
         
         if(this.game.input.activePointer.isDown){
-            this.shootGun(this.gun);
+            this.shootGun(this.activeGun);
             this.rifleShot.loopFull();
             // this.shellFalling.loopFull();
         }
@@ -130,65 +132,73 @@ Exiled.Game.prototype = {
             this.rifleShot.stop()
         }
         
-        this.game.physics.arcade.overlap(this.gun.bullets, this.enemy, this.bulletHitEnemy, null, this)
-
+        
+        //environment physics
         this.game.physics.arcade.collide(this.player, this.blockedLayer);
-        this.game.physics.arcade.collide(this.enemy, this.blockedLayer);
+        this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
+        this.game.physics.arcade.collide(this.enemies);
+        this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
 
-        this.game.physics.arcade.collide(this.player, this.asteroids, this.hitAsteroid, null, this);
-        this.game.physics.arcade.overlap(this.player, this.collectables, this.collect, null, this);
-
+        //combat physics
+        this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this)
+        
         //call the enemy patrol function
-        this.chase(this.enemy);
+        this.enemies.forEachAlive(this.chase, this);
+        
+        
 
     },
-    
+    // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
         bullet.kill();
     },
+    // handles bullet collision with enemy
     bulletHitEnemy: function(bullet, enemy){
         bullet.kill();
-        var emitter = this.game.add.emitter(this.enemy.x, this.enemy.y, 50);
-        emitter.makeParticles('playerParticle');
-        emitter.minParticleSpeed.setTo(-500, -500);
-        emitter.maxParticleSpeed.setTo(500, 500);
-        emitter.gravity = 0;
-        this.explosionSound.play();
-        emitter.explode(100);
-        this.enemy.kill();
+        enemy.damage(15);
+        if(enemy.health <= 0){
+            var emitter = this.game.add.emitter(enemy.x, enemy.y, 50);
+            emitter.makeParticles('playerParticle');
+            emitter.minParticleSpeed.setTo(-500, -500);
+            emitter.maxParticleSpeed.setTo(500, 500);
+            emitter.gravity = 0;
+            this.explosionSound.play();
+            emitter.explode(100);
+        }
     },
+    // enemy movement
     chase: function(enemy){
         //max safe speed 30
-        CHASE_SPEED = 30
+        let CHASE_SPEED = random.integerInRange(24, 30);
         //random.integerInRange(1,4)
-        if (Math.round(this.enemy.y) == Math.round(this.player.y)) {
-            this.enemy.body.velocity.y = 0;
-        } else if (Math.round(this.enemy.y) > Math.round(this.player.y)){
-            this.enemy.body.velocity.y = -CHASE_SPEED;
-            if (this.enemy.body.velocity.x == 0){
-                this.enemy.play('up');
+        if (Math.round(enemy.y) == Math.round(this.player.y)) {
+            enemy.body.velocity.y = 0;
+        } else if (Math.round(enemy.y) > Math.round(this.player.y)){
+            enemy.body.velocity.y = -CHASE_SPEED;
+            if (enemy.body.velocity.x == 0){
+                enemy.play('up');
             }
         } else {
-            this.enemy.body.velocity.y = CHASE_SPEED;
-            if (this.enemy.body.velocity.x == 0){
-                this.enemy.play('down');
+            enemy.body.velocity.y = CHASE_SPEED;
+            if (enemy.body.velocity.x == 0){
+                enemy.play('down');
             }
         }
-        if (Math.round(this.enemy.x) == Math.round(this.player.x)) {
-            this.enemy.body.velocity.x = 0;
-        } else if (Math.round(this.enemy.x) > Math.round(this.player.x)){
-            this.enemy.body.velocity.x = -CHASE_SPEED;
-            if (this.enemy.body.velocity.y == 0){
-                this.enemy.play('left');
+        if (Math.round(enemy.x) == Math.round(this.player.x)) {
+            enemy.body.velocity.x = 0;
+        } else if (Math.round(enemy.x) > Math.round(this.player.x)){
+            enemy.body.velocity.x = -CHASE_SPEED;
+            if (enemy.body.velocity.y == 0){
+                enemy.play('left');
             }
         } else {
-            this.enemy.body.velocity.x = CHASE_SPEED;
-            if (this.enemy.body.velocity.y == 0){
-                this.enemy.play('right');
+            enemy.body.velocity.x = CHASE_SPEED;
+            if (enemy.body.velocity.y == 0){
+                enemy.play('right');
             }
         }
     },
     shootGun: function(gun){
-        this.gun.fireAtPointer(this.game.input.activePointer);
+        gun.fireAtPointer(this.game.input.activePointer);
     },
 }
