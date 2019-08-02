@@ -111,6 +111,7 @@ Exiled.Game.prototype = {
         
         this.scoreLabel.text = this.playerScore.toString();
         this.healthHUD.text = this.player.health.toString();
+        console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         //environment physics
@@ -122,7 +123,9 @@ Exiled.Game.prototype = {
         //combat physics
         this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this);
         if (this.game.time.now - invulnerable > 2000){
-            this.game.physics.arcade.overlap(this.enemies, this.player, this.enemyHitPlayer, null, this);
+            this.game.physics.arcade.collide(this.enemies, this.player, this.enemyHitPlayer, null, this);
+        } else {
+            this.game.physics.arcade.overlap(this.enemies, this.player);
         }
 
         //player controls
