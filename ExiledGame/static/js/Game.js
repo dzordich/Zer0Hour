@@ -3,7 +3,7 @@ var Exiled = Exiled || {};
 Exiled.Game = function(){};
 
 var random = new Phaser.RandomDataGenerator()
-
+var invulnerable = 0;
 
 
 Exiled.Game.prototype = {
@@ -121,7 +121,9 @@ Exiled.Game.prototype = {
 
         //combat physics
         this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this);
-        this.game.physics.arcade.overlap(this.enemies, this.player, this.enemyHitPlayer, null, this);
+        if (this.game.time.now - invulnerable > 2000){
+            this.game.physics.arcade.overlap(this.enemies, this.player, this.enemyHitPlayer, null, this);
+        }
 
         //player controls
         const PLAYER_SPEED = 100
@@ -224,10 +226,11 @@ Exiled.Game.prototype = {
         }
     },
     enemyHitPlayer: function(player, enemy){
-        
-        player.body.moveTo(400, 100, this.getAngleRadians(player.x, player.y, enemy.x, enemy.y));
+        //this.player.reset(this.player.x + 20, this.player.y + 20)
+        invulnerable  = this.game.time.now;
+        // player.body.moveTo(400, 100, this.getAngleRadians(player.x, player.y, enemy.x, enemy.y));
         var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
-        // player.damage(30);
+        //player.damage(30);
         emitter.makeParticles('blood');
         emitter.particleDrag.setTo(150, 150);
         emitter.minParticleSpeed.setTo(-180, -150);
@@ -235,10 +238,10 @@ Exiled.Game.prototype = {
         emitter.gravity = 0;
         emitter.explode(50, 3);
         // blowback
-        var timer = new Phaser.Timer(this.game, true);
-        player.body.velocity.x = -(((enemy.centerX - player.centerX) * 100)/ ((enemy.centerY - player.centerY) * 100));
-        player.body.velocity.y = -(((enemy.centerY - player.centerY) * 100)/ ((enemy.centerX - player.centerX) * 100));
-        timer.add(500, this.stopPlayer, this, this.player);
+        // var timer = new Phaser.Timer(this.game, true);
+        // player.body.velocity.x = -(((enemy.centerX - player.centerX) * 100)/ ((enemy.centerY - player.centerY) * 100));
+        // player.body.velocity.y = -(((enemy.centerY - player.centerY) * 100)/ ((enemy.centerX - player.centerX) * 100));
+        // timer.add(500, this.stopPlayer, this, this.player);
 
 
 
