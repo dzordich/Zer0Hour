@@ -3,7 +3,7 @@ var Exiled = Exiled || {};
 Exiled.Game = function(){};
 
 var random = new Phaser.RandomDataGenerator()
-
+var invulnerable = 0;
 
 
 Exiled.Game.prototype = {
@@ -21,8 +21,9 @@ Exiled.Game.prototype = {
         this.backgroundLayer.resizeWorld();
 
         // find player spawn point
-        var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
-
+        var result = this.findObjectsByType('playerStart', this.map, 'objectLayer');
+        //console.log(`Result ${result}`);
+        
         // create player
         this.player = this.game.add.sprite(result[0].x + 50, result[0].y, 'player');
         this.player.scale.setTo(0.7);
@@ -110,7 +111,8 @@ Exiled.Game.prototype = {
     update: function() {
         
         this.scoreLabel.text = this.playerScore.toString();
-        this.healthHUD.text = this.player.health.toString();
+        this.healthHUD.text = `HEALTH: ${this.player.health.toString()}`;
+        console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         //environment physics
@@ -121,7 +123,11 @@ Exiled.Game.prototype = {
 
         //combat physics
         this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this);
-        this.game.physics.arcade.overlap(this.enemies, this.player, this.enemyHitPlayer, null, this);
+        if (this.game.time.now - invulnerable > 2000){
+            this.game.physics.arcade.collide(this.enemies, this.player, this.enemyHitPlayer, null, this);
+        } else {
+            this.game.physics.arcade.overlap(this.enemies, this.player);
+        }
 
         //player controls
         const PLAYER_SPEED = 100
@@ -224,10 +230,11 @@ Exiled.Game.prototype = {
         }
     },
     enemyHitPlayer: function(player, enemy){
-        
-        player.body.moveTo(400, 100, this.getAngleRadians(player.x, player.y, enemy.x, enemy.y));
+        //this.player.reset(this.player.x + 20, this.player.y + 20)
+        invulnerable  = this.game.time.now;
+        // player.body.moveTo(400, 100, this.getAngleRadians(player.x, player.y, enemy.x, enemy.y));
         var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
-        // player.damage(30);
+        player.damage(30);
         emitter.makeParticles('blood');
         emitter.particleDrag.setTo(150, 150);
         emitter.minParticleSpeed.setTo(-180, -150);
@@ -235,10 +242,10 @@ Exiled.Game.prototype = {
         emitter.gravity = 0;
         emitter.explode(50, 3);
         // blowback
-        var timer = new Phaser.Timer(this.game, true);
-        player.body.velocity.x = -(((enemy.centerX - player.centerX) * 100)/ ((enemy.centerY - player.centerY) * 100));
-        player.body.velocity.y = -(((enemy.centerY - player.centerY) * 100)/ ((enemy.centerX - player.centerX) * 100));
-        timer.add(500, this.stopPlayer, this, this.player);
+        // var timer = new Phaser.Timer(this.game, true);
+        // player.body.velocity.x = -(((enemy.centerX - player.centerX) * 100)/ ((enemy.centerY - player.centerY) * 100));
+        // player.body.velocity.y = -(((enemy.centerY - player.centerY) * 100)/ ((enemy.centerX - player.centerX) * 100));
+        // timer.add(500, this.stopPlayer, this, this.player);
 
 
 
@@ -289,7 +296,7 @@ Exiled.Game.prototype = {
         this.scoreLabel = this.game.add.text(this.game.width-25, this.game.height-34, text, style);
         this.healthHUD = this.game.add.text(this.game.width-10, this.game.height-200, 'HEALTH: ' + this.player.health.toString(), { font: '20px Arial', fill: '#fff', align: 'left' });
         this.scoreLabel.fixedToCamera = true;
-        this.healthHUD = true;
+        //this.healthHUD = true;
 
     },
     getAngleRadians: function(x1, y1, x2, y2){
