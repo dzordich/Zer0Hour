@@ -295,7 +295,7 @@ Exiled.Game.prototype = {
         this.scoreLabel = this.game.add.text(this.game.width-25, this.game.height-34, text, style);
         this.healthHUD = this.game.add.text(this.game.width-10, this.game.height-200, 'HEALTH: ' + this.player.health.toString(), { font: '20px Arial', fill: '#fff', align: 'left' });
         this.scoreLabel.fixedToCamera = true;
-        this.healthHUD = true;
+        //this.healthHUD = true;
 
     },
     getAngleRadians: function(x1, y1, x2, y2){
