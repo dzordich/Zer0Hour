@@ -14,7 +14,7 @@ Exiled.Preload.prototype = {
 
         this.load.tilemap('test_room', 'static/assets/tilemaps/Map.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('world', 'static/assets/images/oryx_16bit_scifi_world.png');
-        this.load.image('creatures', 'staic/assets/images/oryx_16bit_scifi_creatures_trans.png');
+        this.load.image('creatures', 'static/assets/images/oryx_16bit_scifi_creatures_trans.png');
         this.load.image('space', 'static/assets/images/space.png');
         this.load.image('rock', 'static/assets/images/rock.png');
         this.load.spritesheet('player', 'static/assets/images/pc1_cropped.png', 32, 32);
