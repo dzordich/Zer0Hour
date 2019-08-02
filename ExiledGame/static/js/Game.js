@@ -230,7 +230,7 @@ Exiled.Game.prototype = {
         invulnerable  = this.game.time.now;
         // player.body.moveTo(400, 100, this.getAngleRadians(player.x, player.y, enemy.x, enemy.y));
         var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
-        //player.damage(30);
+        player.damage(30);
         emitter.makeParticles('blood');
         emitter.particleDrag.setTo(150, 150);
         emitter.minParticleSpeed.setTo(-180, -150);
