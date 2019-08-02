@@ -12,6 +12,7 @@ django-heroku = "*"
 gunicorn = "*"
 djangorestframework = "*"
 django-filter = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"
