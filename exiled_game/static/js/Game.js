@@ -11,11 +11,12 @@ Exiled.Game.prototype = {
         // create map
         this.map = this.game.add.tilemap('test_room');
         this.map.addTilesetImage('oryx_16bit_scifi_world', 'world');
+        this.map.addTilesetImage('oryx_16bit_scifi_world_trans', 'world_trans');
         this.map.addTilesetImage('oryx_16bit_scifi_creatures_trans', 'creatures');
         this.backgroundLayer = this.map.createLayer('backgroundLayer');
         this.groundLayer = this.map.createLayer('groundLayer');
         this.blockedLayer = this.map.createLayer('blockedLayer');
-        this.objectLayer = this.map.createLayer('objectLayer');
+        // this.objectLayer = this.map.createLayer('objectLayer');
 
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
         this.backgroundLayer.resizeWorld();
