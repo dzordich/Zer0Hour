@@ -21,8 +21,9 @@ Exiled.Game.prototype = {
         this.backgroundLayer.resizeWorld();
 
         // find player spawn point
-        var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
-
+        var result = this.findObjectsByType('playerStart', this.map, 'objectLayer');
+        //console.log(`Result ${result}`);
+        
         // create player
         this.player = this.game.add.sprite(result[0].x + 50, result[0].y, 'player');
         this.player.scale.setTo(0.7);

@@ -23,7 +23,7 @@ Exiled.Preload.prototype = {
         this.load.spritesheet('white_fireball', 'static/assets/images/white_fireball.png', 32, 32);
         this.load.image('playerParticle', 'static/assets/images/player-particle.png');
         this.load.audio('collect', 'static/assets/audio/collect.ogg');
-        this.load.audio('explosion', 'static/asssets/audio/explosion.ogg');
+        this.load.audio('explosion', 'static/assets/audio/explosion.ogg');
         this.load.audio('rifle_shot', 'static/assets/audio/rifle_shot.mp3');
         this.load.audio('shell_falling', 'static/assets/audio/shell_falling.mp3');
 
