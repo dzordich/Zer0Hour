@@ -110,7 +110,7 @@ Exiled.Game.prototype = {
     update: function() {
         
         this.scoreLabel.text = this.playerScore.toString();
-        this.healthHUD.text = this.player.health.toString();
+        this.healthHUD.text = `HEALTH: ${this.player.health.toString()}`;
         console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
