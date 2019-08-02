@@ -4,6 +4,8 @@ Exiled.Game = function(){};
 
 var random = new Phaser.RandomDataGenerator()
 
+
+
 Exiled.Game.prototype = {
     create: function() {
         // create map
@@ -22,12 +24,16 @@ Exiled.Game.prototype = {
         var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
 
         // create player
-        this.player = this.game.add.sprite(result[0].x + 50, result[0].y, 'playership');
+        this.player = this.game.add.sprite(result[0].x + 50, result[0].y, 'player');
         this.player.scale.setTo(0.7);
-        this.player.animations.add('left', [0,1], 10, true);
-        this.player.animations.add('right', [4,5], 10, true);
-        this.player.animations.add('up', [6,7], 10, true);
-        this.player.animations.add('down', [2,3], 10, true);
+        this.player.animations.add('left', [6,14], 10, true);
+        this.player.animations.add('right', [2,10], 10, true);
+        this.player.animations.add('up', [4,12], 10, true);
+        this.player.animations.add('down', [0,8], 10, true);
+        this.player.animations.add('up-left', [5,13], 10, true);
+        this.player.animations.add('up-right', [3,11], 10, true);
+        this.player.animations.add('down-left', [7,15], 10, true);
+        this.player.animations.add('down-right', [1,9], 10, true);
         this.game.physics.arcade.enable(this.player);
         // this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
@@ -83,6 +89,7 @@ Exiled.Game.prototype = {
 
         this.showLabels(this.playerScore, null);
     },
+
     findObjectsByType: function(type, map, layer){
         var result = new Array();
         map.objects[layer].forEach(function(element){
@@ -117,29 +124,65 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.overlap(this.enemies, this.player, this.enemyHitPlayer, null, this);
 
         //player controls
-        if(this.cursors.left.isDown || this.leftKey.isDown){
-            this.player.body.velocity.x -= 100;
-            this.player.play('left');
-        } else if(this.cursors.right.isDown || this.rightKey.isDown){
-            this.player.body.velocity.x = 100;
-            this.player.play('right');
-        } else {
-            this.player.body.acceleration.x = 0;
-        }
-        if(this.cursors.up.isDown || this.upKey.isDown){
-            this.player.body.velocity.y -= 100;
-            if( (!this.cursors.left.isDown || !this.leftKey.isDown) && (!this.cursors.right.isDown || !this.rightKey.isDown) ){
+        const PLAYER_SPEED = 100
+        var down = this.cursors.down.isDown || this.downKey.isDown
+        var up = this.cursors.up.isDown || this.upKey.isDown
+        var left = this.cursors.left.isDown || this.leftKey.isDown
+        var right = this.cursors.right.isDown || this.rightKey.isDown
+        
+        if(left){
+            if(up){
+                this.player.body.velocity.y = -PLAYER_SPEED;
+                this.player.body.velocity.x = -PLAYER_SPEED;
+                this.player.play('up-left');
+            } else if(down){
+                this.player.body.velocity.y = PLAYER_SPEED;
+                this.player.body.velocity.x = -PLAYER_SPEED;
+                this.player.play('down-left');
+            } else {
+                this.player.body.velocity.x = -PLAYER_SPEED;
+                this.player.play('left');
+            }
+        } else if(right) {
+            if(up){
+                this.player.body.velocity.y = -PLAYER_SPEED;
+                this.player.body.velocity.x = PLAYER_SPEED;
+                this.player.play('up-right');
+            } else if(down){
+                this.player.body.velocity.y = PLAYER_SPEED;
+                this.player.body.velocity.x = PLAYER_SPEED;
+                this.player.play('down-right');
+            } else {
+                this.player.body.velocity.x = PLAYER_SPEED;
+                this.player.play('right');
+            }
+        } else if(up){
+            if(right){
+                this.player.body.velocity.y = -PLAYER_SPEED;
+                this.player.body.velocity.x = PLAYER_SPEED;
+                this.player.play('up-right');
+            } else if(left){
+                this.player.body.velocity.y = -PLAYER_SPEED;
+                this.player.body.velocity.x = -PLAYER_SPEED;
+                this.player.play('up-left');
+            } else {
+                this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.play('up');
             }
-        } else if(this.cursors.down.isDown || this.downKey.isDown){
-            this.player.body.velocity.y = 100;
-            if( (!this.cursors.left.isDown || !this.leftKey.isDown) && (!this.cursors.right.isDown || !this.rightKey.isDown) ){
+        } else if(down){
+            if(right){
+                this.player.body.velocity.y = PLAYER_SPEED;
+                this.player.body.velocity.x = PLAYER_SPEED;
+                this.player.play('down-right');
+            } else if(left){
+                this.player.body.velocity.y = PLAYER_SPEED;
+                this.player.body.velocity.x = -PLAYER_SPEED;
+                this.player.play('down-left');
+            } else {
+                this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.play('down');
             }
         } else {
-            this.player.body.acceleration.y = 0;
-        }
-        if ( (this.player.body.velocity.x == 0) && (this.player.body.velocity.y == 0) ) {
             this.player.animations.stop();
         }
         
@@ -155,10 +198,8 @@ Exiled.Game.prototype = {
         
         
         //call the enemy patrol function
-        this.enemies.forEachAlive(this.chase, this);
-        
-        
 
+        this.enemies.forEachAlive(this.chase, this);
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
@@ -206,6 +247,7 @@ Exiled.Game.prototype = {
             emitter.explode(100);
         }
     },
+
     // enemy movement
     chase: function(enemy){
         //max safe speed 30
