@@ -28,6 +28,7 @@ Exiled.Preload.prototype = {
         this.load.audio('shell_falling', 'static/assets/audio/shell_falling.mp3');
 
         this.load.image('gun', 'static/assets/images/player.png');
+        this.load.image('blood', 'static/assets/images/blood.png')
 
     },
     create: function() {

@@ -24,7 +24,7 @@ Exiled.Game.prototype = {
         var result = this.findObjectsByType('playerStart', this.map, 'objectLayer')
 
         // create player
-        this.player = this.game.add.sprite(result[0].x, result[0].y, 'player');
+        this.player = this.game.add.sprite(result[0].x + 50, result[0].y, 'player');
         this.player.scale.setTo(0.7);
         this.player.animations.add('left', [6,14], 10, true);
         this.player.animations.add('right', [2,10], 10, true);
@@ -35,18 +35,23 @@ Exiled.Game.prototype = {
         this.player.animations.add('down-left', [7,15], 10, true);
         this.player.animations.add('down-right', [1,9], 10, true);
         this.game.physics.arcade.enable(this.player);
-        this.player.body.collideWorldBounds = true;
+        // this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
         this.player.health = 100;
+        this.playerScore = 0;
         this.game.camera.follow(this.player);
 
+        // this.player.body.immovable = true;
+        // this.player.body.bounce.x = 1;
+        // this.player.body.bounce.y = 1;
+
         // create enemies
-        var num_enemies = 5;
+        this.numEnemies = 5;
         this.enemies = this.game.add.group();
         this.enemies.enableBody = true;
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
         let newEnemy;
-        for(let i=0; i<=num_enemies; i++){
+        for(let i=0; i<=this.numEnemies; i++){
             newEnemy = this.enemies.create(result[0].x+random.integerInRange(-24, 24), result[0].y+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
             newEnemy.animations.add('left', [0,1], 5, true);
@@ -79,6 +84,10 @@ Exiled.Game.prototype = {
         this.rifle.bulletSpeed = 800;
 
         this.activeGun = this.rifle;
+
+        this.round = 1;
+
+        this.showLabels(this.playerScore, null);
     },
 
     findObjectsByType: function(type, map, layer){
@@ -100,8 +109,19 @@ Exiled.Game.prototype = {
     },
     update: function() {
         
+        this.scoreLabel.text = this.playerScore.toString();
+        this.healthHUD.text = this.player.health.toString();
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
+        //environment physics
+        this.game.physics.arcade.collide(this.player, this.blockedLayer);
+        this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
+        this.game.physics.arcade.collide(this.enemies);
+        this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
+
+        //combat physics
+        this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this);
+        this.game.physics.arcade.overlap(this.enemies, this.player, this.enemyHitPlayer, null, this);
 
         //player controls
         const PLAYER_SPEED = 100
@@ -176,14 +196,6 @@ Exiled.Game.prototype = {
         }
         
         
-        //environment physics
-        this.game.physics.arcade.collide(this.player, this.blockedLayer);
-        this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
-        this.game.physics.arcade.collide(this.enemies);
-        this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
-
-        //combat physics
-        this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this)
         
         //call the enemy patrol function
 
@@ -195,14 +207,42 @@ Exiled.Game.prototype = {
     },
     // handles bullet collision with enemy
     bulletHitEnemy: function(bullet, enemy){
+        var emitter = this.game.add.emitter(enemy.x, enemy.y, 25);
+        emitter.makeParticles('blood');
+        emitter.particleDrag.setTo(150, 150);
+        emitter.minParticleSpeed.setTo(-180, -150);
+        emitter.maxParticleSpeed.setTo(180, 150);
+        emitter.gravity = 0;
         bullet.kill();
         enemy.damage(15);
+        this.playerScore += 10;
+        emitter.explode(50, 3);
         if(enemy.health <= 0){
-            var emitter = this.game.add.emitter(enemy.x, enemy.y, 50);
-            emitter.makeParticles('playerParticle');
-            emitter.minParticleSpeed.setTo(-500, -500);
-            emitter.maxParticleSpeed.setTo(500, 500);
-            emitter.gravity = 0;
+            this.explosionSound.play();
+            emitter.explode(100);
+            this.score += 100;
+        }
+    },
+    enemyHitPlayer: function(player, enemy){
+        
+        player.body.moveTo(400, 100, this.getAngleRadians(player.x, player.y, enemy.x, enemy.y));
+        var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
+        // player.damage(30);
+        emitter.makeParticles('blood');
+        emitter.particleDrag.setTo(150, 150);
+        emitter.minParticleSpeed.setTo(-180, -150);
+        emitter.maxParticleSpeed.setTo(180, 150);
+        emitter.gravity = 0;
+        emitter.explode(50, 3);
+        // blowback
+        var timer = new Phaser.Timer(this.game, true);
+        player.body.velocity.x = -(((enemy.centerX - player.centerX) * 100)/ ((enemy.centerY - player.centerY) * 100));
+        player.body.velocity.y = -(((enemy.centerY - player.centerY) * 100)/ ((enemy.centerX - player.centerX) * 100));
+        timer.add(500, this.stopPlayer, this, this.player);
+
+
+
+        if(player.health <= 0){
             this.explosionSound.play();
             emitter.explode(100);
         }
@@ -243,4 +283,22 @@ Exiled.Game.prototype = {
     shootGun: function(gun){
         gun.fireAtPointer(this.game.input.activePointer);
     },
+    showLabels: function(score, round){
+        var text = score.toString();
+        var style = { font: '15px Arial', fill: '#fff', align: 'left' };
+        this.scoreLabel = this.game.add.text(this.game.width-25, this.game.height-34, text, style);
+        this.healthHUD = this.game.add.text(this.game.width-10, this.game.height-200, 'HEALTH: ' + this.player.health.toString(), { font: '20px Arial', fill: '#fff', align: 'left' });
+        this.scoreLabel.fixedToCamera = true;
+        this.healthHUD = true;
+
+    },
+    getAngleRadians: function(x1, y1, x2, y2){
+        let angle = (x2 - x1)/(y2 - y1);
+        const rad = (Math.PI) * 2;
+        return angle * rad;
+    },
+    stopPlayer: function(player){
+        player.body.acceleration.x = 0;
+        player.body.acceleration.y = 0;
+    }
 }
