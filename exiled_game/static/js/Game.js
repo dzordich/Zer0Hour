@@ -83,13 +83,13 @@ Exiled.Game.prototype = {
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
         this.rifleShot = this.game.add.audio('rifle_shot');
+        this.knifeAttack = this.game.add.audio('knifeAttack');
         this.shellFalling = this.game.add.audio('shell_falling');
         this.shellFalling.allowMultiple = false;
         
         // player's gun
         this.rifle = this.add.weapon(10, 'bullet');
         this.rifle.fireRate = 250;
-        this.rifle.fireLimit = 10;
         this.rifle.bulletRotateToVelocity = true;
         this.magCap = 10;
         this.totalAmmo = START_BULLETS;
@@ -349,14 +349,19 @@ Exiled.Game.prototype = {
         }
     },
     shootRifle: function(){
+        this.rifle.x = this.player.centerX;
+        this.rifle.y = this.player.centerY;
         if(this.totalAmmo > 0){
-            this.rifle.x = this.player.centerX;
-            this.rifle.y = this.player.centerY;
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
             this.rifle.fireAtPointer(this.game.input.activePointer);
             this.rifleShot.play();
             this.totalAmmo -= 1;
         } else {
             //melee attack goes here
+            this.knifeAttack.play();
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 24;
+            this.rifle.fireAtPointer(this.game.input.activePointer);
         }
         // gun.onFire.add(function(gun){
         //     gun.bullets.getFirstExists(1).destroy()
