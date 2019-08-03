@@ -4,7 +4,11 @@ Exiled.Game = function(){};
 
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
-
+// find enemy spawn points
+var enemySpawn1 = [2017, 721];
+var enemySpawn2 = [290, 767];
+var enemySpawn3 = [1205, 553];
+var enemySpawn4 = [958, 962];
 
 Exiled.Game.prototype = {
     create: function() {
@@ -48,13 +52,9 @@ Exiled.Game.prototype = {
         // this.player.body.bounce.x = 1;
         // this.player.body.bounce.y = 1;
 
-        // find enemy spawn points
-        var enemySpawn1 = [2017, 721];
-        var enemySpawn2 = [290, 767];
-        var enemySpawn3 = [1205, 553];
-        var enemySpawn4 = [958, 962];
+        
         // create enemies
-        this.numEnemies = 10; // this is the number of enemies per spawn point. currently we have 2 so this number would be half the number of enemies in a round.
+        this.numEnemies = 10; // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
         this.enemies = this.game.add.group();
         this.enemies.enableBody = true;
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
