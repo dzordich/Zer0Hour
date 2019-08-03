@@ -4,13 +4,14 @@ Exiled.Game = function(){};
 
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
+var roundTextTimer = 0;
 // find enemy spawn points
 var enemySpawn1 = [2017, 721];
 var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
 
-const ENEMY_NUMBER = 5;
+const ENEMY_NUMBER = 1;
 
 //temp for testing
 // var enemySpawn1 = [290, 767];
@@ -92,13 +93,14 @@ Exiled.Game.prototype = {
         this.rifle.bulletRotateToVelocity = true;
         this.magCap = 10;
         this.totalAmmo = 100;
-        this.rifle.bulletSpeed = 800;
+        this.rifle.bulletSpeed = 4000;
 
         this.activeGun = this.rifle;
 
         this.round = 1;
 
         this.showLabels(this.playerScore, null);
+        this.showRoundText();
     },
 
     findObjectsByType: function(type, map, layer){
@@ -164,7 +166,10 @@ Exiled.Game.prototype = {
     update: function() {
         if(!this.enemies.getFirstAlive()){
             this.numEnemies = Math.round(this.numEnemies * 1.25);
-
+            
+            // if(this.game.time.now - roundTextTimer > 5000){
+            //     this.roundLabel.kill()
+            // }
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         }
         this.scoreLabel.text = this.playerScore.toString();
@@ -186,7 +191,7 @@ Exiled.Game.prototype = {
         }
 
         //player controls
-        const PLAYER_SPEED = 100
+        const PLAYER_SPEED = 200;
         var down = this.cursors.down.isDown || this.downKey.isDown
         var up = this.cursors.up.isDown || this.upKey.isDown
         var left = this.cursors.left.isDown || this.leftKey.isDown
@@ -377,6 +382,13 @@ Exiled.Game.prototype = {
         this.healthHUD = this.game.add.text(this.game.width-10, this.game.height-200, 'HEALTH: ' + this.player.health.toString(), { font: '20px Arial', fill: '#fff', align: 'left' });
         this.scoreLabel.fixedToCamera = true;
 
+    },
+    showRoundText: function(){
+        let text = "ROUND " + this.round.toString();
+        let style = { font: '30px Brush Script MT', fill: '#fff', align: 'center' };
+        roundTextTimer = this.game.time.now;
+        this.roundLabel = this.game.add.text(this.world.centerX, this.world.centerY, text, style);
+        this.roundLabel.fixedToCamera = true;
     },
     getAngleRadians: function(x1, y1, x2, y2){
         let angle = (x2 - x1)/(y2 - y1);
