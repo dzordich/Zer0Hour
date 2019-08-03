@@ -18,20 +18,16 @@ Exiled.Game.prototype = {
         this.detailLayer = this.map.createLayer('detailLayer');
         this.blockedLayer = this.map.createLayer('blockedLayer');
         // this.objectLayer = this.map.createLayer('objectLayer');
-
+        
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
         //this.map.setCollisionBetween(1, 1020, false, 'detailLayer');
         this.backgroundLayer.resizeWorld();
 
         // find player spawn point
-        var result = this.findObjectsByType('playerStart', this.map, 'objectLayer');
-        //console.log(`Result ${result}`);
-
-        // var detailLayerArray = this.findObjectsByType('detail', this.map, 'detailLayer');
-        // console.log(`Details ${detailLayerArray}`);
+        var playerSpawn = this.findObjectsByType('playerStart', this.map, 'objectLayer');
         
         // create player
-        this.player = this.game.add.sprite(result[0].x + 50, result[0].y, 'player');
+        this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'player');
         this.player.scale.setTo(0.7);
         this.player.animations.add('left', [6,14], 10, true);
         this.player.animations.add('right', [2,10], 10, true);
@@ -52,42 +48,37 @@ Exiled.Game.prototype = {
         // this.player.body.bounce.x = 1;
         // this.player.body.bounce.y = 1;
 
+        // find enemy spawn points
+        var enemySpawn1 = [2017, 721];
+        var enemySpawn2 = [290, 767];
+        var enemySpawn3 = [1205, 553];
+        var enemySpawn4 = [958, 962];
         // create enemies
-        this.numEnemies = 5;
+        this.numEnemies = 10; // this is the number of enemies per spawn point. currently we have 2 so this number would be half the number of enemies in a round.
         this.enemies = this.game.add.group();
         this.enemies.enableBody = true;
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
-        let newEnemy;
-        for(let i=0; i<=this.numEnemies; i++){
-            newEnemy = this.enemies.create(result[0].x+random.integerInRange(-24, 24), result[0].y+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
-        }
-
+        this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+        // we will keep track of different types of enemies' stats in this object (e.g. speed, health, etc)
+        this.enemies.stats = {};
         // create controls
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.upKey = this.game.input.keyboard.addKey(Phaser.KeyCode.W);
         this.downKey = this.game.input.keyboard.addKey(Phaser.KeyCode.S);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
-        
         // create sounds
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
         this.rifleShot = this.game.add.audio('rifle_shot');
-        // this.rifleShot.override = true;
         this.shellFalling = this.game.add.audio('shell_falling');
         this.shellFalling.allowMultiple = false;
         
         // player's gun
-        this.rifle = this.add.weapon(10, 'playerParticle');
-        this.rifle.KILL_CAMERA_BOUNDS = 3;
-        this.rifle.trackSprite(this.player);
-        this.rifle.trackOffset.y = 13;
+        this.rifle = this.add.weapon(10, 'bullet');
+        // this.rifle.KILL_CAMERA_BOUNDS = 3;
+        // this.rifle.trackSprite(this.player);
+        // this.rifle.trackOffset.y = 13;
         this.rifle.bulletSpeed = 800;
 
         this.activeGun = this.rifle;
@@ -114,6 +105,47 @@ Exiled.Game.prototype = {
         Object.keys(element.properties).forEach(function(key){
             sprite[key] = element.properties[key];
         });
+    },
+    // moved into function so it can easily be called at the beginning of a new round
+    // creates @param numEnemies enemies at each spawn point on the map
+    spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
+        let newEnemy;
+        for(let i=0; i<=numEnemies; i++){
+            newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
+        for(let i=0; i<=numEnemies; i++){
+            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
+        for(let i=0; i<=numEnemies; i++){
+            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
+        for(let i=0; i<=numEnemies; i++){
+            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
     },
     update: function() {
         this.scoreLabel.text = this.playerScore.toString();
@@ -252,9 +284,6 @@ Exiled.Game.prototype = {
         // player.body.velocity.x = -(((enemy.centerX - player.centerX) * 100)/ ((enemy.centerY - player.centerY) * 100));
         // player.body.velocity.y = -(((enemy.centerY - player.centerY) * 100)/ ((enemy.centerX - player.centerX) * 100));
         // timer.add(500, this.stopPlayer, this, this.player);
-
-
-
         if(player.health <= 0){
             this.explosionSound.play();
             emitter.explode(100);
@@ -294,6 +323,8 @@ Exiled.Game.prototype = {
         }
     },
     shootGun: function(gun){
+        gun.x = this.player.centerX;
+        gun.y = this.player.centerY;
         gun.fireAtPointer(this.game.input.activePointer);
     },
     showLabels: function(score, round){
@@ -302,7 +333,6 @@ Exiled.Game.prototype = {
         this.scoreLabel = this.game.add.text(this.game.width-25, this.game.height-34, text, style);
         this.healthHUD = this.game.add.text(this.game.width-10, this.game.height-200, 'HEALTH: ' + this.player.health.toString(), { font: '20px Arial', fill: '#fff', align: 'left' });
         this.scoreLabel.fixedToCamera = true;
-        //this.healthHUD = true;
 
     },
     getAngleRadians: function(x1, y1, x2, y2){
@@ -313,5 +343,10 @@ Exiled.Game.prototype = {
     stopPlayer: function(player){
         player.body.acceleration.x = 0;
         player.body.acceleration.y = 0;
+    },
+    gameOver: function(){
+        // this is where we will post to the API
+        this.scoreLastGame = this.playerScore;
+        this.state.start('MainMenu');
     }
 }
