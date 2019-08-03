@@ -6,6 +6,7 @@ var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 
 
+
 Exiled.Game.prototype = {
     create: function() {
         // create map
@@ -22,6 +23,8 @@ Exiled.Game.prototype = {
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
         //this.map.setCollisionBetween(1, 1020, false, 'detailLayer');
         this.backgroundLayer.resizeWorld();
+
+        this.timer = new Phaser.Timer(this.game, false);
 
         // find player spawn point
         var playerSpawn = this.findObjectsByType('playerStart', this.map, 'objectLayer');
@@ -76,9 +79,11 @@ Exiled.Game.prototype = {
         
         // player's gun
         this.rifle = this.add.weapon(10, 'bullet');
-        // this.rifle.KILL_CAMERA_BOUNDS = 3;
-        // this.rifle.trackSprite(this.player);
-        // this.rifle.trackOffset.y = 13;
+        this.rifle.fireRate = 250;
+        this.rifle.fireLimit = 10;
+        this.rifle.bulletRotateToVelocity = true;
+        this.magCap = 10;
+        this.totalAmmo = 100;
         this.rifle.bulletSpeed = 800;
 
         this.activeGun = this.rifle;
@@ -150,7 +155,6 @@ Exiled.Game.prototype = {
     update: function() {
         this.scoreLabel.text = this.playerScore.toString();
         this.healthHUD.text = `HEALTH: ${this.player.health.toString()}`;
-        console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         //environment physics
@@ -160,7 +164,7 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
 
         //combat physics
-        this.game.physics.arcade.overlap(this.activeGun.bullets, this.enemies, this.bulletHitEnemy, null, this);
+        this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
         if (this.game.time.now - invulnerable > 2000){
             this.game.physics.arcade.collide(this.enemies, this.player, this.enemyHitPlayer, null, this);
         } else {
@@ -229,20 +233,24 @@ Exiled.Game.prototype = {
         } else {
             this.player.animations.stop();
         }
-        
-        if(this.game.input.activePointer.isDown){
-            this.shootGun(this.activeGun);
-            this.rifleShot.loopFull();
-            // this.shellFalling.loopFull();
-        }
-        else{
-            this.rifleShot.stop()
-        }
-        
-        
+        // if(this.rifle.shots < 10){
+        //     if(this.game.input.activePointer.isDown){
+        //         this.shootGun(this.rifle);
+        //         this.rifleShot.loopFull();         
+        //     }
+        //     else{
+        //         this.rifleShot.stop()
+        //     }
+        // }
+        // else{
+        //     this.reloadGun(this.rifle, this.magCap);
+
+        // }
+
+        // shoot gun
+        this.input.onDown.add(this.shootGun, this)
         
         //call the enemy patrol function
-
         this.enemies.forEachAlive(this.chase, this);
     },
     // bullets die when they hit blocks
@@ -323,9 +331,35 @@ Exiled.Game.prototype = {
         }
     },
     shootGun: function(gun){
-        gun.x = this.player.centerX;
-        gun.y = this.player.centerY;
-        gun.fireAtPointer(this.game.input.activePointer);
+        this.rifle.x = this.player.centerX;
+        this.rifle.y = this.player.centerY;
+        if(this.rifle.shots > 10){
+            this.reloadGun(this.rifle, this.magCap);
+        }
+        else{
+            this.rifle.fireAtPointer(this.game.input.activePointer);
+        }
+        // gun.onFire.add(function(gun){
+        //     gun.bullets.getFirstExists(1).destroy()
+        // })
+        console.log(this.rifle.bullets.length)
+    },
+    reloadGun: function(gun, capacity){
+        console.log('poop')
+        reloadDelay = this.game.time.now;
+        if(this.totalAmmo === 0){
+            // switch to melee
+        }
+        else{
+            this.totalAmmo -= capacity;
+            console.log(this.totalAmmo)
+            
+            this.timer.add(10000, gun.resetShots(capacity), this);
+            this.timer.start(5000);
+            // gun.resetShots(capacity);
+            // gun.createBullets(capacity, 'bullet')
+        }
+        
     },
     showLabels: function(score, round){
         var text = score.toString();
