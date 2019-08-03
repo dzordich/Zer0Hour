@@ -163,7 +163,8 @@ Exiled.Game.prototype = {
     },
     update: function() {
         if(!this.enemies.getFirstAlive()){
-            //round over ROUND CODE HERE
+            this.numEnemies = Math.round(this.numEnemies * 1.25);
+
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         }
         this.scoreLabel.text = this.playerScore.toString();
@@ -262,6 +263,7 @@ Exiled.Game.prototype = {
 
         // shoot gun
         this.input.onDown.add(this.shootRifle, this)
+        this.rifle.onFireLimit.add(this.reloadGun, this)
         
         //call the enemy patrol function
         this.enemies.forEachAlive(this.chase, this);
@@ -346,30 +348,25 @@ Exiled.Game.prototype = {
     shootRifle: function(){
         this.rifle.x = this.player.centerX;
         this.rifle.y = this.player.centerY;
-        if(this.rifle.shots > 10){
-            this.reloadGun(this.rifle, this.magCap);
-        }
-        else{
-            this.rifle.fireAtPointer(this.game.input.activePointer);
-            this.rifleShot.play();
-        }
+        this.rifle.fireAtPointer(this.game.input.activePointer);
+        this.rifleShot.play();
         // gun.onFire.add(function(gun){
         //     gun.bullets.getFirstExists(1).destroy()
         // })
-        console.log(this.rifle.bullets.length)
+        console.log(this.rifle.shots)
     },
-    reloadGun: function(gun, capacity){
+    reloadGun: function(){
+        console.log('poop')
         if(this.totalAmmo === 0){
             // switch to melee
         }
         else{
-            this.totalAmmo -= capacity;
-            console.log(this.totalAmmo)
+            this.totalAmmo -= this.magCap;
             
-            this.timer.add(10000, gun.resetShots(capacity), this);
-            this.timer.start(5000);
-            // gun.resetShots(capacity);
-            // gun.createBullets(capacity, 'bullet')
+            this.rifle.resetShots();
+            this.rifle.createBullets(10, 'bullet')
+            console.log(this.totalAmmo)
+
         }
         
     },
