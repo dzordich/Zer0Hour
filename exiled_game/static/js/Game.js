@@ -5,10 +5,15 @@ Exiled.Game = function(){};
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 // find enemy spawn points
-var enemySpawn1 = [2017, 721];
+//var enemySpawn1 = [2017, 721];
 var enemySpawn2 = [290, 767];
-var enemySpawn3 = [1205, 553];
-var enemySpawn4 = [958, 962];
+//var enemySpawn3 = [1205, 553];
+//var enemySpawn4 = [958, 962];
+
+//temp for testing
+var enemySpawn1 = [290, 767];
+var enemySpawn3 = [290, 767];
+var enemySpawn4 = [290, 767];
 
 Exiled.Game.prototype = {
     create: function() {
@@ -56,8 +61,8 @@ Exiled.Game.prototype = {
         // create enemies
         this.numEnemies = 1; // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
         this.enemies = this.game.add.group();
-        this.enemies.onDestroy.add(function (){
-            console.log("destroy");
+        this.enemies.forEachAlive(function (){
+            console.log('born');
         });
         this.enemies.enableBody = true;
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
@@ -152,8 +157,8 @@ Exiled.Game.prototype = {
         }
     },
     update: function() {
-        if (!this.enemies.alive){
-            console.log("All Dead");
+        if(!this.enemies.getFirstAlive()){
+            console.log('all dead');
         }
         this.scoreLabel.text = this.playerScore.toString();
         this.healthHUD.text = `HEALTH: ${this.player.health.toString()}`;
