@@ -10,8 +10,8 @@ var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
 
-const ENEMY_NUMBER = 1;
-const START_BULLETS = 10;
+const ENEMY_NUMBER = 5;
+const START_BULLETS = 100;
 
 //temp for testing
 // var enemySpawn1 = [290, 767];
@@ -90,7 +90,6 @@ Exiled.Game.prototype = {
         // player's gun
         this.rifle = this.add.weapon(10, 'bullet');
         this.rifle.fireRate = 250;
-        this.rifle.fireLimit = 10;
         this.rifle.bulletRotateToVelocity = true;
         this.magCap = 10;
         this.totalAmmo = START_BULLETS;
@@ -350,15 +349,19 @@ Exiled.Game.prototype = {
         }
     },
     shootRifle: function(){
+        this.rifle.x = this.player.centerX;
+        this.rifle.y = this.player.centerY;
         if(this.totalAmmo > 0){
-            this.rifle.x = this.player.centerX;
-            this.rifle.y = this.player.centerY;
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
             this.rifle.fireAtPointer(this.game.input.activePointer);
             this.rifleShot.play();
             this.totalAmmo -= 1;
         } else {
             //melee attack goes here
             this.knifeAttack.play();
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 24;
+            this.rifle.fireAtPointer(this.game.input.activePointer);
         }
         // gun.onFire.add(function(gun){
         //     gun.bullets.getFirstExists(1).destroy()
