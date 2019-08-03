@@ -15,7 +15,7 @@ Exiled.Game.prototype = {
         this.map.addTilesetImage('oryx_16bit_scifi_creatures_trans', 'creatures');
         this.backgroundLayer = this.map.createLayer('backgroundLayer');
         this.groundLayer = this.map.createLayer('groundLayer');
-        //this.detailLayer = this.map.createLayer('detailLayer');
+        this.detailLayer = this.map.createLayer('detailLayer');
         this.blockedLayer = this.map.createLayer('blockedLayer');
         // this.objectLayer = this.map.createLayer('objectLayer');
 
@@ -99,6 +99,7 @@ Exiled.Game.prototype = {
 
     findObjectsByType: function(type, map, layer){
         var result = new Array();
+        console.log(map);
         map.objects[layer].forEach(function(element){
             if(element.type === type){
                 element.y -= map.tileHeight;
