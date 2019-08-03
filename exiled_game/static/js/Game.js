@@ -4,7 +4,18 @@ Exiled.Game = function(){};
 
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
+// find enemy spawn points
+var enemySpawn1 = [2017, 721];
+var enemySpawn2 = [290, 767];
+var enemySpawn3 = [1205, 553];
+var enemySpawn4 = [958, 962];
 
+const ENEMY_NUMBER = 5;
+
+//temp for testing
+// var enemySpawn1 = [290, 767];
+// var enemySpawn3 = [290, 767];
+// var enemySpawn4 = [290, 767];
 
 Exiled.Game.prototype = {
     create: function() {
@@ -48,13 +59,10 @@ Exiled.Game.prototype = {
         // this.player.body.bounce.x = 1;
         // this.player.body.bounce.y = 1;
 
-        // find enemy spawn points
-        var enemySpawn1 = [2017, 721];
-        var enemySpawn2 = [290, 767];
-        var enemySpawn3 = [1205, 553];
-        var enemySpawn4 = [958, 962];
+        
         // create enemies
-        this.numEnemies = 10; // this is the number of enemies per spawn point. currently we have 2 so this number would be half the number of enemies in a round.
+        // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
+        this.numEnemies = ENEMY_NUMBER; 
         this.enemies = this.game.add.group();
         this.enemies.enableBody = true;
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
@@ -109,8 +117,9 @@ Exiled.Game.prototype = {
     // moved into function so it can easily be called at the beginning of a new round
     // creates @param numEnemies enemies at each spawn point on the map
     spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
+        console.log('spawned enemies');
         let newEnemy;
-        for(let i=0; i<=numEnemies; i++){
+        for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
             newEnemy.animations.add('left', [0,1], 5, true);
@@ -119,7 +128,7 @@ Exiled.Game.prototype = {
             newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
         }
-        for(let i=0; i<=numEnemies; i++){
+        for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
             newEnemy.animations.add('left', [0,1], 5, true);
@@ -128,7 +137,7 @@ Exiled.Game.prototype = {
             newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
         }
-        for(let i=0; i<=numEnemies; i++){
+        for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
             newEnemy.animations.add('left', [0,1], 5, true);
@@ -137,7 +146,7 @@ Exiled.Game.prototype = {
             newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
         }
-        for(let i=0; i<=numEnemies; i++){
+        for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
             newEnemy.animations.add('left', [0,1], 5, true);
@@ -148,9 +157,13 @@ Exiled.Game.prototype = {
         }
     },
     update: function() {
+        if(!this.enemies.getFirstAlive()){
+            //round over ROUND CODE HERE
+            this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+        }
         this.scoreLabel.text = this.playerScore.toString();
         this.healthHUD.text = `HEALTH: ${this.player.health.toString()}`;
-        console.log(this.player.health);
+        //console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         //environment physics
