@@ -161,8 +161,8 @@ Exiled.Game.prototype = {
             //round over ROUND CODE HERE
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         }
-        this.scoreLabel.text = this.playerScore.toString();
-        this.healthHUD.text = `HEALTH: ${this.player.health.toString()}`;
+        this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
+        this.healthHUD.text = `Health: ${this.player.health.toString()}`;
         //console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
@@ -342,9 +342,9 @@ Exiled.Game.prototype = {
     },
     showLabels: function(score, round){
         var text = score.toString();
-        var style = { font: '15px Arial', fill: '#fff', align: 'left' };
-        this.scoreLabel = this.game.add.text(this.game.width-25, this.game.height-34, text, style);
-        this.healthHUD = this.game.add.text(this.game.width-10, this.game.height-200, 'HEALTH: ' + this.player.health.toString(), { font: '20px Arial', fill: '#fff', align: 'left' });
+        var style = { font: '15px Arial', fill: '#fff' };
+        this.scoreLabel = this.game.add.text(this.game.width-70, this.game.height-24, text, style);
+        this.healthHUD = this.game.add.text(this.game.width-85, this.game.height-40, 'Health: ' + this.player.health.toString(), style);
         this.scoreLabel.fixedToCamera = true;
         this.healthHUD.fixedToCamera = true;
 
