@@ -10,7 +10,7 @@ var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
 
-const ENEMY_NUMBER = 5;
+const ENEMY_NUMBER = 1;
 
 //temp for testing
 // var enemySpawn1 = [290, 767];
@@ -379,8 +379,10 @@ Exiled.Game.prototype = {
         var style = { font: '15px Arial', fill: '#fff' };
         this.scoreLabel = this.game.add.text(this.game.width-70, this.game.height-24, text, style);
         this.healthHUD = this.game.add.text(this.game.width-85, this.game.height-40, 'Health: ' + this.player.health.toString(), style);
+        this.bulletsHUD = this.game.add.text(this.game.width-85, this.game.height-58, 'Bullets: ' + "100", style);
         this.scoreLabel.fixedToCamera = true;
         this.healthHUD.fixedToCamera = true;
+        this.bulletsHUD.fixedToCamera = true;
 
     },
     getAngleRadians: function(x1, y1, x2, y2){
