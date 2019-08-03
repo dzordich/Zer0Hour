@@ -15,15 +15,20 @@ Exiled.Game.prototype = {
         this.map.addTilesetImage('oryx_16bit_scifi_creatures_trans', 'creatures');
         this.backgroundLayer = this.map.createLayer('backgroundLayer');
         this.groundLayer = this.map.createLayer('groundLayer');
+        this.detailLayer = this.map.createLayer('detailLayer');
         this.blockedLayer = this.map.createLayer('blockedLayer');
         // this.objectLayer = this.map.createLayer('objectLayer');
 
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
+        //this.map.setCollisionBetween(1, 1020, false, 'detailLayer');
         this.backgroundLayer.resizeWorld();
 
         // find player spawn point
         var result = this.findObjectsByType('playerStart', this.map, 'objectLayer');
         //console.log(`Result ${result}`);
+
+        // var detailLayerArray = this.findObjectsByType('detail', this.map, 'detailLayer');
+        // console.log(`Details ${detailLayerArray}`);
         
         // create player
         this.player = this.game.add.sprite(result[0].x + 50, result[0].y, 'player');
@@ -94,6 +99,7 @@ Exiled.Game.prototype = {
 
     findObjectsByType: function(type, map, layer){
         var result = new Array();
+        console.log(map);
         map.objects[layer].forEach(function(element){
             if(element.type === type){
                 element.y -= map.tileHeight;
@@ -110,7 +116,6 @@ Exiled.Game.prototype = {
         });
     },
     update: function() {
-        
         this.scoreLabel.text = this.playerScore.toString();
         this.healthHUD.text = `HEALTH: ${this.player.health.toString()}`;
         console.log(this.player.health);

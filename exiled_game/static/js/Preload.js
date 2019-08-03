@@ -12,7 +12,7 @@ Exiled.Preload.prototype = {
 
         this.load.setPreloadSprite(this.preloadBar);
 
-        this.load.tilemap('test_room', 'static/assets/tilemaps/test_map2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('test_room', 'static/assets/tilemaps/test_map2.5.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('world', 'static/assets/images/oryx_16bit_scifi_world.png');
         this.load.image('world_trans', 'static/assets/images/oryx_16bit_scifi_world_trans.png');
         this.load.image('creatures', 'static/assets/images/oryx_16bit_scifi_creatures_trans.png');
