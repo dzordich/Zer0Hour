@@ -351,6 +351,7 @@ Exiled.Game.prototype = {
         }
         else{
             this.rifle.fireAtPointer(this.game.input.activePointer);
+            this.rifleShot.play();
         }
         // gun.onFire.add(function(gun){
         //     gun.bullets.getFirstExists(1).destroy()
