@@ -49,14 +49,16 @@ Exiled.Game.prototype = {
         // this.player.body.bounce.y = 1;
 
         // find enemy spawn points
-        this.enemySpawn1 = this.findObjectsByType('enemyStart', this.map, "objectLayer");
-        this.enemySpawn2 = this.findObjectsByType('enemy2Start', this.map, 'objectLayer');
+        var enemySpawn1 = [2017, 721];
+        var enemySpawn2 = [290, 767];
+        var enemySpawn3 = [1205, 553];
+        var enemySpawn4 = [958, 962];
         // create enemies
         this.numEnemies = 10; // this is the number of enemies per spawn point. currently we have 2 so this number would be half the number of enemies in a round.
         this.enemies = this.game.add.group();
         this.enemies.enableBody = true;
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
-        this.spawnEnemies(this.numEnemies);
+        this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         // we will keep track of different types of enemies' stats in this object (e.g. speed, health, etc)
         this.enemies.stats = {};
         // create controls
@@ -106,10 +108,10 @@ Exiled.Game.prototype = {
     },
     // moved into function so it can easily be called at the beginning of a new round
     // creates @param numEnemies enemies at each spawn point on the map
-    spawnEnemies: function(numEnemies){
+    spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
         let newEnemy;
         for(let i=0; i<=numEnemies; i++){
-            newEnemy = this.enemies.create(this.enemySpawn1[0].x+random.integerInRange(-24, 24), this.enemySpawn1[0].y+random.integerInRange(-24, 24), 'enemy');
+            newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
             newEnemy.animations.add('left', [0,1], 5, true);
             newEnemy.animations.add('right', [4,5], 5, true);
@@ -118,7 +120,25 @@ Exiled.Game.prototype = {
             newEnemy.health = 45;
         }
         for(let i=0; i<=numEnemies; i++){
-            newEnemy = this.enemies.create(this.enemySpawn2[0].x+random.integerInRange(-24, 24), this.enemySpawn2[0].y+random.integerInRange(-24, 24), 'enemy');
+            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
+        for(let i=0; i<=numEnemies; i++){
+            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
+        for(let i=0; i<=numEnemies; i++){
+            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
             newEnemy.animations.add('left', [0,1], 5, true);
             newEnemy.animations.add('right', [4,5], 5, true);
