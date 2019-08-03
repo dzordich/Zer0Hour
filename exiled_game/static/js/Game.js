@@ -10,8 +10,8 @@ var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
 
-const ENEMY_NUMBER = 5;
-const START_BULLETS = 100;
+const ENEMY_NUMBER = 1;
+const START_BULLETS = 10;
 
 //temp for testing
 // var enemySpawn1 = [290, 767];
@@ -83,6 +83,7 @@ Exiled.Game.prototype = {
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
         this.rifleShot = this.game.add.audio('rifle_shot');
+        this.knifeAttack = this.game.add.audio('knifeAttack');
         this.shellFalling = this.game.add.audio('shell_falling');
         this.shellFalling.allowMultiple = false;
         
@@ -357,6 +358,7 @@ Exiled.Game.prototype = {
             this.totalAmmo -= 1;
         } else {
             //melee attack goes here
+            this.knifeAttack.play();
         }
         // gun.onFire.add(function(gun){
         //     gun.bullets.getFirstExists(1).destroy()
