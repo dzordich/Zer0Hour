@@ -10,7 +10,8 @@ var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
 
-const ENEMY_NUMBER = 1;
+const ENEMY_NUMBER = 5;
+const START_BULLETS = 100;
 
 //temp for testing
 // var enemySpawn1 = [290, 767];
@@ -91,7 +92,7 @@ Exiled.Game.prototype = {
         this.rifle.fireLimit = 10;
         this.rifle.bulletRotateToVelocity = true;
         this.magCap = 10;
-        this.totalAmmo = 100;
+        this.totalAmmo = START_BULLETS;
         this.rifle.bulletSpeed = 800;
 
         this.activeGun = this.rifle;
@@ -169,6 +170,7 @@ Exiled.Game.prototype = {
         }
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
+        this.bulletsHUD.text = `Bullets: ${this.totalAmmo}`;
         //console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
@@ -347,27 +349,27 @@ Exiled.Game.prototype = {
         }
     },
     shootRifle: function(){
-        this.rifle.x = this.player.centerX;
-        this.rifle.y = this.player.centerY;
-        this.rifle.fireAtPointer(this.game.input.activePointer);
-        this.rifleShot.play();
+        if(this.totalAmmo > 0){
+            this.rifle.x = this.player.centerX;
+            this.rifle.y = this.player.centerY;
+            this.rifle.fireAtPointer(this.game.input.activePointer);
+            this.rifleShot.play();
+            this.totalAmmo -= 1;
+        } else {
+            //melee attack goes here
+        }
         // gun.onFire.add(function(gun){
         //     gun.bullets.getFirstExists(1).destroy()
         // })
-        console.log(this.rifle.shots)
     },
     reloadGun: function(){
-        console.log('poop')
         if(this.totalAmmo === 0){
             // switch to melee
         }
         else{
-            this.totalAmmo -= this.magCap;
-            
+            //this.totalAmmo -= this.magCap;
             this.rifle.resetShots();
             this.rifle.createBullets(10, 'bullet')
-            console.log(this.totalAmmo)
-
         }
         
     },
