@@ -21,6 +21,7 @@ Exiled.Preload.prototype = {
         this.load.spritesheet('enemy', 'static/assets/images/BadGuySprite.png', 32, 32);
         this.load.image('playerParticle', 'static/assets/images/player-particle.png');
         this.load.audio('explosion', 'static/assets/audio/explosion.ogg');
+        this.load.audio('knifeAttack', 'static/assets/audio/knifeAttack.ogg');
         this.load.audio('rifle_shot', 'static/assets/audio/rifle_shot.mp3');
         this.load.audio('shell_falling', 'static/assets/audio/shell_falling.mp3');
         this.load.image('blood', 'static/assets/images/blood.png')
