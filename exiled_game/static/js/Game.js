@@ -1,7 +1,11 @@
+// import { threadId } from "worker_threads";
+// import { textChangeRangeIsUnchanged } from "typescript";
+// what is this?
+
 var Exiled = Exiled || {};
 
 Exiled.Game = function(){};
-
+console.log('got here!');
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 // find enemy spawn points
@@ -10,8 +14,10 @@ var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
 
-const ENEMY_NUMBER = 5;
+const ENEMY_NUMBER = 1;
 const START_BULLETS = 100;
+const HEALTH_SPAWN = [526, 621];
+const AMMO_SPAWN = [433, 621];
 
 //temp for testing
 // var enemySpawn1 = [290, 767];
@@ -163,9 +169,11 @@ Exiled.Game.prototype = {
         }
     },
     update: function() {
+        //console.log(`coord ${this.player.x},${this.player.y}`);
         if(!this.enemies.getFirstAlive()){
+            this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
+            this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             this.numEnemies = Math.round(this.numEnemies * 1.25);
-
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         }
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
@@ -265,8 +273,8 @@ Exiled.Game.prototype = {
         // }
 
         // shoot gun
-        this.input.onDown.add(this.shootRifle, this)
-        this.rifle.onFireLimit.add(this.reloadGun, this)
+        this.input.onDown.add(this.shootRifle, this);
+        this.rifle.onFireLimit.add(this.reloadGun, this);
         
         //call the enemy patrol function
         this.enemies.forEachAlive(this.chase, this);
@@ -315,7 +323,12 @@ Exiled.Game.prototype = {
             emitter.explode(100);
         }
     },
-
+    spawnHealth: function(x,y){
+        console.log("spawnHealth");
+    },
+    spawnAmmo:function(x,y){
+        console.log("spawnAmmo");
+    },
     // enemy movement
     chase: function(enemy){
         //max safe speed 30
