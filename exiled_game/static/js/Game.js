@@ -1,25 +1,36 @@
+// import { threadId } from "worker_threads";
+// import { textChangeRangeIsUnchanged } from "typescript";
+// what is this?
+
 var Exiled = Exiled || {};
 
 Exiled.Game = function(){};
-
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 var roundTextTimer = 0;
 // find enemy spawn points
-var enemySpawn1 = [2017, 721];
+//var enemySpawn1 = [2017, 721];
 var enemySpawn2 = [290, 767];
-var enemySpawn3 = [1205, 553];
-var enemySpawn4 = [958, 962];
+//var enemySpawn3 = [1205, 553];
+//var enemySpawn4 = [958, 962];
+//var enemySpawn3 = [1205, 553];
+//var enemySpawn4 = [958, 962];
+
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
-
+const PLAYER_SPEED = 100;
 const ENEMY_NUMBER = 1;
 const START_BULLETS = 100;
+const HEALTH_SPAWN = [526, 621];
+const AMMO_SPAWN = [433, 621];
+const PLAYER_MAX_HEALTH = 100;
+const PICKUP_HEALTH_AMOUNT = 30;
+const PICKUP_AMMO_AMOUNT = 30;
 
 //temp for testing
-// var enemySpawn1 = [290, 767];
-// var enemySpawn3 = [290, 767];
-// var enemySpawn4 = [290, 767];
+var enemySpawn1 = [290, 767];
+var enemySpawn3 = [290, 767];
+var enemySpawn4 = [290, 767];
 
 
 Exiled.Game.prototype = {
@@ -57,9 +68,21 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.enable(this.player);
         // this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
-        this.player.health = 100;
+        this.player.health = PLAYER_MAX_HEALTH;
         this.playerScore = 0;
         this.game.camera.follow(this.player);
+
+        // this.player.body.immovable = true;
+        // this.player.body.bounce.x = 1;
+        // this.player.body.bounce.y = 1;
+        this.healthPickups = this.game.add.group();
+        this.healthPickups.enableBody = true;
+        this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
+
+        this.ammoPickups = this.game.add.group();
+        this.ammoPickups.enableBody = true;
+        this.ammoPickups.physicsBodyType = Phaser.Physics.ARCADE;
+        // this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
 
         // create enemies
         // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
@@ -95,7 +118,7 @@ Exiled.Game.prototype = {
         this.magCap = 10;
         this.totalAmmo = START_BULLETS;
         this.rifle.bulletSpeed = 2500;
-        // this.activeGun = this.rifle;
+        this.activeGun = this.rifle;
 
         this.round = 1;
         // HUD
@@ -124,7 +147,6 @@ Exiled.Game.prototype = {
     // moved into function so it can easily be called at the beginning of a new round
     // creates @param numEnemies enemies at each spawn point on the map
     spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
-        console.log('spawned enemies');
         let newEnemy;
         for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
@@ -172,6 +194,9 @@ Exiled.Game.prototype = {
     },
     update: function() {
         if(!this.enemies.getFirstAlive()){
+            this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
+            this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
+            this.numEnemies = Math.round(this.numEnemies * 1.25);
             this.round += 1;
             this.numEnemies = Math.round(this.numEnemies * 1.25);
             // if(this.game.time.now - roundTextTimer > 5000){
@@ -195,7 +220,13 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.enemies);
         this.game.physics.arcade.collide(this.boss, this.blockedLayer);
         this.game.physics.arcade.overlap(this.boss, this.enemies);
-        this.game.physics.arcade.collide(this.blockedLayer, this.rifle.bullets, this.bulletHitBlock, null, this);
+        this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
+
+        //pickup physics
+        this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
+        this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
+
+
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
         this.game.physics.arcade.overlap(this.rifle.bullets, this.boss, this.bulletHitEnemy, null, this);
@@ -207,7 +238,6 @@ Exiled.Game.prototype = {
         }
 
         //player controls
-        const PLAYER_SPEED = 200;
         var down = this.cursors.down.isDown || this.downKey.isDown
         var up = this.cursors.up.isDown || this.upKey.isDown
         var left = this.cursors.left.isDown || this.leftKey.isDown
@@ -270,8 +300,8 @@ Exiled.Game.prototype = {
         }
 
         // shoot gun
-        this.input.onDown.add(this.shootRifle, this)
-        this.rifle.onFireLimit.add(this.reloadGun, this)
+        this.input.onDown.add(this.shootRifle, this);
+        this.rifle.onFireLimit.add(this.reloadGun, this);
         
         //call the enemy patrol function
         this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
@@ -331,7 +361,34 @@ Exiled.Game.prototype = {
             this.gameOver();
         }
     },
-
+    spawnHealth: function(x,y){
+        this.healthPickups.destroy(true, true);
+        let newHealth;
+        newHealth = this.healthPickups.create(x, y, 'healthPickup');
+        newHealth.scale.setTo(0.15);
+    },
+    pickUpHealth: function(player, healthPickup){
+        healthPickup.destroy();
+        if (this.player.health <= (PLAYER_MAX_HEALTH-PICKUP_HEALTH_AMOUNT)){
+            this.player.health += PICKUP_HEALTH_AMOUNT;
+        } else {
+            this.player.health = PLAYER_MAX_HEALTH;
+        }
+    },
+    spawnAmmo: function(x,y){
+        this.ammoPickups.destroy(true, true);
+        let newAmmo;
+        newAmmo = this.ammoPickups.create(x, y, 'ammo');
+        newAmmo.scale.setTo(0.15);
+    },
+    pickUpAmmo: function(player, ammoPickup){
+        ammoPickup.destroy();
+        if (this.totalAmmo <= (START_BULLETS-PICKUP_AMMO_AMOUNT)){
+            this.totalAmmo += PICKUP_AMMO_AMOUNT;
+        } else {
+            this.totalAmmo = START_BULLETS;
+        }
+    },
     // enemy movement
     chase: function(enemy, speed){
         //max safe speed 30        
