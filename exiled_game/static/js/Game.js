@@ -9,10 +9,10 @@ console.log('got here!');
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 // find enemy spawn points
-var enemySpawn1 = [2017, 721];
+//var enemySpawn1 = [2017, 721];
 var enemySpawn2 = [290, 767];
-var enemySpawn3 = [1205, 553];
-var enemySpawn4 = [958, 962];
+//var enemySpawn3 = [1205, 553];
+//var enemySpawn4 = [958, 962];
 
 const ENEMY_NUMBER = 1;
 const START_BULLETS = 100;
@@ -20,9 +20,9 @@ const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
 
 //temp for testing
-// var enemySpawn1 = [290, 767];
-// var enemySpawn3 = [290, 767];
-// var enemySpawn4 = [290, 767];
+var enemySpawn1 = [290, 767];
+var enemySpawn3 = [290, 767];
+var enemySpawn4 = [290, 767];
 
 
 Exiled.Game.prototype = {
@@ -324,10 +324,12 @@ Exiled.Game.prototype = {
         }
     },
     spawnHealth: function(x,y){
-        console.log("spawnHealth");
+        this.healthPickup = this.game.add.sprite(x, y, 'healthPickup');
+        this.healthPickup.scale.setTo(0.15);
     },
     spawnAmmo:function(x,y){
-        console.log("spawnAmmo");
+        this.ammoPickup = this.game.add.sprite(x, y, 'ammo');
+        this.ammoPickup.scale.setTo(0.15);
     },
     // enemy movement
     chase: function(enemy){
