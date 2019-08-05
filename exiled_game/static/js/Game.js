@@ -313,7 +313,10 @@ Exiled.Game.prototype = {
         
         //call the enemy patrol function
         this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
-        this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED)
+        this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
+        if(this.player.health <= 0){
+            this.gameOver();
+        }
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
@@ -476,7 +479,24 @@ Exiled.Game.prototype = {
     },
     gameOver: function(){
         // this is where we will post to the API
+        this.game.paused = true;
         this.scoreLastGame = this.playerScore;
-        this.state.start('MainMenu');
+        // this.state.start('MainMenu');
+        let name = prompt('Enter your name to save score: ');
+        name = name.slice(0, 10);
+        let scoreDict = {
+            "score": this.playerScore,
+            "name": name
+        }
+
+        fetch('http://127.0.0.1:8000/api/all_scores', {
+            method: 'POST',
+            body: JSON.stringify(scoreDict),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+            .then(response => console.log('Success:', JSON.stringify(response)))
+            .catch(error => console.error('Error:', error));
     }
 }
