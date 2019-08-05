@@ -171,11 +171,6 @@ Exiled.Game.prototype = {
             newEnemy.health = 45;
         }
     },
-    spawnHealth: function(x,y){
-        let newHealth;
-        newHealth = this.healthPickups.create(x, y, 'healthPickup');
-        newHealth.scale.setTo(0.15);
-    },
     update: function() {
         //console.log(`coord ${this.player.x},${this.player.y}`);
         if(!this.enemies.getFirstAlive()){
@@ -355,8 +350,14 @@ Exiled.Game.prototype = {
         }
     
     },
+    spawnHealth: function(x,y){
+        let newHealth;
+        newHealth = this.healthPickups.create(x, y, 'healthPickup');
+        newHealth.scale.setTo(0.15);
+    },
     pickUpHealth: function(player, healthPickup){
-        console.log("health picked up");
+        healthPickup.kill();
+        this.player.health += 30;
     },
     spawnAmmo:function(x,y){
         this.ammoPickup = this.game.add.sprite(x, y, 'ammo');
