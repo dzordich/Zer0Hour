@@ -13,5 +13,5 @@ class Player (models.Model):
 class Score (models.Model):
     score = models.IntegerField()
     # game_round = models.IntegerField()
-    # name = models.CharField(max_length=11)
+    name = models.CharField(max_length=11, null=True, blank=True)
     # date?
