@@ -1,36 +1,35 @@
-// import { threadId } from "worker_threads";
-// import { textChangeRangeIsUnchanged } from "typescript";
-// what is this?
-
 var Exiled = Exiled || {};
 
 Exiled.Game = function(){};
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
+var waveClearTime = 0;
+var restTime = false;
 var roundTextTimer = 0;
+
 // find enemy spawn points
-//var enemySpawn1 = [2017, 721];
+var enemySpawn1 = [2017, 721];
 var enemySpawn2 = [290, 767];
-//var enemySpawn3 = [1205, 553];
-//var enemySpawn4 = [958, 962];
-//var enemySpawn3 = [1205, 553];
-//var enemySpawn4 = [958, 962];
+var enemySpawn3 = [1205, 553];
+var enemySpawn4 = [958, 962];
 
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
-const ENEMY_NUMBER = 1;
+const ENEMY_NUMBER = 2;
 const START_BULLETS = 100;
 const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
 const PLAYER_MAX_HEALTH = 100;
 const PICKUP_HEALTH_AMOUNT = 30;
 const PICKUP_AMMO_AMOUNT = 30;
+var currentMessage = '';
+const ROUND_DELAY_MS = 10000;
 
 //temp for testing
-var enemySpawn1 = [290, 767];
-var enemySpawn3 = [290, 767];
-var enemySpawn4 = [290, 767];
+// var enemySpawn1 = [290, 767];
+// var enemySpawn3 = [290, 767];
+// var enemySpawn4 = [290, 767];
 
 
 Exiled.Game.prototype = {
@@ -46,7 +45,6 @@ Exiled.Game.prototype = {
         this.blockedLayer = this.map.createLayer('blockedLayer');
         
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
-        //this.map.setCollisionBetween(1, 1020, false, 'detailLayer');
         this.backgroundLayer.resizeWorld();
 
         this.timer = new Phaser.Timer(this.game, false);
@@ -66,23 +64,18 @@ Exiled.Game.prototype = {
         this.player.animations.add('down-left', [7,15], 10, true);
         this.player.animations.add('down-right', [1,9], 10, true);
         this.game.physics.arcade.enable(this.player);
-        // this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
         this.player.health = PLAYER_MAX_HEALTH;
         this.playerScore = 0;
         this.game.camera.follow(this.player);
 
-        // this.player.body.immovable = true;
-        // this.player.body.bounce.x = 1;
-        // this.player.body.bounce.y = 1;
+        //create groups for pickups
         this.healthPickups = this.game.add.group();
         this.healthPickups.enableBody = true;
         this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
-
         this.ammoPickups = this.game.add.group();
         this.ammoPickups.enableBody = true;
         this.ammoPickups.physicsBodyType = Phaser.Physics.ARCADE;
-        // this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
 
         // create enemies
         // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
@@ -97,12 +90,14 @@ Exiled.Game.prototype = {
         this.boss = this.game.add.group();
         this.boss.enableBody = true;
         this.boss.physicsBodyType = Phaser.Physics.ARCADE;
+
         // create controls
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.upKey = this.game.input.keyboard.addKey(Phaser.KeyCode.W);
         this.downKey = this.game.input.keyboard.addKey(Phaser.KeyCode.S);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
+
         // create sounds
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
@@ -122,8 +117,8 @@ Exiled.Game.prototype = {
 
         this.round = 1;
         // HUD
-        this.showLabels(this.playerScore, null);
-        this.showRoundText();
+        this.showHUD(this.playerScore, null);
+        //this.showRoundText();
     },
 
     findObjectsByType: function(type, map, layer){
@@ -193,24 +188,37 @@ Exiled.Game.prototype = {
         newBoss.scale.setTo(3);
     },
     update: function() {
-        if(!this.enemies.getFirstAlive()){
-            this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
-            this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
-            this.numEnemies = Math.round(this.numEnemies * 1.25);
-            this.round += 1;
-            this.numEnemies = Math.round(this.numEnemies * 1.25);
-            // if(this.game.time.now - roundTextTimer > 5000){
-            //     this.roundLabel.kill()
-            // }
-            this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
-            // spawn boss every 3 rounds
-            if(this.round % 3 === 0){
-                this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
+        if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
+            currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
+            if(!restTime){
+                //spawn health and ammo
+                restTime = true;
+                waveClearTime = this.game.time.now;
+                this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
+                this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
+            }
+            if (this.game.time.now - waveClearTime > ROUND_DELAY_MS){
+                //end rest time and spawn enemies
+                restTime = false;
+                currentMessage = "Fight!";
+                this.numEnemies = Math.round(this.numEnemies * 1.25);
+                this.round += 1;
+                this.numEnemies = Math.round(this.numEnemies * 1.25);
+                this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+                // spawn boss every 3 rounds
+                if(this.round % 3 === 0){
+                    this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
+                }
             }
         }
+
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
         this.bulletsHUD.text = `Bullets: ${this.totalAmmo}`;
+        console.log(`Round Label ${this.roundLabel.text}`);
+        this.roundLabel.text = `Round: ${this.round}`;
+        //for alignment and testing
+        this.playerHUDMessage.text = currentMessage;
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         
@@ -444,23 +452,18 @@ Exiled.Game.prototype = {
         }
         
     },
-    showLabels: function(score, round){
-        var text = score.toString();
+    showHUD: function(score, round){
         var style = { font: '15px Arial', fill: '#fff' };
-        this.scoreLabel = this.game.add.text(this.game.width-70, this.game.height-24, text, style);
+        this.scoreLabel = this.game.add.text(this.game.width-70, this.game.height-24, score, style);
         this.healthHUD = this.game.add.text(this.game.width-85, this.game.height-40, 'Health: ' + this.player.health.toString(), style);
-        this.bulletsHUD = this.game.add.text(this.game.width-85, this.game.height-58, 'Bullets: ' + "100", style);
+        this.bulletsHUD = this.game.add.text(this.game.width-85, this.game.height-58, 'Bullets: ' + this.totalAmmo.toString(), style);
+        this.roundLabel = this.game.add.text(this.game.width-85, this.game.height-75, "Round: " + this.round.toString(), style);
+        this.playerHUDMessage = this.game.add.text(this.game.width-350, this.game.height-24, "", style);
         this.scoreLabel.fixedToCamera = true;
         this.healthHUD.fixedToCamera = true;
         this.bulletsHUD.fixedToCamera = true;
-
-    },
-    showRoundText: function(){
-        let text = "ROUND " + this.round.toString();
-        let style = { font: '30px Arial', fill: '#fff', align: 'center' };
-        roundTextTimer = this.game.time.now;
-        this.roundLabel = this.game.add.text(this.world.centerX, this.world.centerY, text, style);
         this.roundLabel.fixedToCamera = true;
+        this.playerHUDMessage.fixedToCamera = true;
     },
     getAngleRadians: function(x1, y1, x2, y2){
         let angle = (x2 - x1)/(y2 - y1);
