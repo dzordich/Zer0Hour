@@ -33,7 +33,6 @@ Exiled.Game.prototype = {
         this.groundLayer = this.map.createLayer('groundLayer');
         this.detailLayer = this.map.createLayer('detailLayer');
         this.blockedLayer = this.map.createLayer('blockedLayer');
-        // this.objectLayer = this.map.createLayer('objectLayer');
         
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
         //this.map.setCollisionBetween(1, 1020, false, 'detailLayer');
@@ -62,11 +61,6 @@ Exiled.Game.prototype = {
         this.playerScore = 0;
         this.game.camera.follow(this.player);
 
-        // this.player.body.immovable = true;
-        // this.player.body.bounce.x = 1;
-        // this.player.body.bounce.y = 1;
-
-        
         // create enemies
         // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
         this.numEnemies = ENEMY_NUMBER; 
@@ -79,6 +73,7 @@ Exiled.Game.prototype = {
         // create boss
         this.boss = this.game.add.group();
         this.boss.enableBody = true;
+        this.boss.physicsBodyType = Phaser.Physics.ARCADE;
         // create controls
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.upKey = this.game.input.keyboard.addKey(Phaser.KeyCode.W);
@@ -100,11 +95,10 @@ Exiled.Game.prototype = {
         this.magCap = 10;
         this.totalAmmo = START_BULLETS;
         this.rifle.bulletSpeed = 2500;
-
-        this.activeGun = this.rifle;
+        // this.activeGun = this.rifle;
 
         this.round = 1;
-
+        // HUD
         this.showLabels(this.playerScore, null);
         this.showRoundText();
     },
@@ -141,33 +135,33 @@ Exiled.Game.prototype = {
             newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
         }
-        // for(let i=0; i<numEnemies; i++){
-        //     newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
-        //     newEnemy.scale.setTo(0.7);
-        //     newEnemy.animations.add('left', [0,1], 5, true);
-        //     newEnemy.animations.add('right', [4,5], 5, true);
-        //     newEnemy.animations.add('up', [6,7], 5, true);
-        //     newEnemy.animations.add('down', [2,3], 5, true);
-        //     newEnemy.health = 45;
-        // }
-        // for(let i=0; i<numEnemies; i++){
-        //     newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
-        //     newEnemy.scale.setTo(0.7);
-        //     newEnemy.animations.add('left', [0,1], 5, true);
-        //     newEnemy.animations.add('right', [4,5], 5, true);
-        //     newEnemy.animations.add('up', [6,7], 5, true);
-        //     newEnemy.animations.add('down', [2,3], 5, true);
-        //     newEnemy.health = 45;
-        // }
-        // for(let i=0; i<numEnemies; i++){
-        //     newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
-        //     newEnemy.scale.setTo(0.7);
-        //     newEnemy.animations.add('left', [0,1], 5, true);
-        //     newEnemy.animations.add('right', [4,5], 5, true);
-        //     newEnemy.animations.add('up', [6,7], 5, true);
-        //     newEnemy.animations.add('down', [2,3], 5, true);
-        //     newEnemy.health = 45;
-        // }
+        for(let i=0; i<numEnemies; i++){
+            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
+        for(let i=0; i<numEnemies; i++){
+            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
+        for(let i=0; i<numEnemies; i++){
+            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
+            newEnemy.scale.setTo(0.7);
+            newEnemy.animations.add('left', [0,1], 5, true);
+            newEnemy.animations.add('right', [4,5], 5, true);
+            newEnemy.animations.add('up', [6,7], 5, true);
+            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.health = 45;
+        }
     },
     spawnBoss: function(x, y){
         let newBoss;
@@ -180,7 +174,6 @@ Exiled.Game.prototype = {
         if(!this.enemies.getFirstAlive()){
             this.round += 1;
             this.numEnemies = Math.round(this.numEnemies * 1.25);
-            
             // if(this.game.time.now - roundTextTimer > 5000){
             //     this.roundLabel.kill()
             // }
@@ -193,9 +186,9 @@ Exiled.Game.prototype = {
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
         this.bulletsHUD.text = `Bullets: ${this.totalAmmo}`;
-        //console.log(this.player.health);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
+        
         //environment physics
         this.game.physics.arcade.collide(this.player, this.blockedLayer);
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
@@ -203,7 +196,6 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.boss, this.blockedLayer);
         this.game.physics.arcade.overlap(this.boss, this.enemies);
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
-
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
         this.game.physics.arcade.overlap(this.rifle.bullets, this.boss, this.bulletHitEnemy, null, this);
@@ -215,7 +207,7 @@ Exiled.Game.prototype = {
         }
 
         //player controls
-        const PLAYER_SPEED = 400;
+        const PLAYER_SPEED = 200;
         var down = this.cursors.down.isDown || this.downKey.isDown
         var up = this.cursors.up.isDown || this.upKey.isDown
         var left = this.cursors.left.isDown || this.leftKey.isDown
@@ -277,7 +269,6 @@ Exiled.Game.prototype = {
             this.player.animations.stop();
         }
 
-
         // shoot gun
         this.input.onDown.add(this.shootRifle, this)
         this.rifle.onFireLimit.add(this.reloadGun, this)
@@ -309,9 +300,7 @@ Exiled.Game.prototype = {
         }
     },
     enemyHitPlayer: function(player, enemy){
-        //this.player.reset(this.player.x + 20, this.player.y + 20)
         invulnerable  = this.game.time.now;
-        // player.body.moveTo(400, 100, this.getAngleRadians(player.x, player.y, enemy.x, enemy.y));
         var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
         player.damage(30);
         emitter.makeParticles('blood');
@@ -320,11 +309,6 @@ Exiled.Game.prototype = {
         emitter.maxParticleSpeed.setTo(180, 150);
         emitter.gravity = 0;
         emitter.explode(50, 3);
-        // blowback
-        // var timer = new Phaser.Timer(this.game, true);
-        // player.body.velocity.x = -(((enemy.centerX - player.centerX) * 100)/ ((enemy.centerY - player.centerY) * 100));
-        // player.body.velocity.y = -(((enemy.centerY - player.centerY) * 100)/ ((enemy.centerX - player.centerX) * 100));
-        // timer.add(500, this.stopPlayer, this, this.player);
         if(player.health <= 0){
             this.explosionSound.play();
             emitter.explode(100);
@@ -416,7 +400,7 @@ Exiled.Game.prototype = {
     },
     showRoundText: function(){
         let text = "ROUND " + this.round.toString();
-        let style = { font: '30px Brush Script MT', fill: '#fff', align: 'center' };
+        let style = { font: '30px Arial', fill: '#fff', align: 'center' };
         roundTextTimer = this.game.time.now;
         this.roundLabel = this.game.add.text(this.world.centerX, this.world.centerY, text, style);
         this.roundLabel.fixedToCamera = true;
