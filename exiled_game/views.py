@@ -14,4 +14,3 @@ def index(request):
 class AllScores(generics.ListCreateAPIView):
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
-
