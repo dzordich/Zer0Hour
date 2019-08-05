@@ -1,7 +1,3 @@
-// import { threadId } from "worker_threads";
-// import { textChangeRangeIsUnchanged } from "typescript";
-// what is this?
-
 var Exiled = Exiled || {};
 
 Exiled.Game = function(){};
@@ -10,18 +6,17 @@ var invulnerable = 0;
 var waveClearTime = 0;
 var restTime = false;
 var roundTextTimer = 0;
+
 // find enemy spawn points
-//var enemySpawn1 = [2017, 721];
+var enemySpawn1 = [2017, 721];
 var enemySpawn2 = [290, 767];
-//var enemySpawn3 = [1205, 553];
-//var enemySpawn4 = [958, 962];
-//var enemySpawn3 = [1205, 553];
-//var enemySpawn4 = [958, 962];
+var enemySpawn3 = [1205, 553];
+var enemySpawn4 = [958, 962];
 
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
-const ENEMY_NUMBER = 1;
+const ENEMY_NUMBER = 2;
 const START_BULLETS = 100;
 const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
@@ -32,9 +27,9 @@ var currentMessage = '';
 const ROUND_DELAY_MS = 10000;
 
 //temp for testing
-var enemySpawn1 = [290, 767];
-var enemySpawn3 = [290, 767];
-var enemySpawn4 = [290, 767];
+// var enemySpawn1 = [290, 767];
+// var enemySpawn3 = [290, 767];
+// var enemySpawn4 = [290, 767];
 
 
 Exiled.Game.prototype = {
