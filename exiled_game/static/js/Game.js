@@ -10,8 +10,10 @@ var enemySpawn1 = [2017, 721];
 var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
+var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
+const BOSS_CHASE_SPEED = 17;
 
-const ENEMY_NUMBER = 5;
+const ENEMY_NUMBER = 1;
 const START_BULLETS = 100;
 
 //temp for testing
@@ -74,6 +76,9 @@ Exiled.Game.prototype = {
         this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         // we will keep track of different types of enemies' stats in this object (e.g. speed, health, etc)
         this.enemies.stats = {};
+        // create boss
+        this.boss = this.game.add.group();
+        this.boss.enableBody = true;
         // create controls
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.upKey = this.game.input.keyboard.addKey(Phaser.KeyCode.W);
@@ -136,42 +141,54 @@ Exiled.Game.prototype = {
             newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
         }
-        for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
-        }
-        for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
-        }
-        for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
-        }
+        // for(let i=0; i<numEnemies; i++){
+        //     newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
+        //     newEnemy.scale.setTo(0.7);
+        //     newEnemy.animations.add('left', [0,1], 5, true);
+        //     newEnemy.animations.add('right', [4,5], 5, true);
+        //     newEnemy.animations.add('up', [6,7], 5, true);
+        //     newEnemy.animations.add('down', [2,3], 5, true);
+        //     newEnemy.health = 45;
+        // }
+        // for(let i=0; i<numEnemies; i++){
+        //     newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
+        //     newEnemy.scale.setTo(0.7);
+        //     newEnemy.animations.add('left', [0,1], 5, true);
+        //     newEnemy.animations.add('right', [4,5], 5, true);
+        //     newEnemy.animations.add('up', [6,7], 5, true);
+        //     newEnemy.animations.add('down', [2,3], 5, true);
+        //     newEnemy.health = 45;
+        // }
+        // for(let i=0; i<numEnemies; i++){
+        //     newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
+        //     newEnemy.scale.setTo(0.7);
+        //     newEnemy.animations.add('left', [0,1], 5, true);
+        //     newEnemy.animations.add('right', [4,5], 5, true);
+        //     newEnemy.animations.add('up', [6,7], 5, true);
+        //     newEnemy.animations.add('down', [2,3], 5, true);
+        //     newEnemy.health = 45;
+        // }
+    },
+    spawnBoss: function(x, y){
+        let newBoss;
+        // need sprite for boss
+        newBoss = this.boss.create(x, y, 'playerParticle');
+        newBoss.health = 200;
+        newBoss.scale.setTo(3);
     },
     update: function() {
         if(!this.enemies.getFirstAlive()){
+            this.round += 1;
             this.numEnemies = Math.round(this.numEnemies * 1.25);
             
             // if(this.game.time.now - roundTextTimer > 5000){
             //     this.roundLabel.kill()
             // }
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+            // spawn boss every 3 rounds
+            if(this.round % 3 === 0){
+                this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
+            }
         }
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
@@ -183,18 +200,22 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.player, this.blockedLayer);
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
         this.game.physics.arcade.collide(this.enemies);
+        this.game.physics.arcade.collide(this.boss, this.blockedLayer);
+        this.game.physics.arcade.overlap(this.boss, this.enemies);
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
 
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
+        this.game.physics.arcade.overlap(this.rifle.bullets, this.boss, this.bulletHitEnemy, null, this);
         if (this.game.time.now - invulnerable > 2000){
             this.game.physics.arcade.collide(this.enemies, this.player, this.enemyHitPlayer, null, this);
+            this.game.physics.arcade.collide(this.boss, this.player, this.bossHitPlayer, null, this);
         } else {
             this.game.physics.arcade.overlap(this.enemies, this.player);
         }
 
         //player controls
-        const PLAYER_SPEED = 200;
+        const PLAYER_SPEED = 400;
         var down = this.cursors.down.isDown || this.downKey.isDown
         var up = this.cursors.up.isDown || this.upKey.isDown
         var left = this.cursors.left.isDown || this.leftKey.isDown
@@ -255,26 +276,15 @@ Exiled.Game.prototype = {
         } else {
             this.player.animations.stop();
         }
-        // if(this.rifle.shots < 10){
-        //     if(this.game.input.activePointer.isDown){
-        //         this.shootGun(this.rifle);
-        //         this.rifleShot.loopFull();         
-        //     }
-        //     else{
-        //         this.rifleShot.stop()
-        //     }
-        // }
-        // else{
-        //     this.reloadGun(this.rifle, this.magCap);
 
-        // }
 
         // shoot gun
         this.input.onDown.add(this.shootRifle, this)
         this.rifle.onFireLimit.add(this.reloadGun, this)
         
         //call the enemy patrol function
-        this.enemies.forEachAlive(this.chase, this);
+        this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
+        this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED)
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
@@ -320,21 +330,34 @@ Exiled.Game.prototype = {
             emitter.explode(100);
         }
     },
+    bossHitPlayer: function(player, boss){
+        invulnerable = this.game.time.now;
+        var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
+        player.damage(50);
+        emitter.makeParticles('blood');
+        emitter.particleDrag.setTo(150, 150);
+        emitter.minParticleSpeed.setTo(-180, -150);
+        emitter.maxParticleSpeed.setTo(180, 150);
+        emitter.gravity = 0;
+        emitter.explode(50, 3);
+        if(player.health <= 0){
+            this.explosionSound.play();
+            emitter.explode(100);
+        }
+    },
 
     // enemy movement
-    chase: function(enemy){
-        //max safe speed 30
-        let CHASE_SPEED = random.integerInRange(24, 30);
-        //random.integerInRange(1,4)
+    chase: function(enemy, speed){
+        //max safe speed 30        
         if (Math.round(enemy.y) == Math.round(this.player.y)) {
             enemy.body.velocity.y = 0;
         } else if (Math.round(enemy.y) > Math.round(this.player.y)){
-            enemy.body.velocity.y = -CHASE_SPEED;
+            enemy.body.velocity.y = -speed;
             if (enemy.body.velocity.x == 0){
                 enemy.play('up');
             }
         } else {
-            enemy.body.velocity.y = CHASE_SPEED;
+            enemy.body.velocity.y = speed;
             if (enemy.body.velocity.x == 0){
                 enemy.play('down');
             }
@@ -342,12 +365,12 @@ Exiled.Game.prototype = {
         if (Math.round(enemy.x) == Math.round(this.player.x)) {
             enemy.body.velocity.x = 0;
         } else if (Math.round(enemy.x) > Math.round(this.player.x)){
-            enemy.body.velocity.x = -CHASE_SPEED;
+            enemy.body.velocity.x = -speed;
             if (enemy.body.velocity.y == 0){
                 enemy.play('left');
             }
         } else {
-            enemy.body.velocity.x = CHASE_SPEED;
+            enemy.body.velocity.x = speed;
             if (enemy.body.velocity.y == 0){
                 enemy.play('right');
             }
@@ -368,9 +391,6 @@ Exiled.Game.prototype = {
             this.rifle.bulletKillDistance = 24;
             this.rifle.fireAtPointer(this.game.input.activePointer);
         }
-        // gun.onFire.add(function(gun){
-        //     gun.bullets.getFirstExists(1).destroy()
-        // })
     },
     reloadGun: function(){
         if(this.totalAmmo === 0){
