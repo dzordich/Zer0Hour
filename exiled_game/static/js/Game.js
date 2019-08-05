@@ -5,7 +5,6 @@
 var Exiled = Exiled || {};
 
 Exiled.Game = function(){};
-console.log('DZAD cache 4');
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 // find enemy spawn points
@@ -73,7 +72,7 @@ Exiled.Game.prototype = {
         this.healthPickups = this.game.add.group();
         this.healthPickups.enableBody = true;
         this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
-        this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
+        // this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
 
         // create enemies
         // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
@@ -174,10 +173,8 @@ Exiled.Game.prototype = {
         }
     },
     update: function() {
-        //console.log(`coord ${this.player.x},${this.player.y}`);
         if(!this.enemies.getFirstAlive()){
             this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
-            //this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             this.numEnemies = Math.round(this.numEnemies * 1.25);
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         }
@@ -331,36 +328,18 @@ Exiled.Game.prototype = {
             emitter.explode(100);
         }
     },
-    
-    generateCollectables: function() {
-        this.collectables = this.game.add.group();
-    
-        //enable physics in them
-        this.collectables.enableBody = true;
-        this.collectables.physicsBodyType = Phaser.Physics.ARCADE;
-    
-        //phaser's random number generator
-        var numCollectables = this.game.rnd.integerInRange(100, 150)
-        var collectable;
-    
-        for (var i = 0; i < numCollectables; i++) {
-          //add sprite
-          collectable = this.collectables.create(this.game.world.randomX, this.game.world.randomY, 'power');
-          collectable.animations.add('fly', [0, 1, 2, 3], 5, true);
-          collectable.animations.play('fly');
-        }
-    
-    },
     spawnHealth: function(x,y){
-        this.healthPickups = this.game.add.group();
-        this.healthPickups.enableBody = true;
-        this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
+        // this.healthPickups = this.game.add.group();
+        // this.healthPickups.enableBody = true;
+        // this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
+        this.healthPickups.destroy(true, true);
         let newHealth;
         newHealth = this.healthPickups.create(x, y, 'healthPickup');
         newHealth.scale.setTo(0.15);
+        console.log(this.healthPickups);
     },
     pickUpHealth: function(player, healthPickup){
-        healthPickup.kill();
+        healthPickup.destroy();
         if (this.player.health <= (PLAYER_MAX_HEALTH-PICKUP_HEALTH_AMOUNT)){
             this.player.health += PICKUP_HEALTH_AMOUNT;
         } else {
