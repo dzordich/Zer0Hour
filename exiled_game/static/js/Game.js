@@ -19,6 +19,7 @@ const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
 const PLAYER_MAX_HEALTH = 100;
 const PICKUP_HEALTH_AMOUNT = 30;
+const PICKUP_AMMO_AMOUNT = 30;
 
 //temp for testing
 var enemySpawn1 = [290, 767];
@@ -72,6 +73,10 @@ Exiled.Game.prototype = {
         this.healthPickups = this.game.add.group();
         this.healthPickups.enableBody = true;
         this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
+
+        this.ammoPickups = this.game.add.group();
+        this.ammoPickups.enableBody = true;
+        this.ammoPickups.physicsBodyType = Phaser.Physics.ARCADE;
         // this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
 
         // create enemies
@@ -133,7 +138,6 @@ Exiled.Game.prototype = {
     // moved into function so it can easily be called at the beginning of a new round
     // creates @param numEnemies enemies at each spawn point on the map
     spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
-        console.log('spawned enemies');
         let newEnemy;
         for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
@@ -175,6 +179,7 @@ Exiled.Game.prototype = {
     update: function() {
         if(!this.enemies.getFirstAlive()){
             this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
+            this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             this.numEnemies = Math.round(this.numEnemies * 1.25);
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         }
@@ -192,6 +197,8 @@ Exiled.Game.prototype = {
 
         //pickup physics
         this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
+        this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
+
 
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
@@ -329,14 +336,10 @@ Exiled.Game.prototype = {
         }
     },
     spawnHealth: function(x,y){
-        // this.healthPickups = this.game.add.group();
-        // this.healthPickups.enableBody = true;
-        // this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
         this.healthPickups.destroy(true, true);
         let newHealth;
         newHealth = this.healthPickups.create(x, y, 'healthPickup');
         newHealth.scale.setTo(0.15);
-        console.log(this.healthPickups);
     },
     pickUpHealth: function(player, healthPickup){
         healthPickup.destroy();
@@ -345,11 +348,20 @@ Exiled.Game.prototype = {
         } else {
             this.player.health = PLAYER_MAX_HEALTH;
         }
-        
     },
-    spawnAmmo:function(x,y){
-        this.ammoPickup = this.game.add.sprite(x, y, 'ammo');
-        this.ammoPickup.scale.setTo(0.15);
+    spawnAmmo: function(x,y){
+        this.ammoPickups.destroy(true, true);
+        let newAmmo;
+        newAmmo = this.ammoPickups.create(x, y, 'ammo');
+        newAmmo.scale.setTo(0.15);
+    },
+    pickUpAmmo: function(player, ammoPickup){
+        ammoPickup.destroy();
+        if (this.totalAmmo <= (START_BULLETS-PICKUP_AMMO_AMOUNT)){
+            this.totalAmmo += PICKUP_AMMO_AMOUNT;
+        } else {
+            this.totalAmmo = START_BULLETS;
+        }
     },
     // enemy movement
     chase: function(enemy){
