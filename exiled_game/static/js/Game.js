@@ -7,6 +7,8 @@ var Exiled = Exiled || {};
 Exiled.Game = function(){};
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
+var waveClearTime = 0;
+var restTime = false;
 var roundTextTimer = 0;
 // find enemy spawn points
 //var enemySpawn1 = [2017, 721];
@@ -26,6 +28,8 @@ const AMMO_SPAWN = [433, 621];
 const PLAYER_MAX_HEALTH = 100;
 const PICKUP_HEALTH_AMOUNT = 30;
 const PICKUP_AMMO_AMOUNT = 30;
+var currentMessage = '';
+const ROUND_DELAY_MS = 10000;
 
 //temp for testing
 var enemySpawn1 = [290, 767];
@@ -189,16 +193,27 @@ Exiled.Game.prototype = {
         newBoss.scale.setTo(3);
     },
     update: function() {
-        if(!this.enemies.getFirstAlive()){
-            this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
-            this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
-            this.numEnemies = Math.round(this.numEnemies * 1.25);
-            this.round += 1;
-            this.numEnemies = Math.round(this.numEnemies * 1.25);
-            this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
-            // spawn boss every 3 rounds
-            if(this.round % 3 === 0){
-                this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
+        if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
+            currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
+            if(!restTime){
+                //spawn health and ammo
+                restTime = true;
+                waveClearTime = this.game.time.now;
+                this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
+                this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
+            }
+            if (this.game.time.now - waveClearTime > ROUND_DELAY_MS){
+                //end rest time and spawn enemies
+                restTime = false;
+                currentMessage = "Fight!";
+                this.numEnemies = Math.round(this.numEnemies * 1.25);
+                this.round += 1;
+                this.numEnemies = Math.round(this.numEnemies * 1.25);
+                this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+                // spawn boss every 3 rounds
+                if(this.round % 3 === 0){
+                    this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
+                }
             }
         }
 
@@ -208,7 +223,7 @@ Exiled.Game.prototype = {
         console.log(`Round Label ${this.roundLabel.text}`);
         this.roundLabel.text = `Round: ${this.round}`;
         //for alignment and testing
-        this.playerHUDMessage.text = "Player Message Here!";
+        this.playerHUDMessage.text = currentMessage;
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         
@@ -448,7 +463,7 @@ Exiled.Game.prototype = {
         this.healthHUD = this.game.add.text(this.game.width-85, this.game.height-40, 'Health: ' + this.player.health.toString(), style);
         this.bulletsHUD = this.game.add.text(this.game.width-85, this.game.height-58, 'Bullets: ' + this.totalAmmo.toString(), style);
         this.roundLabel = this.game.add.text(this.game.width-85, this.game.height-75, "Round: " + this.round.toString(), style);
-        this.playerHUDMessage = this.game.add.text(this.game.width-350, this.game.height-24, "Message", style);
+        this.playerHUDMessage = this.game.add.text(this.game.width-350, this.game.height-24, "", style);
         this.scoreLabel.fixedToCamera = true;
         this.healthHUD.fixedToCamera = true;
         this.bulletsHUD.fixedToCamera = true;
