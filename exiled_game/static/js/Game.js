@@ -5,7 +5,7 @@
 var Exiled = Exiled || {};
 
 Exiled.Game = function(){};
-console.log('DZAD cache 3');
+console.log('DZAD cache 4');
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 // find enemy spawn points
@@ -18,6 +18,8 @@ const ENEMY_NUMBER = 1;
 const START_BULLETS = 100;
 const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
+const PLAYER_MAX_HEALTH = 100;
+const PICKUP_HEALTH_AMOUNT = 30;
 
 //temp for testing
 var enemySpawn1 = [290, 767];
@@ -61,7 +63,7 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.enable(this.player);
         // this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
-        this.player.health = 100;
+        this.player.health = PLAYER_MAX_HEALTH;
         this.playerScore = 0;
         this.game.camera.follow(this.player);
 
@@ -174,8 +176,7 @@ Exiled.Game.prototype = {
     update: function() {
         //console.log(`coord ${this.player.x},${this.player.y}`);
         if(!this.enemies.getFirstAlive()){
-            //this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
-            console.log('no cache issue 5');
+            this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
             //this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             this.numEnemies = Math.round(this.numEnemies * 1.25);
             this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
@@ -351,13 +352,21 @@ Exiled.Game.prototype = {
     
     },
     spawnHealth: function(x,y){
+        this.healthPickups = this.game.add.group();
+        this.healthPickups.enableBody = true;
+        this.healthPickups.physicsBodyType = Phaser.Physics.ARCADE;
         let newHealth;
         newHealth = this.healthPickups.create(x, y, 'healthPickup');
         newHealth.scale.setTo(0.15);
     },
     pickUpHealth: function(player, healthPickup){
         healthPickup.kill();
-        this.player.health += 30;
+        if (this.player.health <= (PLAYER_MAX_HEALTH-PICKUP_HEALTH_AMOUNT)){
+            this.player.health += PICKUP_HEALTH_AMOUNT;
+        } else {
+            this.player.health = PLAYER_MAX_HEALTH;
+        }
+        
     },
     spawnAmmo:function(x,y){
         this.ammoPickup = this.game.add.sprite(x, y, 'ammo');
