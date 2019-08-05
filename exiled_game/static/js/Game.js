@@ -195,7 +195,7 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.enemies);
         this.game.physics.arcade.collide(this.boss, this.blockedLayer);
         this.game.physics.arcade.overlap(this.boss, this.enemies);
-        this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
+        this.game.physics.arcade.collide(this.blockedLayer, this.rifle.bullets, this.bulletHitBlock, null, this);
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
         this.game.physics.arcade.overlap(this.rifle.bullets, this.boss, this.bulletHitEnemy, null, this);
@@ -312,6 +312,7 @@ Exiled.Game.prototype = {
         if(player.health <= 0){
             this.explosionSound.play();
             emitter.explode(100);
+            this.gameOver();
         }
     },
     bossHitPlayer: function(player, boss){
@@ -327,6 +328,7 @@ Exiled.Game.prototype = {
         if(player.health <= 0){
             this.explosionSound.play();
             emitter.explode(100);
+            this.gameOver();
         }
     },
 
@@ -417,6 +419,20 @@ Exiled.Game.prototype = {
     gameOver: function(){
         // this is where we will post to the API
         this.scoreLastGame = this.playerScore;
-        this.state.start('MainMenu');
+        // this.state.start('MainMenu');
+
+        let scoreDict = {
+            "score": this.playerScore
+        }
+
+        fetch('http://127.0.0.1:8000/api/all_scores', {
+            method: 'POST',
+            body: JSON.stringify(scoreDict),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+            .then(response => console.log('Success:', JSON.stringify(response)))
+            .catch(error => console.error('Error:', error));
     }
 }
