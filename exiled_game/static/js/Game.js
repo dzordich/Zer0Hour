@@ -25,6 +25,7 @@ const PICKUP_HEALTH_AMOUNT = 30;
 const PICKUP_AMMO_AMOUNT = 60;
 var currentMessage = '';
 const ROUND_DELAY_MS = 10000;
+const ITEM_DELAY_MS = 1000;
 
 var is_game_over = false;
 
@@ -55,16 +56,28 @@ Exiled.Game.prototype = {
         var playerSpawn = this.findObjectsByType('playerStart', this.map, 'objectLayer');
         
         // create player
-        this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'player');
-        this.player.scale.setTo(0.7);
-        this.player.animations.add('left', [6,14], 10, true);
-        this.player.animations.add('right', [2,10], 10, true);
-        this.player.animations.add('up', [4,12], 10, true);
-        this.player.animations.add('down', [0,8], 10, true);
-        this.player.animations.add('up-left', [5,13], 10, true);
-        this.player.animations.add('up-right', [3,11], 10, true);
-        this.player.animations.add('down-left', [7,15], 10, true);
-        this.player.animations.add('down-right', [1,9], 10, true);
+        // this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'player');
+        // this.player.scale.setTo(0.7);
+        // this.player.animations.add('left', [6,14], 10, true);
+        // this.player.animations.add('right', [2,10], 10, true);
+        // this.player.animations.add('up', [4,12], 10, true);
+        // this.player.animations.add('down', [0,8], 10, true);
+        // this.player.animations.add('up-left', [5,13], 10, true);
+        // this.player.animations.add('up-right', [3,11], 10, true);
+        // this.player.animations.add('down-left', [7,15], 10, true);
+        // this.player.animations.add('down-right', [1,9], 10, true);
+        this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'zPlayer');
+        this.player.anchor.setTo(0.5, 0.5);
+        this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-right', [0,1,2,3,4,5], 10, true);
+
+        this.player.scale.setTo(0.1);
         this.game.physics.arcade.enable(this.player);
         this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
@@ -106,9 +119,10 @@ Exiled.Game.prototype = {
         // create sounds
         this.explosionSound = this.game.add.audio('explosion');
         this.collectSound = this.game.add.audio('collect');
-        this.rifleShot = this.game.add.audio('rifle_shot');
+        this.rifleShot = this.game.add.audio('laser_shot');
         this.knifeAttack = this.game.add.audio('knifeAttack');
         this.shellFalling = this.game.add.audio('shell_falling');
+        this.chargeUp = this.game.add.audio('charge_up');
         this.shellFalling.allowMultiple = false;
         
         // player's gun
@@ -219,8 +233,8 @@ Exiled.Game.prototype = {
 
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
-        this.bulletsHUD.text = `Bullets: ${this.totalAmmo}`;
-        // console.log(`Round Label ${this.roundLabel.text}`);
+        this.bulletsHUD.text = `Energy: ${this.totalAmmo}`;
+        //console.log(`Round Label ${this.roundLabel.text}`);
         this.roundLabel.text = `Round: ${this.round}`;
         //for alignment and testing
         this.playerHUDMessage.text = currentMessage;
@@ -235,9 +249,11 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.overlap(this.boss, this.enemies);
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
 
-        //pickup physics
-        this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
-        this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
+        //pickup physics - needs item delay for scaling bug
+        if(this.game.time.now - waveClearTime > ITEM_DELAY_MS){
+            this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
+            this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
+        }
 
 
         //combat physics
@@ -261,52 +277,64 @@ Exiled.Game.prototype = {
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('up-left');
+                this.player.angle = 135;
             } else if(down){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('down-left');
+                this.player.angle = 45;
             } else {
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('left');
+                this.player.angle = 90;
             }
         } else if(right) {
             if(up){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('up-right');
+                this.player.angle = 225;
             } else if(down){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('down-right');
+                this.player.angle = 315;
             } else {
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('right');
+                this.player.angle = 270;
             }
         } else if(up){
             if(right){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('up-right');
+                this.player.angle = 225;
             } else if(left){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('up-left');
+                this.player.angle = 135;
             } else {
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.play('up');
+                this.player.angle = 180;
             }
         } else if(down){
             if(right){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('down-right');
+                this.player.angle = 315;
             } else if(left){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('down-left');
+                this.player.angle = 25;
             } else {
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.play('down');
+                this.player.angle = 0;
             }
         } else {
             this.player.animations.stop();
@@ -397,11 +425,12 @@ Exiled.Game.prototype = {
     spawnAmmo: function(x,y){
         this.ammoPickups.destroy(true, true);
         let newAmmo;
-        newAmmo = this.ammoPickups.create(x, y, 'ammo');
-        newAmmo.scale.setTo(0.15);
+        newAmmo = this.ammoPickups.create(x, y, 'energyAmmo');
+        newAmmo.scale.setTo(.15);
     },
     pickUpAmmo: function(player, ammoPickup){
         ammoPickup.destroy();
+        this.chargeUp.play();
         if (this.totalAmmo <= (START_BULLETS-PICKUP_AMMO_AMOUNT)){
             this.totalAmmo += PICKUP_AMMO_AMOUNT;
         } else {
