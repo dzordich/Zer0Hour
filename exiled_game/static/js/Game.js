@@ -161,6 +161,8 @@ Exiled.Game.prototype = {
     // creates @param numEnemies enemies at each spawn point on the map
     spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
         let newEnemy;
+        //this.enemies.anchor.setTo(0.5, 0.5);
+
         for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
@@ -204,7 +206,8 @@ Exiled.Game.prototype = {
         newBoss = this.boss.create(x, y, 'ZBoss');
         newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
         newBoss.play('walk');
-        newBoss.scale.set(.1);
+        newBoss.scale.set(.05);
+        newBoss.anchor.setTo(0.5, 0.5);
         newBoss.health = 200;
     },
     update: function() {
@@ -447,11 +450,13 @@ Exiled.Game.prototype = {
             enemy.body.velocity.y = -speed;
             if (enemy.body.velocity.x == 0){
                 enemy.play('up');
+                enemy.angle = 180;
             }
         } else {
             enemy.body.velocity.y = speed;
             if (enemy.body.velocity.x == 0){
                 enemy.play('down');
+                enemy.angle = 0;
             }
         }
         if (Math.round(enemy.x) == Math.round(this.player.x)) {
@@ -460,11 +465,13 @@ Exiled.Game.prototype = {
             enemy.body.velocity.x = -speed;
             if (enemy.body.velocity.y == 0){
                 enemy.play('left');
+                enemy.angle = 90;
             }
         } else {
             enemy.body.velocity.x = speed;
             if (enemy.body.velocity.y == 0){
                 enemy.play('right');
+                enemy.angle = 270;
             }
         }
     },
