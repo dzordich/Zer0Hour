@@ -18,7 +18,8 @@ Exiled.Preload.prototype = {
         this.load.image('creatures', 'static/assets/images/oryx_16bit_scifi_creatures_trans.png');
         this.load.image('space', 'static/assets/images/space.png');
         this.load.image('healthPickup', 'static/assets/images/healthPickup.png');
-        this.load.image('ammo', 'static/assets/images/ammo.png');
+        this.load.image('energyAmmo', 'static/assets/images/energyAmmo.png');
+        //this.load.image('energyAmmo', 'static/assets/images/healthPickup.png');
         this.load.spritesheet('player', 'static/assets/images/pc1_cropped.png', 32, 32);
         this.load.spritesheet('zPlayer', 'static/assets/images/ZPlayerChar.png', 271, 351);
         this.load.spritesheet('enemy', 'static/assets/images/BadGuySprite.png', 32, 32);

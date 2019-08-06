@@ -25,6 +25,7 @@ const PICKUP_HEALTH_AMOUNT = 30;
 const PICKUP_AMMO_AMOUNT = 30;
 var currentMessage = '';
 const ROUND_DELAY_MS = 10000;
+const ITEM_DELAY_MS = 1000;
 
 //temp for testing
 var enemySpawn1 = [290, 767];
@@ -74,7 +75,7 @@ Exiled.Game.prototype = {
         this.player.animations.add('down-left', [0,1,2,3,4,5], 10, true);
         this.player.animations.add('down-right', [0,1,2,3,4,5], 10, true);
 
-        this.player.scale.setTo(0.15);
+        this.player.scale.setTo(0.1);
         this.game.physics.arcade.enable(this.player);
         this.playerSpeed = 120;
         this.player.health = PLAYER_MAX_HEALTH;
@@ -158,7 +159,7 @@ Exiled.Game.prototype = {
         let newEnemy;
         for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
+            newEnemy.scale.setTo(1);
             newEnemy.animations.add('left', [0,1], 5, true);
             newEnemy.animations.add('right', [4,5], 5, true);
             newEnemy.animations.add('up', [6,7], 5, true);
@@ -167,7 +168,7 @@ Exiled.Game.prototype = {
         }
         for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
+            newEnemy.scale.setTo(1);
             newEnemy.animations.add('left', [0,1], 5, true);
             newEnemy.animations.add('right', [4,5], 5, true);
             newEnemy.animations.add('up', [6,7], 5, true);
@@ -227,7 +228,7 @@ Exiled.Game.prototype = {
 
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
-        this.bulletsHUD.text = `Bullets: ${this.totalAmmo}`;
+        this.bulletsHUD.text = `Energy: ${this.totalAmmo}`;
         console.log(`Round Label ${this.roundLabel.text}`);
         this.roundLabel.text = `Round: ${this.round}`;
         //for alignment and testing
@@ -244,8 +245,10 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
 
         //pickup physics
-        this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
-        this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
+        if(this.game.time.now - waveClearTime > ITEM_DELAY_MS){
+            this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
+            this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
+        }
 
 
         //combat physics
@@ -412,8 +415,8 @@ Exiled.Game.prototype = {
     spawnAmmo: function(x,y){
         this.ammoPickups.destroy(true, true);
         let newAmmo;
-        newAmmo = this.ammoPickups.create(x, y, 'ammo');
-        newAmmo.scale.setTo(0.15);
+        newAmmo = this.ammoPickups.create(x, y, 'energyAmmo');
+        newAmmo.scale.setTo(.15);
     },
     pickUpAmmo: function(player, ammoPickup){
         ammoPickup.destroy();
