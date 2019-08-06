@@ -53,16 +53,27 @@ Exiled.Game.prototype = {
         var playerSpawn = this.findObjectsByType('playerStart', this.map, 'objectLayer');
         
         // create player
-        this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'player');
-        this.player.scale.setTo(0.7);
-        this.player.animations.add('left', [6,14], 10, true);
-        this.player.animations.add('right', [2,10], 10, true);
-        this.player.animations.add('up', [4,12], 10, true);
-        this.player.animations.add('down', [0,8], 10, true);
-        this.player.animations.add('up-left', [5,13], 10, true);
-        this.player.animations.add('up-right', [3,11], 10, true);
-        this.player.animations.add('down-left', [7,15], 10, true);
-        this.player.animations.add('down-right', [1,9], 10, true);
+        // this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'player');
+        // this.player.scale.setTo(0.7);
+        // this.player.animations.add('left', [6,14], 10, true);
+        // this.player.animations.add('right', [2,10], 10, true);
+        // this.player.animations.add('up', [4,12], 10, true);
+        // this.player.animations.add('down', [0,8], 10, true);
+        // this.player.animations.add('up-left', [5,13], 10, true);
+        // this.player.animations.add('up-right', [3,11], 10, true);
+        // this.player.animations.add('down-left', [7,15], 10, true);
+        // this.player.animations.add('down-right', [1,9], 10, true);
+        this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'zPlayer');
+        this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-right', [0,1,2,3,4,5], 10, true);
+
+        this.player.scale.setTo(0.15);
         this.game.physics.arcade.enable(this.player);
         this.playerSpeed = 120;
         this.player.health = PLAYER_MAX_HEALTH;

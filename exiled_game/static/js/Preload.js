@@ -20,6 +20,7 @@ Exiled.Preload.prototype = {
         this.load.image('healthPickup', 'static/assets/images/healthPickup.png');
         this.load.image('ammo', 'static/assets/images/ammo.png');
         this.load.spritesheet('player', 'static/assets/images/pc1_cropped.png', 32, 32);
+        this.load.spritesheet('zPlayer', 'static/assets/images/ZPlayerChar.png', 271, 351);
         this.load.spritesheet('enemy', 'static/assets/images/BadGuySprite.png', 32, 32);
         this.load.image('playerParticle', 'static/assets/images/player-particle.png');
         this.load.audio('explosion', 'static/assets/audio/explosion.ogg');
