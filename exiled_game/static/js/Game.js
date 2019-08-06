@@ -244,7 +244,7 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.overlap(this.boss, this.enemies);
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
 
-        //pickup physics
+        //pickup physics - needs item delay for scaling bug
         if(this.game.time.now - waveClearTime > ITEM_DELAY_MS){
             this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
             this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
