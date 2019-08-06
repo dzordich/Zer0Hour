@@ -1,5 +1,4 @@
 var Exiled = Exiled || {};
-
 Exiled.Game = function(){};
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
@@ -16,7 +15,7 @@ var enemySpawn4 = [958, 962];
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
-const ENEMY_NUMBER = 2;
+var ENEMY_NUMBER = 2;
 const START_BULLETS = 100;
 const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
@@ -33,6 +32,8 @@ var is_game_over = false;
 // var enemySpawn1 = [290, 767];
 // var enemySpawn3 = [290, 767];
 // var enemySpawn4 = [290, 767];
+//var ENEMY_NUMBER = 1;
+
 
 
 Exiled.Game.prototype = {
@@ -162,6 +163,8 @@ Exiled.Game.prototype = {
     // creates @param numEnemies enemies at each spawn point on the map
     spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
         let newEnemy;
+        // newEnemy.anchor.setTo(0.5, 0.5);
+
         for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
             newEnemy.scale.setTo(0.7);
@@ -202,9 +205,12 @@ Exiled.Game.prototype = {
     spawnBoss: function(x, y){
         let newBoss;
         // need sprite for boss
-        newBoss = this.boss.create(x, y, 'playerParticle');
+        newBoss = this.boss.create(x, y, 'ZBoss');
+        newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+        newBoss.play('walk');
+        newBoss.scale.set(.05);
+        newBoss.anchor.setTo(0.5, 0.5);
         newBoss.health = 200;
-        newBoss.scale.setTo(3);
     },
     update: function() {
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
@@ -439,33 +445,25 @@ Exiled.Game.prototype = {
     },
     // enemy movement
     chase: function(enemy, speed){
-        //max safe speed 30        
+        //max safe speed 30      
+        enemy.anchor.setTo(0.5, 0.5); 
+        enemy.play('down');
+
         if (Math.round(enemy.y) == Math.round(this.player.y)) {
             enemy.body.velocity.y = 0;
         } else if (Math.round(enemy.y) > Math.round(this.player.y)){
             enemy.body.velocity.y = -speed;
-            if (enemy.body.velocity.x == 0){
-                enemy.play('up');
-            }
         } else {
             enemy.body.velocity.y = speed;
-            if (enemy.body.velocity.x == 0){
-                enemy.play('down');
-            }
         }
         if (Math.round(enemy.x) == Math.round(this.player.x)) {
             enemy.body.velocity.x = 0;
         } else if (Math.round(enemy.x) > Math.round(this.player.x)){
             enemy.body.velocity.x = -speed;
-            if (enemy.body.velocity.y == 0){
-                enemy.play('left');
-            }
         } else {
             enemy.body.velocity.x = speed;
-            if (enemy.body.velocity.y == 0){
-                enemy.play('right');
-            }
         }
+        this.turnToFace(enemy,this.player);
     },
     shootRifle: function(){
         this.rifle.x = this.player.centerX;
@@ -515,6 +513,15 @@ Exiled.Game.prototype = {
     stopPlayer: function(player){
         player.body.acceleration.x = 0;
         player.body.acceleration.y = 0;
+    },
+    turnToFace: function(sprite, targetSprite){
+        //find interior angle
+        xDistance = targetSprite.x - sprite.x;
+        yDistance = targetSprite.y - sprite.y;
+        newAngle = Math.atan2(yDistance,xDistance)*(180/Math.PI);
+
+        //convert to down facing
+        sprite.angle = newAngle - 90;
     },
     gameOver: function(){
         // stop all sounds. window alerts mess them up

@@ -1,4 +1,5 @@
 var Exiled = Exiled || {};
+console.log('got here');
 
 Exiled.Preload = function(){};
 
@@ -23,6 +24,7 @@ Exiled.Preload.prototype = {
         this.load.spritesheet('player', 'static/assets/images/pc1_cropped.png', 32, 32);
         this.load.spritesheet('zPlayer', 'static/assets/images/ZPlayerChar.png', 271, 351);
         this.load.spritesheet('enemy', 'static/assets/images/BadGuySprite.png', 32, 32);
+        this.load.spritesheet('ZBoss', 'static/assets/images/ZBoss.png', 1610, 1446);
         this.load.image('playerParticle', 'static/assets/images/player-particle.png');
         this.load.audio('explosion', 'static/assets/audio/explosion.ogg');
         this.load.audio('knifeAttack', 'static/assets/audio/knifeAttack.ogg');
@@ -30,9 +32,8 @@ Exiled.Preload.prototype = {
         this.load.audio('laser_shot', 'static/assets/audio/laser_shot.ogg');
         this.load.audio('charge_up', 'static/assets/audio/ChargeUp.ogg');
         this.load.audio('shell_falling', 'static/assets/audio/shell_falling.mp3');
-        this.load.image('blood', 'static/assets/images/blood.png')
+        this.load.image('blood', 'static/assets/images/blood.png');
         this.load.image('bullet', 'static/assets/images/bullet.png');
-
     },
     create: function() {
         this.state.start('MainMenu');
