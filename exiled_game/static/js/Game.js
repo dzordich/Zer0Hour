@@ -161,7 +161,7 @@ Exiled.Game.prototype = {
     // creates @param numEnemies enemies at each spawn point on the map
     spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
         let newEnemy;
-        //this.enemies.anchor.setTo(0.5, 0.5);
+        // newEnemy.anchor.setTo(0.5, 0.5);
 
         for(let i=0; i<numEnemies; i++){
             newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
@@ -443,37 +443,25 @@ Exiled.Game.prototype = {
     },
     // enemy movement
     chase: function(enemy, speed){
-        //max safe speed 30        
+        //max safe speed 30      
+        enemy.anchor.setTo(0.5, 0.5); 
+        enemy.play('down');
+
         if (Math.round(enemy.y) == Math.round(this.player.y)) {
             enemy.body.velocity.y = 0;
         } else if (Math.round(enemy.y) > Math.round(this.player.y)){
             enemy.body.velocity.y = -speed;
-            if (enemy.body.velocity.x == 0){
-                enemy.play('up');
-                enemy.angle = 180;
-            }
         } else {
             enemy.body.velocity.y = speed;
-            if (enemy.body.velocity.x == 0){
-                enemy.play('down');
-                enemy.angle = 0;
-            }
         }
         if (Math.round(enemy.x) == Math.round(this.player.x)) {
             enemy.body.velocity.x = 0;
         } else if (Math.round(enemy.x) > Math.round(this.player.x)){
             enemy.body.velocity.x = -speed;
-            if (enemy.body.velocity.y == 0){
-                enemy.play('left');
-                enemy.angle = 90;
-            }
         } else {
             enemy.body.velocity.x = speed;
-            if (enemy.body.velocity.y == 0){
-                enemy.play('right');
-                enemy.angle = 270;
-            }
         }
+        this.turnToFace(enemy,this.player);
     },
     shootRifle: function(){
         this.rifle.x = this.player.centerX;
@@ -523,6 +511,15 @@ Exiled.Game.prototype = {
     stopPlayer: function(player){
         player.body.acceleration.x = 0;
         player.body.acceleration.y = 0;
+    },
+    turnToFace: function(sprite, targetSprite){
+        //find interior angle
+        xDistance = targetSprite.x - sprite.x;
+        yDistance = targetSprite.y - sprite.y;
+        newAngle = Math.atan2(yDistance,xDistance)*(180/Math.PI);
+
+        //convert to down facing
+        sprite.angle = newAngle - 90;
     },
     gameOver: function(){
         // stop all sounds. window alerts mess them up
