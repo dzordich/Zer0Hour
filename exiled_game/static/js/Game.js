@@ -64,6 +64,7 @@ Exiled.Game.prototype = {
         // this.player.animations.add('down-left', [7,15], 10, true);
         // this.player.animations.add('down-right', [1,9], 10, true);
         this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'zPlayer');
+        this.player.anchor.setTo(0.5, 0.5);
         this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
         this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
         this.player.animations.add('down', [0,1,2,3,4,5], 10, true);
@@ -267,52 +268,64 @@ Exiled.Game.prototype = {
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('up-left');
+                this.player.angle = 135;
             } else if(down){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('down-left');
+                this.player.angle = 45;
             } else {
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('left');
+                this.player.angle = 90;
             }
         } else if(right) {
             if(up){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('up-right');
+                this.player.angle = 225;
             } else if(down){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('down-right');
+                this.player.angle = 315;
             } else {
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('right');
+                this.player.angle = 270;
             }
         } else if(up){
             if(right){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('up-right');
+                this.player.angle = 225;
             } else if(left){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('up-left');
+                this.player.angle = 135;
             } else {
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.play('up');
+                this.player.angle = 180;
             }
         } else if(down){
             if(right){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('down-right');
+                this.player.angle = 315;
             } else if(left){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('down-left');
+                this.player.angle = 25;
             } else {
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.play('down');
+                this.player.angle = 0;
             }
         } else {
             this.player.animations.stop();
