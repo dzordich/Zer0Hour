@@ -15,7 +15,7 @@ var enemySpawn4 = [958, 962];
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
-const ENEMY_NUMBER = 1;
+var ENEMY_NUMBER = 2;
 const START_BULLETS = 100;
 const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
@@ -29,9 +29,11 @@ const ITEM_DELAY_MS = 1000;
 var is_game_over = false;
 
 //temp for testing
-var enemySpawn1 = [290, 767];
-var enemySpawn3 = [290, 767];
-var enemySpawn4 = [290, 767];
+// var enemySpawn1 = [290, 767];
+// var enemySpawn3 = [290, 767];
+// var enemySpawn4 = [290, 767];
+//var ENEMY_NUMBER = 1;
+
 
 
 Exiled.Game.prototype = {
