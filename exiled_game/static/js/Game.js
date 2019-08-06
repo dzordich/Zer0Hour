@@ -22,9 +22,11 @@ const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
 const PLAYER_MAX_HEALTH = 100;
 const PICKUP_HEALTH_AMOUNT = 30;
-const PICKUP_AMMO_AMOUNT = 30;
+const PICKUP_AMMO_AMOUNT = 60;
 var currentMessage = '';
 const ROUND_DELAY_MS = 10000;
+
+var is_game_over = false;
 
 //temp for testing
 // var enemySpawn1 = [290, 767];
@@ -45,7 +47,7 @@ Exiled.Game.prototype = {
         this.blockedLayer = this.map.createLayer('blockedLayer');
         
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
-        this.backgroundLayer.resizeWorld();
+        this.groundLayer.resizeWorld();
 
         this.timer = new Phaser.Timer(this.game, false);
 
@@ -64,6 +66,7 @@ Exiled.Game.prototype = {
         this.player.animations.add('down-left', [7,15], 10, true);
         this.player.animations.add('down-right', [1,9], 10, true);
         this.game.physics.arcade.enable(this.player);
+        this.player.body.collideWorldBounds = true;
         this.playerSpeed = 120;
         this.player.health = PLAYER_MAX_HEALTH;
         this.playerScore = 0;
@@ -97,6 +100,8 @@ Exiled.Game.prototype = {
         this.downKey = this.game.input.keyboard.addKey(Phaser.KeyCode.S);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
+        this.enter = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
+
 
         // create sounds
         this.explosionSound = this.game.add.audio('explosion');
@@ -215,7 +220,7 @@ Exiled.Game.prototype = {
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
         this.bulletsHUD.text = `Bullets: ${this.totalAmmo}`;
-        console.log(`Round Label ${this.roundLabel.text}`);
+        // console.log(`Round Label ${this.roundLabel.text}`);
         this.roundLabel.text = `Round: ${this.round}`;
         //for alignment and testing
         this.playerHUDMessage.text = currentMessage;
@@ -314,12 +319,17 @@ Exiled.Game.prototype = {
         //call the enemy patrol function
         this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
         this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
-        if(this.player.health <= 0){
-            this.gameOver();
+
+        this.player.events.onKilled.add(this.gameOver, this)
+        if(is_game_over){
+            if(this.enter.isDown) {
+                this.game.state.start('MainMenu');
+            }
         }
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
+        console.log(bullet)
         bullet.kill();
     },
     // handles bullet collision with enemy
@@ -478,17 +488,47 @@ Exiled.Game.prototype = {
         player.body.acceleration.y = 0;
     },
     gameOver: function(){
-        // this is where we will post to the API
-        this.game.paused = true;
-        this.scoreLastGame = this.playerScore;
-        // this.state.start('MainMenu');
+        // stop all sounds. window alerts mess them up
+        this.explosionSound.stop();
+        this.collectSound.stop();
+        this.rifleShot.stop();
+        this.knifeAttack.stop();
+        this.shellFalling.stop();
+
+        is_game_over = true;
+        var text = "GAME OVER";
+        var style = { font: "30px Arial", fill: "#fff", align: "center" };
+        var t = this.game.add.text(this.game.width/2, this.game.height/2, text, style);
+        t.anchor.set(0.5);
+        t.fixedToCamera = true;
+        // get high scores from db
+        let results = []
+        fetch('http://127.0.0.1:8000/api/all_scores')
+        .then(function (response) {
+            return response.json()
+        })
+        .then(function (data) {
+            for (let key of data) {
+                results.push(key)
+            }
+            // console.log(results);
+            results.sort(function(a, b){
+                return a.score-b.score;
+            })
+            results.reverse();
+            console.log(results);
+            if(results.findIndex(x => x.score === this.playerScore) <= 10){
+                alert("Congratulations. Your score is in the top 10!");
+            }
+        })
+        
         let name = prompt('Enter your name to save score: ');
         name = name.slice(0, 10);
         let scoreDict = {
             "score": this.playerScore,
             "name": name
         }
-
+        // post new score to db
         fetch('http://127.0.0.1:8000/api/all_scores', {
             method: 'POST',
             body: JSON.stringify(scoreDict),
@@ -498,5 +538,11 @@ Exiled.Game.prototype = {
         }).then(res => res.json())
             .then(response => console.log('Success:', JSON.stringify(response)))
             .catch(error => console.error('Error:', error));
+        
+        var text2 = "Press ENTER to return to Main Menu";
+        var style2 = { font: "26px Arial", fill: "#fff", align: "center" };
+        var t2 = this.game.add.text(this.game.width/2, this.game.height/2 + 50, text2, style2);
+        t2.anchor.set(0.5);
+        t2.fixedToCamera = true;
     }
 }
