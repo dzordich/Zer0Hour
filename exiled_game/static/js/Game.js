@@ -1,5 +1,4 @@
 var Exiled = Exiled || {};
-
 Exiled.Game = function(){};
 var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
@@ -16,7 +15,7 @@ var enemySpawn4 = [958, 962];
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
-const ENEMY_NUMBER = 2;
+const ENEMY_NUMBER = 1;
 const START_BULLETS = 100;
 const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
@@ -30,9 +29,9 @@ const ITEM_DELAY_MS = 1000;
 var is_game_over = false;
 
 //temp for testing
-// var enemySpawn1 = [290, 767];
-// var enemySpawn3 = [290, 767];
-// var enemySpawn4 = [290, 767];
+var enemySpawn1 = [290, 767];
+var enemySpawn3 = [290, 767];
+var enemySpawn4 = [290, 767];
 
 
 Exiled.Game.prototype = {
@@ -202,9 +201,11 @@ Exiled.Game.prototype = {
     spawnBoss: function(x, y){
         let newBoss;
         // need sprite for boss
-        newBoss = this.boss.create(x, y, 'playerParticle');
+        newBoss = this.boss.create(x, y, 'ZBoss');
+        newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+        newBoss.play('walk');
+        newBoss.scale.set(.1);
         newBoss.health = 200;
-        newBoss.scale.setTo(3);
     },
     update: function() {
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
