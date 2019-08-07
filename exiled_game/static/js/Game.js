@@ -28,6 +28,7 @@ const ITEM_DELAY_MS = 1000;
 var recentlyFired = false;
 var recentlyFiredTimer = 0;
 const RECENTLY_FIRED_DELAY = 500;
+var CURRENT_WEAPON = 'gun';
 
 var is_game_over = false;
 
@@ -118,7 +119,7 @@ Exiled.Game.prototype = {
         this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
         this.enter = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
-
+        this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
 
         // create sounds
         this.zombieDeathSound = this.game.add.audio('zombieDeath');
@@ -143,7 +144,15 @@ Exiled.Game.prototype = {
         this.showHUD(this.playerScore, null);
         //this.showRoundText();
     },
-
+    switchWeapon: function() {
+        if (CURRENT_WEAPON == 'gun'){
+            CURRENT_WEAPON = 'knife';
+            this.createKnifePlayer();
+        } else {
+            CURRENT_WEAPON = 'gun';
+            this.createGunPlayer();
+        }
+    },
     findObjectsByType: function(type, map, layer){
         var result = new Array();
         console.log(map);
@@ -226,7 +235,59 @@ Exiled.Game.prototype = {
         newBoss.anchor.setTo(0.5, 0.5);
         newBoss.health = 200;
     },
+    createKnifePlayer: function(){
+        playerX = this.player.x;
+        playerY = this.player.y;
+        health = this.player.health;
+        this.oldPlayer = this.player;
+        this.player = this.game.add.sprite(playerX, playerY, 'zPlayer_knife');
+        //super delete oldPlayer here
+        this.oldPlayer.destroy();
+        this.player.anchor.setTo(0.5, 0.5);
+        this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-right', [0,1,2,3,4,5], 10, true);
+
+        this.player.scale.setTo(0.1);
+        this.game.physics.arcade.enable(this.player);
+        this.player.body.collideWorldBounds = true;
+        this.playerSpeed = 120;
+        this.player.health = health;
+        this.game.camera.follow(this.player);
+    },
+    createGunPlayer: function(){
+        playerX = this.player.x;
+        playerY = this.player.y;
+        health = this.player.health;
+        this.oldPlayer = this.player;
+        this.player = this.game.add.sprite(playerX, playerY, 'zPlayer');
+        //super delete oldPlayer here
+        this.oldPlayer.destroy();
+        this.player.anchor.setTo(0.5, 0.5);
+        this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-right', [0,1,2,3,4,5], 10, true);
+
+        this.player.scale.setTo(0.1);
+        this.game.physics.arcade.enable(this.player);
+        this.player.body.collideWorldBounds = true;
+        this.playerSpeed = 120;
+        this.player.health = health;
+        this.game.camera.follow(this.player);
+    },
     update: function() {
+
+        //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
             if(!restTime){
@@ -251,13 +312,14 @@ Exiled.Game.prototype = {
             }
         }
 
+        //update HUD
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
         this.bulletsHUD.text = `Energy: ${this.totalAmmo}`;
-        //console.log(`Round Label ${this.roundLabel.text}`);
         this.roundLabel.text = `Round: ${this.round}`;
-        //for alignment and testing
         this.playerHUDMessage.text = currentMessage;
+
+        //stop the player if they're not moving
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         
@@ -268,14 +330,13 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.boss, this.blockedLayer);
         this.game.physics.arcade.overlap(this.boss, this.enemies);
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
-
+        
         //pickup physics - needs item delay for scaling bug
         if(this.game.time.now - waveClearTime > ITEM_DELAY_MS){
             this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
             this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
         }
-
-
+        
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
         this.game.physics.arcade.overlap(this.rifle.bullets, this.boss, this.bulletHitEnemy, null, this);
@@ -285,9 +346,17 @@ Exiled.Game.prototype = {
         } else {
             this.game.physics.arcade.overlap(this.enemies, this.player);
         }
-
+        
         //player facing
         this.playerTurnToFace();
+        
+        //choose correct weapon
+        this.switchWeaponKey.onDown.add(this.switchWeapon, this);
+
+        if(CURRENT_WEAPON == 'gun' && this.totalAmmo == 0){
+            CURRENT_WEAPON = 'knife';
+            this.createKnifePlayer();
+        }
 
         //player controls
         var down = this.cursors.down.isDown || this.downKey.isDown
@@ -511,7 +580,7 @@ Exiled.Game.prototype = {
         recentlyFiredTimer = this.game.time.now;
         this.rifle.x = this.player.centerX;
         this.rifle.y = this.player.centerY;
-        if(this.totalAmmo > 0){
+        if(this.totalAmmo > 0 && CURRENT_WEAPON == 'gun'){
             this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
             this.rifle.fireAtPointer(this.game.input.activePointer);
             this.rifleShot.play();

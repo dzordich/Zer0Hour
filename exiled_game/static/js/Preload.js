@@ -23,6 +23,7 @@ Exiled.Preload.prototype = {
         //this.load.image('energyAmmo', 'static/assets/images/healthPickup.png');
         this.load.spritesheet('player', 'static/assets/images/pc1_cropped.png', 32, 32);
         this.load.spritesheet('zPlayer', 'static/assets/images/ZPlayerChar.png', 271, 351);
+        this.load.spritesheet('zPlayer_knife', 'static/assets/images/ZPlayerChar_knife.png', 438, 342);
         this.load.spritesheet('enemy', 'static/assets/images/BadGuySprite.png', 32, 32);
         this.load.spritesheet('ZBoss', 'static/assets/images/ZBoss.png', 1610, 1446);
         this.load.spritesheet('zombie', 'static/assets/images/zombie.png', 663, 637);
