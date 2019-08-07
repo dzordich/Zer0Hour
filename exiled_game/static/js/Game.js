@@ -166,40 +166,48 @@ Exiled.Game.prototype = {
         // newEnemy.anchor.setTo(0.5, 0.5);
 
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy.scale.setTo(0.07);
+            newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
+            // newEnemy.animations.add('left', [0,1], 5, true);
+            // newEnemy.animations.add('right', [4,5], 5, true);
+            // newEnemy.animations.add('up', [6,7], 5, true);
+            // newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
+            newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy.scale.setTo(0.07);
+            newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
+            // newEnemy.animations.add('left', [0,1], 5, true);
+            // newEnemy.animations.add('right', [4,5], 5, true);
+            // newEnemy.animations.add('up', [6,7], 5, true);
+            // newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
+            newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy.scale.setTo(0.07);
+            newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
+            // newEnemy.animations.add('left', [0,1], 5, true);
+            // newEnemy.animations.add('right', [4,5], 5, true);
+            // newEnemy.animations.add('up', [6,7], 5, true);
+            // newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
+            newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'enemy');
-            newEnemy.scale.setTo(0.7);
-            newEnemy.animations.add('left', [0,1], 5, true);
-            newEnemy.animations.add('right', [4,5], 5, true);
-            newEnemy.animations.add('up', [6,7], 5, true);
-            newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy.scale.setTo(0.07);
+            newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
+            // newEnemy.animations.add('left', [0,1], 5, true);
+            // newEnemy.animations.add('right', [4,5], 5, true);
+            // newEnemy.animations.add('up', [6,7], 5, true);
+            // newEnemy.animations.add('down', [2,3], 5, true);
             newEnemy.health = 45;
+            newEnemy.play('walk');
         }
     },
     spawnBoss: function(x, y){
