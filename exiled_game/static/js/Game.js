@@ -280,6 +280,9 @@ Exiled.Game.prototype = {
             this.game.physics.arcade.overlap(this.enemies, this.player);
         }
 
+        //player facing
+        this.playerTurnToFace();
+
         //player controls
         var down = this.cursors.down.isDown || this.downKey.isDown
         var up = this.cursors.up.isDown || this.upKey.isDown
@@ -474,6 +477,9 @@ Exiled.Game.prototype = {
         this.turnToFace(enemy,this.player);
     },
     shootRifle: function(){
+        console.log(this.game.input.activePointer);
+        console.log(this.player);
+        console.log(this.camera);
         this.rifle.x = this.player.centerX;
         this.rifle.y = this.player.centerY;
         if(this.totalAmmo > 0){
@@ -531,6 +537,18 @@ Exiled.Game.prototype = {
         //convert to down facing
         sprite.angle = newAngle - 90;
     },
+    playerTurnToFace: function(){
+        //necessary as a separate function because the pointer x,y
+        //is relative to the camera, not the map
+        //find angle
+        //game.camera.width / 2, game.camera.height / 2
+        xDistance = this.input.activePointer.x - (this.game.camera.width / 2);
+        yDistance = this.input.activePointer.y - (this.game.camera.height / 2);
+        newAngle = Math.atan2(yDistance,xDistance)*(180/Math.PI);
+
+        //convert to down facing
+        this.player.angle = newAngle - 90;
+    },
     gameOver: function(){
         // stop all sounds. window alerts mess them up
         this.zombieDeathSound.stop();
@@ -560,7 +578,6 @@ Exiled.Game.prototype = {
                 return a.score-b.score;
             })
             results.reverse();
-            console.log(results);
             if(results.findIndex(x => x.score === this.playerScore) <= 10){
                 alert("Congratulations. Your score is in the top 10!");
             }
