@@ -118,7 +118,7 @@ Exiled.Game.prototype = {
 
 
         // create sounds
-        this.explosionSound = this.game.add.audio('explosion');
+        this.zombieDeathSound = this.game.add.audio('zombieDeath');
         this.collectSound = this.game.add.audio('collect');
         this.rifleShot = this.game.add.audio('laser_shot');
         this.knifeAttack = this.game.add.audio('knifeAttack');
@@ -387,7 +387,7 @@ Exiled.Game.prototype = {
         // this.playerScore += 1;
         emitter.explode(50, 3);
         if(enemy.health <= 0){
-            this.explosionSound.play();
+            this.zombieDeathSound.play();
             emitter.explode(100);
             this.playerScore += 1;
         }
@@ -403,7 +403,7 @@ Exiled.Game.prototype = {
         emitter.gravity = 0;
         emitter.explode(50, 3);
         if(player.health <= 0){
-            this.explosionSound.play();
+            this.zombieDeathSound.play();
             emitter.explode(100);
         }
     },
@@ -418,7 +418,7 @@ Exiled.Game.prototype = {
         emitter.gravity = 0;
         emitter.explode(50, 3);
         if(player.health <= 0){
-            this.explosionSound.play();
+            this.zombieDeathSound.play();
             emitter.explode(100);
         }
     },
@@ -533,7 +533,7 @@ Exiled.Game.prototype = {
     },
     gameOver: function(){
         // stop all sounds. window alerts mess them up
-        this.explosionSound.stop();
+        this.zombieDeathSound.stop();
         this.collectSound.stop();
         this.rifleShot.stop();
         this.knifeAttack.stop();
