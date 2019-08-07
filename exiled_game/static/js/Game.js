@@ -252,6 +252,31 @@ Exiled.Game.prototype = {
         this.player.health = health;
         this.game.camera.follow(this.player);
     },
+    createGunPlayer: function(){
+        playerX = this.player.x;
+        playerY = this.player.y;
+        health = this.player.health;
+        this.oldPlayer = this.player;
+        this.player = this.game.add.sprite(playerX, playerY, 'zPlayer');
+        //super delete oldPlayer here
+        this.oldPlayer.destroy();
+        this.player.anchor.setTo(0.5, 0.5);
+        this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-right', [0,1,2,3,4,5], 10, true);
+
+        this.player.scale.setTo(0.1);
+        this.game.physics.arcade.enable(this.player);
+        this.player.body.collideWorldBounds = true;
+        this.playerSpeed = 120;
+        this.player.health = health;
+        this.game.camera.follow(this.player);
+    },
     update: function() {
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
@@ -276,7 +301,6 @@ Exiled.Game.prototype = {
                 }
             }
         }
-
         this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
         this.healthHUD.text = `Health: ${this.player.health.toString()}`;
         this.bulletsHUD.text = `Energy: ${this.totalAmmo}`;
@@ -287,6 +311,16 @@ Exiled.Game.prototype = {
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         
+        //choose correct weapon
+        if(CURRENT_WEAPON == 'knife' && this.totalAmmo > 0){
+            CURRENT_WEAPON = 'gun';
+            this.createGunPlayer();
+        }
+        if(CURRENT_WEAPON == 'gun' && this.totalAmmo == 0){
+            CURRENT_WEAPON = 'knife';
+            this.createKnifePlayer();
+        }
+
         //environment physics
         this.game.physics.arcade.collide(this.player, this.blockedLayer);
         this.game.physics.arcade.collide(this.enemies, this.blockedLayer);
@@ -543,10 +577,6 @@ Exiled.Game.prototype = {
             this.rifleShot.play();
             this.totalAmmo -= 1;
         } else {
-            if(CURRENT_WEAPON == 'gun'){
-                CURRENT_WEAPON = 'knife';
-                this.createKnifePlayer();
-            }
             //melee attack goes here
             this.knifeAttack.play();
             this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
