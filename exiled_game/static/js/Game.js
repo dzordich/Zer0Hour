@@ -231,9 +231,10 @@ Exiled.Game.prototype = {
         playerX = this.player.x;
         playerY = this.player.y;
         health = this.player.health;
-        //super delete old player here
-
+        this.oldPlayer = this.player;
         this.player = this.game.add.sprite(playerX, playerY, 'zPlayer_knife');
+        //super delete oldPlayer here
+        this.oldPlayer.destroy();
         this.player.anchor.setTo(0.5, 0.5);
         this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
         this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
