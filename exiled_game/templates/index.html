@@ -18,7 +18,7 @@
 				margin: 0px;
 				cursor: crosshair;
 			}
-			/* #overlay {
+			#overlay {
 				position: fixed;
 				display: block;
 				width: 100%;
@@ -27,14 +27,19 @@
 				left: 0;
 				right: 0;
 				bottom: 0;
-				background: radial-gradient(transparent, #000 90%);
+				background: radial-gradient(transparent, #000 75%);
 				z-index: 2;
 				pointer-events: none;			
-			} */
+			}
+			#HUD {
+				position: fixed;
+				z-index: 3;
+			}
 	  	</style>
 	</head>
 	<body>
-		<div id="overlay"></div>  
+		<div id="overlay"></div>
+		<button id="HUD">Where dis at?</button>  
 		<!-- include the main game file -->
 		<script src="{% static 'js/main.js' %}"></script>
 	</body>
