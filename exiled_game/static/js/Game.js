@@ -165,6 +165,8 @@ Exiled.Game.prototype = {
     // moved into function so it can easily be called at the beginning of a new round
     // creates @param numEnemies enemies at each spawn point on the map
     spawnEnemies: function(numEnemies, spawn1, spawn2, spawn3, spawn4){
+        //small bug patch
+        invulnerable  = this.game.time.now;
         let newEnemy;
         // newEnemy.anchor.setTo(0.5, 0.5);
 
@@ -214,6 +216,7 @@ Exiled.Game.prototype = {
         }
     },
     spawnBoss: function(x, y){
+        invulnerable  = this.game.time.now;
         let newBoss;
         // need sprite for boss
         newBoss = this.boss.create(x, y, 'ZBoss');
