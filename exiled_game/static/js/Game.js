@@ -12,6 +12,8 @@ var enemySpawn2 = [290, 767];
 var enemySpawn3 = [1205, 553];
 var enemySpawn4 = [958, 962];
 
+const BULLET_SPEED = 2500;
+const KNIFE_SPEED = 1000;
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
@@ -136,7 +138,7 @@ Exiled.Game.prototype = {
         this.rifle.bulletRotateToVelocity = true;
         this.magCap = 10;
         this.totalAmmo = START_BULLETS;
-        this.rifle.bulletSpeed = 2500;
+        this.rifle.bulletSpeed = BULLET_SPEED;
         this.activeGun = this.rifle;
 
         this.round = 1;
@@ -259,6 +261,14 @@ Exiled.Game.prototype = {
         this.playerSpeed = 120;
         this.player.health = health;
         this.game.camera.follow(this.player);
+        
+        this.rifle = this.add.weapon(10, 'knife_slash');
+        this.rifle.fireRate = 250;
+        this.rifle.bulletRotateToVelocity = true;
+        this.magCap = 10;
+        //this.totalAmmo = START_BULLETS;
+        this.rifle.bulletSpeed = BULLET_SPEED;
+        this.activeGun = this.rifle;
     },
     createGunPlayer: function(){
         playerX = this.player.x;
@@ -284,6 +294,14 @@ Exiled.Game.prototype = {
         this.playerSpeed = 120;
         this.player.health = health;
         this.game.camera.follow(this.player);
+
+        this.rifle = this.add.weapon(10, 'bullet');
+        this.rifle.fireRate = 250;
+        this.rifle.bulletRotateToVelocity = true;
+        this.magCap = 10;
+        //this.totalAmmo = START_BULLETS;
+        this.rifle.bulletSpeed = BULLET_SPEED;
+        this.activeGun = this.rifle;
     },
     update: function() {
 
@@ -581,15 +599,17 @@ Exiled.Game.prototype = {
         this.rifle.x = this.player.centerX;
         this.rifle.y = this.player.centerY;
         if(this.totalAmmo > 0 && CURRENT_WEAPON == 'gun'){
+            //this.rifle.bulletSpeed = BULLET_SPEED;
             this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
             this.rifle.fireAtPointer(this.game.input.activePointer);
             this.rifleShot.play();
             this.totalAmmo -= 1;
         } else {
             //melee attack goes here
+            //this.rifle.bulletSpeed = KNIFE_SPEED;
             this.knifeAttack.play();
             this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
-            this.rifle.bulletKillDistance = 24;
+            this.rifle.bulletKillDistance = 20;
             this.rifle.fireAtPointer(this.game.input.activePointer);
         }
     },
