@@ -159,7 +159,7 @@ Exiled.Game.prototype = {
         // newEnemy.anchor.setTo(0.5, 0.5);
 
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn1[0], spawn1[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -170,7 +170,7 @@ Exiled.Game.prototype = {
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn2[0], spawn2[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -181,7 +181,7 @@ Exiled.Game.prototype = {
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn3[0], spawn3[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -192,7 +192,7 @@ Exiled.Game.prototype = {
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn4[0], spawn4[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -284,6 +284,7 @@ Exiled.Game.prototype = {
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
+            this.enemies.forEachExists(this.annihilate, this);
             if(!restTime){
                 //spawn health and ammo
                 restTime = true;
@@ -502,6 +503,7 @@ Exiled.Game.prototype = {
             this.zombieDeathSound.play();
             emitter.explode(100);
         }
+        emitter.destroy();
     },
     bossHitPlayer: function(player, boss){
         invulnerable = this.game.time.now;
@@ -517,6 +519,7 @@ Exiled.Game.prototype = {
             this.zombieDeathSound.play();
             emitter.explode(100);
         }
+        emitter.destroy();
     },
     spawnHealth: function(x,y){
         this.healthPickups.destroy(true, true);
@@ -642,6 +645,9 @@ Exiled.Game.prototype = {
 
         //convert to down facing
         this.player.angle = newAngle - 90;
+    },
+    annihilate: function(thing){
+        thing.destroy();
     },
     gameOver: function(){
         // stop all sounds. window alerts mess them up
