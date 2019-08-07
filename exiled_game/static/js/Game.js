@@ -16,7 +16,7 @@ var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
 const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
 var ENEMY_NUMBER = 2;
-const START_BULLETS = 100;
+const START_BULLETS = 10;
 const HEALTH_SPAWN = [526, 621];
 const AMMO_SPAWN = [433, 621];
 const PLAYER_MAX_HEALTH = 100;
@@ -28,6 +28,7 @@ const ITEM_DELAY_MS = 1000;
 var recentlyFired = false;
 var recentlyFiredTimer = 0;
 const RECENTLY_FIRED_DELAY = 500;
+var CURRENT_WEAPON = 'gun';
 
 var is_game_over = false;
 
@@ -225,6 +226,30 @@ Exiled.Game.prototype = {
         newBoss.scale.set(.05);
         newBoss.anchor.setTo(0.5, 0.5);
         newBoss.health = 200;
+    },
+    createKnifePlayer: function(){
+        playerX = this.player.x;
+        playerY = this.player.y;
+        health = this.player.health;
+        //super delete old player here
+
+        this.player = this.game.add.sprite(playerX, playerY, 'zPlayer_knife');
+        this.player.anchor.setTo(0.5, 0.5);
+        this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('up-right', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-left', [0,1,2,3,4,5], 10, true);
+        this.player.animations.add('down-right', [0,1,2,3,4,5], 10, true);
+
+        this.player.scale.setTo(0.1);
+        this.game.physics.arcade.enable(this.player);
+        this.player.body.collideWorldBounds = true;
+        this.playerSpeed = 120;
+        this.player.health = health;
+        this.game.camera.follow(this.player);
     },
     update: function() {
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
@@ -517,6 +542,10 @@ Exiled.Game.prototype = {
             this.rifleShot.play();
             this.totalAmmo -= 1;
         } else {
+            if(CURRENT_WEAPON == 'gun'){
+                CURRENT_WEAPON = 'knife';
+                this.createKnifePlayer();
+            }
             //melee attack goes here
             this.knifeAttack.play();
             this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
