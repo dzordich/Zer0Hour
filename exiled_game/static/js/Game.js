@@ -261,6 +261,14 @@ Exiled.Game.prototype = {
         this.playerSpeed = 120;
         this.player.health = health;
         this.game.camera.follow(this.player);
+        
+        this.rifle = this.add.weapon(10, 'knife_slash');
+        this.rifle.fireRate = 250;
+        this.rifle.bulletRotateToVelocity = true;
+        this.magCap = 10;
+        //this.totalAmmo = START_BULLETS;
+        this.rifle.bulletSpeed = BULLET_SPEED;
+        this.activeGun = this.rifle;
     },
     createGunPlayer: function(){
         playerX = this.player.x;
@@ -286,6 +294,14 @@ Exiled.Game.prototype = {
         this.playerSpeed = 120;
         this.player.health = health;
         this.game.camera.follow(this.player);
+
+        this.rifle = this.add.weapon(10, 'bullet');
+        this.rifle.fireRate = 250;
+        this.rifle.bulletRotateToVelocity = true;
+        this.magCap = 10;
+        //this.totalAmmo = START_BULLETS;
+        this.rifle.bulletSpeed = BULLET_SPEED;
+        this.activeGun = this.rifle;
     },
     update: function() {
 
