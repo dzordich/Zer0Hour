@@ -25,6 +25,9 @@ const PICKUP_AMMO_AMOUNT = 60;
 var currentMessage = '';
 const ROUND_DELAY_MS = 10000;
 const ITEM_DELAY_MS = 1000;
+var recentlyFired = false;
+var recentlyFiredTimer = 0;
+const RECENTLY_FIRED_DELAY = 500;
 
 var is_game_over = false;
 
@@ -294,64 +297,88 @@ Exiled.Game.prototype = {
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('up-left');
-                this.player.angle = 135;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 135;
+                }
             } else if(down){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('down-left');
-                this.player.angle = 45;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 45;
+                }
             } else {
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('left');
-                this.player.angle = 90;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 90;
+                }
             }
         } else if(right) {
             if(up){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('up-right');
-                this.player.angle = 225;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 225;
+                }
             } else if(down){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('down-right');
-                this.player.angle = 315;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 315;
+                }
             } else {
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('right');
-                this.player.angle = 270;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 270;
+                }
             }
         } else if(up){
             if(right){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('up-right');
-                this.player.angle = 225;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 225;
+                }
             } else if(left){
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('up-left');
-                this.player.angle = 135;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 135;
+                }
             } else {
                 this.player.body.velocity.y = -PLAYER_SPEED;
                 this.player.play('up');
-                this.player.angle = 180;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 180;
+                }
             }
         } else if(down){
             if(right){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = PLAYER_SPEED;
                 this.player.play('down-right');
-                this.player.angle = 315;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 315;
+                }
             } else if(left){
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.body.velocity.x = -PLAYER_SPEED;
                 this.player.play('down-left');
-                this.player.angle = 25;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 25;
+                }
             } else {
                 this.player.body.velocity.y = PLAYER_SPEED;
                 this.player.play('down');
-                this.player.angle = 0;
+                if(this.game.time.now - recentlyFiredTimer > RECENTLY_FIRED_DELAY){
+                    this.player.angle = 0;
+                }
             }
         } else {
             this.player.animations.stop();
@@ -477,9 +504,8 @@ Exiled.Game.prototype = {
         this.turnToFace(enemy,this.player);
     },
     shootRifle: function(){
-        console.log(this.game.input.activePointer);
-        console.log(this.player);
-        console.log(this.camera);
+        recentlyFired = true;
+        recentlyFiredTimer = this.game.time.now;
         this.rifle.x = this.player.centerX;
         this.rifle.y = this.player.centerY;
         if(this.totalAmmo > 0){
