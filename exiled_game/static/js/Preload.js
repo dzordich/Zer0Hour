@@ -37,8 +37,8 @@ Exiled.Preload.prototype = {
         this.load.audio('zombieDeath', 'static/assets/audio/zombieDeath.mp3');
         this.load.image('blood', 'static/assets/images/blood.png');
         //this.load.image('bullet', 'static/assets/images/bullet.png');
-        this.load.image('bullet', 'static/assets/images/knife_slash.png');
-        //this.load.image('knife_slash', 'static/assets/images/knife_slash.png');
+        this.load.image('bullet', 'static/assets/images/energy_bullet.png');
+        this.load.image('knife_slash', 'static/assets/images/knife_slash.png');
     },
     create: function() {
         this.state.start('MainMenu');
