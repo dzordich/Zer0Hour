@@ -13,14 +13,11 @@ Exiled.Preload.prototype = {
 
         this.load.setPreloadSprite(this.preloadBar);
 
-        this.load.tilemap('test_room', 'static/assets/tilemaps/test_map2.5.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('map', 'static/assets/tilemaps/final_map.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('world', 'static/assets/images/oryx_16bit_scifi_world.png');
-        this.load.image('world_trans', 'static/assets/images/oryx_16bit_scifi_world_trans.png');
-        this.load.image('creatures', 'static/assets/images/oryx_16bit_scifi_creatures_trans.png');
         this.load.image('space', 'static/assets/images/space.png');
         this.load.image('healthPickup', 'static/assets/images/healthPickup.png');
         this.load.image('energyAmmo', 'static/assets/images/energyAmmo.png');
-        //this.load.image('energyAmmo', 'static/assets/images/healthPickup.png');
         this.load.spritesheet('player', 'static/assets/images/pc1_cropped.png', 32, 32);
         this.load.spritesheet('zPlayer', 'static/assets/images/ZPlayerChar.png', 271, 351);
         this.load.spritesheet('zPlayer_knife', 'static/assets/images/ZPlayerChar_knife.png', 438, 342);

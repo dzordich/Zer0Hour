@@ -7,10 +7,10 @@ var restTime = false;
 var roundTextTimer = 0;
 
 // find enemy spawn points
-var enemySpawn1 = [2017, 721];
-var enemySpawn2 = [290, 767];
-var enemySpawn3 = [1205, 553];
-var enemySpawn4 = [958, 962];
+var enemySpawn1 = [752, 17.5];
+var enemySpawn2 = [37.5, 600];
+var enemySpawn3 = [777, 1134];
+var enemySpawn4 = [498, 586];
 
 const BULLET_SPEED = 2500;
 const KNIFE_SPEED = 1000;
@@ -19,8 +19,8 @@ const BOSS_CHASE_SPEED = 17;
 const PLAYER_SPEED = 100;
 var ENEMY_NUMBER = 2;
 const START_BULLETS = 100;
-const HEALTH_SPAWN = [526, 621];
-const AMMO_SPAWN = [433, 621];
+const HEALTH_SPAWN = [637, 592];
+const AMMO_SPAWN = [889, 592];
 const PLAYER_MAX_HEALTH = 100;
 const PICKUP_HEALTH_AMOUNT = 30;
 const PICKUP_AMMO_AMOUNT = 60;
@@ -34,23 +34,14 @@ var CURRENT_WEAPON = 'gun';
 
 var is_game_over = false;
 
-//temp for testing
-// var enemySpawn1 = [290, 767];
-// var enemySpawn3 = [290, 767];
-// var enemySpawn4 = [290, 767];
-//var ENEMY_NUMBER = 1;
-
-
 
 Exiled.Game.prototype = {
     create: function() {
         // create map
-        this.map = this.game.add.tilemap('test_room');
+        this.map = this.game.add.tilemap('map');
         this.map.addTilesetImage('oryx_16bit_scifi_world', 'world');
-        this.map.addTilesetImage('oryx_16bit_scifi_world_trans', 'world_trans');
-        this.map.addTilesetImage('oryx_16bit_scifi_creatures_trans', 'creatures');
-        this.backgroundLayer = this.map.createLayer('backgroundLayer');
         this.groundLayer = this.map.createLayer('groundLayer');
+        this.detailLayer2 = this.map.createLayer('detailLayer2');
         this.detailLayer = this.map.createLayer('detailLayer');
         this.blockedLayer = this.map.createLayer('blockedLayer');
         
@@ -58,22 +49,9 @@ Exiled.Game.prototype = {
         this.groundLayer.resizeWorld();
 
         this.timer = new Phaser.Timer(this.game, false);
-
-        // find player spawn point
-        var playerSpawn = this.findObjectsByType('playerStart', this.map, 'objectLayer');
         
         // create player
-        // this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'player');
-        // this.player.scale.setTo(0.7);
-        // this.player.animations.add('left', [6,14], 10, true);
-        // this.player.animations.add('right', [2,10], 10, true);
-        // this.player.animations.add('up', [4,12], 10, true);
-        // this.player.animations.add('down', [0,8], 10, true);
-        // this.player.animations.add('up-left', [5,13], 10, true);
-        // this.player.animations.add('up-right', [3,11], 10, true);
-        // this.player.animations.add('down-left', [7,15], 10, true);
-        // this.player.animations.add('down-right', [1,9], 10, true);
-        this.player = this.game.add.sprite(playerSpawn[0].x + 50, playerSpawn[0].y, 'zPlayer');
+        this.player = this.game.add.sprite(770, 599, 'zPlayer');
         this.player.anchor.setTo(0.5, 0.5);
         this.player.animations.add('up', [0,1,2,3,4,5], 10, true);
         this.player.animations.add('left', [0,1,2,3,4,5], 10, true);
@@ -157,7 +135,6 @@ Exiled.Game.prototype = {
     },
     findObjectsByType: function(type, map, layer){
         var result = new Array();
-        console.log(map);
         map.objects[layer].forEach(function(element){
             if(element.type === type){
                 element.y -= map.tileHeight;
@@ -304,7 +281,6 @@ Exiled.Game.prototype = {
         this.activeGun = this.rifle;
     },
     update: function() {
-
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
@@ -620,7 +596,7 @@ Exiled.Game.prototype = {
         else{
             //this.totalAmmo -= this.magCap;
             this.rifle.resetShots();
-            this.rifle.createBullets(10, 'bullet')
+            // this.rifle.createBullets(10, 'bullet')
         }
         
     },
