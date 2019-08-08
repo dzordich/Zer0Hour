@@ -281,7 +281,11 @@ Exiled.Game.prototype = {
         this.activeGun = this.rifle;
     },
     update: function() {
-        document.querySelector('#HUD').innerText = `${this.totalAmmo}`;
+        document.querySelector('#HUD').innerHTML = `
+        <p>Energy: ${this.totalAmmo}</p>
+        <p>Health: ${this.player.health}</p>
+        <p>Round: ${this.round}</p>
+        <p>Score: ${this.playerScore}</p>`;
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
