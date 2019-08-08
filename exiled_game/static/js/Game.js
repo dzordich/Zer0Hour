@@ -12,6 +12,8 @@ var enemySpawn2 = [37.5, 600];
 var enemySpawn3 = [777, 1134];
 var enemySpawn4 = [498, 586];
 
+const DIALOG_DELAY = 3000;
+var DIALOG_TIMESTAMP = 0;
 const BULLET_SPEED = 2500;
 const KNIFE_SPEED = 1000;
 var ENEMY_CHASE_SPEED = random.integerInRange(24, 30);
@@ -36,6 +38,9 @@ const SURVIVOR_SPEED = 100;
 const SURVIVOR_DROP_TRIGGER_X = 763;
 var pickupsSpawned = false;
 
+var dialogBox = document.querySelector('#dialog');
+var dialogContent = document.querySelector('#dialog-content');
+var dialogImage = document.querySelector('#dialog-picture');
 
 var is_game_over = false;
 
@@ -140,9 +145,16 @@ Exiled.Game.prototype = {
         this.activeGun = this.rifle;
 
         this.round = 1;
-        // HUD (old)
-        //this.showHUD(this.playerScore, null);
-        //this.showRoundText();
+        this.openingDialog();
+    },
+    openingDialog: function(){
+        dialogContent.innerText = "I have to clear out these zombies to let the survivors escape.";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
+    },
+    closeDialogBox: function(){
+        dialogContent.innerText = "";
+        dialogBox.style.display="none";
     },
     switchWeapon: function() {
         if (CURRENT_WEAPON == 'gun'){
@@ -308,6 +320,10 @@ Exiled.Game.prototype = {
         <p>Round: ${this.round}</p>
         <p>Score: ${this.playerScore}</p>
         <p>${currentMessage}</p>`;
+        //close dialog box after delay
+        if(this.game.time.now - DIALOG_TIMESTAMP > DIALOG_DELAY){
+            this.closeDialogBox();
+        }
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
