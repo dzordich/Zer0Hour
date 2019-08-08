@@ -293,7 +293,7 @@ Exiled.Game.prototype = {
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
-            this.enemies.forEachExists(this.annihilate, this);
+            this.enemies.forEach(this.annihilate, this);
             if(!restTime){
                 //spawn health and ammo
                 restTime = true;
@@ -305,9 +305,8 @@ Exiled.Game.prototype = {
                 //end rest time and spawn enemies
                 restTime = false;
                 currentMessage = "Fight!";
-                this.numEnemies = Math.round(this.numEnemies * 1.25);
+                this.numEnemies = Math.round(this.numEnemies * 1.5);
                 this.round += 1;
-                this.numEnemies = Math.round(this.numEnemies * 1.25);
                 this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
                 // spawn boss every 3 rounds
                 if(this.round % 3 === 0){
@@ -476,7 +475,7 @@ Exiled.Game.prototype = {
             if(this.enter.isDown) {
                 // clear cache
                 this.cache.destroy();
-                this.game.state.start('MainMenu');
+                this.game.state.start('Preload');
             }
         }
     },
