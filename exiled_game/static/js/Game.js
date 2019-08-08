@@ -33,6 +33,9 @@ const RECENTLY_FIRED_DELAY = 500;
 var CURRENT_WEAPON = 'gun';
 const SURVIVOR_SPAWN = [75, 600];
 const SURVIVOR_SPEED = 100;
+const SURVIVOR_DROP_TRIGGER_X = 763;
+var pickupsSpawned = false;
+
 
 var is_game_over = false;
 
@@ -317,13 +320,15 @@ Exiled.Game.prototype = {
                 // this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 // this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             }
-            if(this.newSurvivor && this.newSurvivor.x >= 763 && this.newSurvivor.x <= 764){
+            if(this.newSurvivor && this.newSurvivor.x > SURVIVOR_DROP_TRIGGER_X && !pickupsSpawned){
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
+                pickupsSpawned = true;
             }
             if (this.game.time.now - waveClearTime > ROUND_DELAY_MS){
                 //end rest time and spawn enemies
                 restTime = false;
+                pickupsSpawned = false;
                 currentMessage = "Fight!";
                 this.numEnemies = Math.round(this.numEnemies * 1.5);
                 this.round += 1;
