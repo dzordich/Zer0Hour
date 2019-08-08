@@ -523,7 +523,7 @@ Exiled.Game.prototype = {
         //call the enemy patrol function
         // this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
         // this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
-        if(this.game.time.now - moveDelay > 500){
+        if(this.game.time.now - moveDelay > 800){
             this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
             this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
         }
@@ -575,6 +575,7 @@ Exiled.Game.prototype = {
     },
     bossHitPlayer: function(player, boss){
         invulnerable = this.game.time.now;
+        player.tint = 0xff0000;
         this.damageEmitter.x = player.centerX;
         this.damageEmitter.y = player.centerY;
         player.damage(50);
