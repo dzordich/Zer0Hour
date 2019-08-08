@@ -43,8 +43,12 @@
 				bottom: 0;
 				z-index: 3;
 			}
-			#dialog-picture {
+			#player-picture {
 				height: 50%;
+			}
+			#survivor-picture {
+				height: 50%;
+				display: none;
 			}
 			#dialog-content {
 				margin-left: 10px;
@@ -66,7 +70,8 @@
 		<p id="HUD"></p>  
 		<div id="overlay"></div>
 		<div id="dialog">
-			<img id="dialog-picture" src="{% static 'assets/images/playerIcon.png' %}"/>
+			<img id="survivor-picture" src="{% static 'assets/images/survivorIcon.png'%}"/>
+			<img id="player-picture" src="{% static 'assets/images/playerIcon.png' %}"/>
 			<p id="dialog-content">Dialog Here</p>
 		</div>
 		</div>

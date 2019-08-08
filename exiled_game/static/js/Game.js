@@ -40,7 +40,9 @@ var pickupsSpawned = false;
 
 var dialogBox = document.querySelector('#dialog');
 var dialogContent = document.querySelector('#dialog-content');
-var dialogImage = document.querySelector('#dialog-picture');
+var playerImage = document.querySelector('#player-picture');
+var survivorImage = document.querySelector('#survivor-picture');
+
 
 var is_game_over = false;
 
@@ -148,6 +150,8 @@ Exiled.Game.prototype = {
         this.openingDialog();
     },
     openingDialog: function(){
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
         dialogContent.innerText = "I have to clear out these zombies to let the survivors escape.";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
@@ -155,6 +159,20 @@ Exiled.Game.prototype = {
     closeDialogBox: function(){
         dialogContent.innerText = "";
         dialogBox.style.display="none";
+    },
+    betweenRoundPlayerDialog: function(){
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
+        dialogContent.innerText = "The coast is clear! Run for the shuttle!";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
+    },
+    betweenRoundSurvivorDialog: function(){
+        playerImage.style.display = "none";
+        survivorImage.style.display = "block";
+        dialogContent.innerText = "Thank you! Take this!";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
     },
     switchWeapon: function() {
         if (CURRENT_WEAPON == 'gun'){
@@ -329,6 +347,8 @@ Exiled.Game.prototype = {
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
             this.enemies.forEach(this.annihilate, this);
             if(!restTime){
+                //call to the survivor
+                this.betweenRoundPlayerDialog();
                 //spawn health and ammo
                 this.spawnSurvivor();
                 restTime = true;
@@ -337,6 +357,7 @@ Exiled.Game.prototype = {
                 // this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             }
             if(this.newSurvivor && this.newSurvivor.x > SURVIVOR_DROP_TRIGGER_X && !pickupsSpawned){
+                this.betweenRoundSurvivorDialog();
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
                 pickupsSpawned = true;
