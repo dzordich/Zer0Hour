@@ -32,6 +32,23 @@
 				z-index: 2;
 				pointer-events: none;			
 			}
+			#dialog {
+				font-family: 'Orbitron', sans-serif;
+				color:lightgreen;
+				position: fixed;
+				display: none;
+				justify-content: center;
+				width: 100%;
+				height: 20%;
+				bottom: 0;
+				z-index: 3;
+			}
+			#dialog img {
+				height: 50%;
+			}
+			#dialog p {
+				margin-left: 10px;
+			}
 			#HUD {
 				font-family: 'Orbitron', sans-serif;
 				position: fixed;
@@ -48,6 +65,11 @@
 	<body>
 		<p id="HUD"></p>  
 		<div id="overlay"></div>
+		<div id="dialog">
+			<img src="{% static 'assets/images/playerIcon.png' %}"/>
+			<p>Dialog Here</p>
+		</div>
+		</div>
 		<!-- include the main game file -->
 		<script src="{% static 'js/main.js' %}"></script>
 	</body>
