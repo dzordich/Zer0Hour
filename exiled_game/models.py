@@ -12,6 +12,9 @@ class Player (models.Model):
 
 class Score (models.Model):
     score = models.IntegerField()
-    # game_round = models.IntegerField()
+    game_round = models.IntegerField(null=True, blank=True)
+    kills = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=11, null=True, blank=True)
-    # date?
+
+    class Meta:
+        ordering = ['-score']

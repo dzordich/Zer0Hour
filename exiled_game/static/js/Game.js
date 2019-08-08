@@ -36,6 +36,8 @@ var recentlyFiredTimer = 0;
 const RECENTLY_FIRED_DELAY = 500;
 var CURRENT_WEAPON = 'gun';
 
+var KILLS = 0;
+
 var is_game_over = false;
 
 
@@ -109,7 +111,7 @@ Exiled.Game.prototype = {
         this.downKey = this.game.input.keyboard.addKey(Phaser.KeyCode.S);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
-        this.enter = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
+        this.returnToMenu = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
         this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
         this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
 
@@ -536,7 +538,7 @@ Exiled.Game.prototype = {
         this.pauseKey.onDown.add(this.pauseGame, this);
 
         if(is_game_over){
-            if(this.enter.isDown) {
+            if(this.returnToMenu.isDown) {
                 this.game.state.start('Boot');
             }
         }
@@ -552,12 +554,13 @@ Exiled.Game.prototype = {
         this.damageEmitter.y = enemy.centerY;
         bullet.kill();
         enemy.damage(15);
-        // this.playerScore += 1;
+        this.playerScore += 10;
         this.damageEmitter.explode(50, 3);
         if(enemy.health <= 0){
             // this.zombieDeathSound.play();
             this.damageEmitter.explode(100);
-            this.playerScore += 1;
+            this.playerScore += 100;
+            KILLS++;
         }
     },
     enemyHitPlayer: function(player, enemy){
@@ -729,53 +732,62 @@ Exiled.Game.prototype = {
         this.knifeAttack.stop();
         this.shellFalling.stop();
 
-        is_game_over = true;
-        var text = "GAME OVER";
-        var style = { font: "30px Arial", fill: "#fff", align: "center" };
-        var t = this.game.add.text(this.game.width/2, this.game.height/2, text, style);
-        t.anchor.set(0.5);
-        t.fixedToCamera = true;
-        // get high scores from db
-        let results = []
-        fetch('/api/all_scores')
-        .then(function (response) {
-            return response.json()
-        })
-        .then(function (data) {
-            for (let key of data) {
-                results.push(key)
+        const submit = document.querySelector("#scoresubmit");
+
+        let place;
+
+        submit.innerHTML = `
+        <div class="gameText">
+        <h1>GAME OVER</h1>
+        <p>Press F to return to menu</p>
+        <p>Enter your name to save your score</p>
+        <input type="text" id="searchInput" placeholder="Player" maxlength="10"><button id="submitScore" type="submit">Save Score</button>
+        </div>`;
+        let submitButton = document.querySelector("#submitScore");
+        submitButton.addEventListener('click', function(){
+            let name = document.querySelector('input').value;
+            let scoreDict = {
+                "score": this.playerScore,
+                "name": name,
+                "kills": KILLS,
+                "game_round": this.round
             }
-            // console.log(results);
-            results.sort(function(a, b){
-                return a.score-b.score;
+            // post new score to db
+            fetch('/api/all_scores', {
+                method: 'POST',
+                body: JSON.stringify(scoreDict),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-            results.reverse();
-            if(results.findIndex(x => x.score === this.playerScore) <= 10){
-                alert("Congratulations. Your score is in the top 10!");
-            }
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(data){
+                place = data.index_of_score;
+                if(place <= 10){
+                    alert("Congratulations. Your score is in the top 10!");
+                }
+            })
         })
-        
-        let name = prompt('Enter your name to save score: ');
-        name = name.slice(0, 10);
-        let scoreDict = {
-            "score": this.playerScore,
-            "name": name
-        }
-        // post new score to db
-        fetch('/api/all_scores', {
-            method: 'POST',
-            body: JSON.stringify(scoreDict),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => res.json())
-            .then(response => console.log('Success:', JSON.stringify(response)))
-            .catch(error => console.error('Error:', error));
-        
-        var text2 = "Press ENTER to return to Main Menu";
-        var style2 = { font: "26px Arial", fill: "#fff", align: "center" };
-        var t2 = this.game.add.text(this.game.width/2, this.game.height/2 + 50, text2, style2);
-        t2.anchor.set(0.5);
-        t2.fixedToCamera = true;
+        // get high scores from db
+        // let results = []
+        // fetch('/api/all_scores')
+        // .then(function (response) {
+        //     return response.json()
+        // })
+        // .then(function (data) {
+        //     for (let key of data) {
+        //         results.push(key)
+        //     }
+        //     // console.log(results);
+        //     results.sort(function(a, b){
+        //         return a.score-b.score;
+        //     })
+        //     results.reverse();
+        //     if(results.findIndex(x => x.score === this.playerScore) <= 10){
+        //         alert("Congratulations. Your score is in the top 10!");
+        //     }
+        // })
     }
 }
