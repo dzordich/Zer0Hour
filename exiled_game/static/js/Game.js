@@ -137,6 +137,7 @@ Exiled.Game.prototype = {
         this.chargeUp = this.game.add.audio('charge_up');
         this.shellFalling.allowMultiple = false;
         this.zombieDeathSound = this.game.add.audio('zombieDeath');
+        this.zombieDeathSound.volume = 0.4;
         
         // emitter
         this.damageEmitter = this.game.add.emitter(0, 0, 25);
