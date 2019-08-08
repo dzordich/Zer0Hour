@@ -120,8 +120,8 @@ Exiled.Game.prototype = {
         this.activeGun = this.rifle;
 
         this.round = 1;
-        // HUD
-        this.showHUD(this.playerScore, null);
+        // HUD (old)
+        //this.showHUD(this.playerScore, null);
         //this.showRoundText();
     },
     switchWeapon: function() {
@@ -281,11 +281,13 @@ Exiled.Game.prototype = {
         this.activeGun = this.rifle;
     },
     update: function() {
+        //update HUD
         document.querySelector('#HUD').innerHTML = `
         <p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
         <p>Round: ${this.round}</p>
-        <p>Score: ${this.playerScore}</p>`;
+        <p>Score: ${this.playerScore}</p>
+        <p>${currentMessage}</p>`;
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
@@ -311,12 +313,12 @@ Exiled.Game.prototype = {
             }
         }
 
-        //update HUD
-        this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
-        this.healthHUD.text = `Health: ${this.player.health.toString()}`;
-        this.bulletsHUD.text = `Energy: ${this.totalAmmo}`;
-        this.roundLabel.text = `Round: ${this.round}`;
-        this.playerHUDMessage.text = currentMessage;
+        //update HUD (old)
+        // this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
+        // this.healthHUD.text = `Health: ${this.player.health.toString()}`;
+        // this.bulletsHUD.text = `Energy: ${this.totalAmmo}`;
+        // this.roundLabel.text = `Round: ${this.round}`;
+        // this.playerHUDMessage.text = currentMessage;
 
         //stop the player if they're not moving
         this.player.body.velocity.x = 0;
