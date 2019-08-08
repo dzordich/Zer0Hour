@@ -314,6 +314,10 @@ Exiled.Game.prototype = {
                 this.spawnSurvivor();
                 restTime = true;
                 waveClearTime = this.game.time.now;
+                // this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
+                // this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
+            }
+            if(this.newSurvivor && this.newSurvivor.x >= 763 && this.newSurvivor.x <= 764){
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             }
