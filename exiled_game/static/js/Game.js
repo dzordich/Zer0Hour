@@ -282,8 +282,7 @@ Exiled.Game.prototype = {
     },
     update: function() {
         //update HUD
-        document.querySelector('#HUD').innerHTML = `
-        <p>Energy: ${this.totalAmmo}</p>
+        document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
         <p>Round: ${this.round}</p>
         <p>Score: ${this.playerScore}</p>

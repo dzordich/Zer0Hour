@@ -13,6 +13,7 @@
 
  
 		<style>
+			@import url('https://fonts.googleapis.com/css?family=Orbitron&display=swap');
 			body {
 				padding: 0px;
 				margin: 0px;
@@ -32,16 +33,21 @@
 				pointer-events: none;			
 			}
 			#HUD {
+				font-family: 'Orbitron', sans-serif;
 				position: fixed;
 				z-index: 3;
-				color:white;
+				color:lightgreen;
 				margin-left: 1rem;
+			}
+			#HUD p{
+				margin-block-start: 0px;
+				margin-block-end: 3px;
 			}
 	  	</style>
 	</head>
 	<body>
-		<div id="overlay"></div>
 		<p id="HUD"></p>  
+		<div id="overlay"></div>
 		<!-- include the main game file -->
 		<script src="{% static 'js/main.js' %}"></script>
 	</body>
