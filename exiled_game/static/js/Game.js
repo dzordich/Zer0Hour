@@ -83,7 +83,7 @@ Exiled.Game.prototype = {
         //create group for survivors
         this.survivors = this.game.add.group();
         this.survivors.enableBody = true;
-        this.survivors.physicsBodyType = Phaser.Physics.ARCADE;
+        //this.survivors.physicsBodyType = Phaser.Physics.ARCADE;
         //this.spawnSurvivor();
 
         // create enemies
@@ -349,6 +349,11 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.boss, this.blockedLayer);
         this.game.physics.arcade.overlap(this.boss, this.enemies);
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
+
+        //survivor removal
+        if (this.newSurvivor && this.newSurvivor.x >= 1483) {
+            this.removeSurvivor();
+        }
         
         //pickup physics - needs item delay for scaling bug
         if(this.game.time.now - waveClearTime > ITEM_DELAY_MS){
@@ -495,7 +500,7 @@ Exiled.Game.prototype = {
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
-        console.log(bullet)
+        //console.log(bullet)
         bullet.kill();
     },
     // handles bullet collision with enemy
@@ -560,13 +565,15 @@ Exiled.Game.prototype = {
         // newBoss.play('walk');
         // newBoss.scale.set(.05);
         this.survivors.destroy(true, true);
-        let newSurvivor;
-        newSurvivor = this.survivors.create(SURVIVOR_SPAWN[0], SURVIVOR_SPAWN[1], 'survivor');
-        newSurvivor.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
-        newSurvivor.play('walk');
-        newSurvivor.scale.setTo(0.4);
-        newSurvivor.body.velocity.x = SURVIVOR_SPEED;
-        newSurvivor.angle = 90;
+        this.newSurvivor = this.survivors.create(SURVIVOR_SPAWN[0], SURVIVOR_SPAWN[1], 'survivor');
+        this.newSurvivor.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
+        this.newSurvivor.play('walk');
+        this.newSurvivor.scale.setTo(0.4);
+        this.newSurvivor.body.velocity.x = SURVIVOR_SPEED;
+        this.newSurvivor.angle = 90;
+    },
+    removeSurvivor: function(){
+        this.survivors.destroy(true, true);
     },
     pickUpAmmo: function(player, ammoPickup){
         ammoPickup.destroy();
