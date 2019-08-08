@@ -1,7 +1,8 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
 var Exiled = Exiled || {};
-let results = []
-let bool = false;
+
+const menuText = document.querySelector('#mainMenu');
+const highscores = document.querySelector('#highscores');
+
 //title screen
 Exiled.MainMenu = function(){};
 
@@ -14,49 +15,30 @@ Exiled.MainMenu.prototype = {
     //give it speed in x
     this.background.autoScroll(-20, 0);
 
+    
+
+    menuText.style.display = 'block';
     // fetch high scores from db
-    results = [];
     fetch('/api/all_scores')
     .then(function (response) {
         return response.json()
     })
     .then(function (data) {
-        for (let key of data) {
-            results.push(key)
-        }
-        // console.log(results);
-        results.sort(function(a, b){
-            return a.score-b.score;
-        })
-        results.reverse();
-        results = results.slice(0, 10);
-        bool = true;
-        console.log('go')
+      let i = 1;
+      for (let key of data) {
+          if(i>10){
+            return;
+          }
+          let scoreText = document.createElement('tr');
+          scoreText.innerHTML = `<td>${key.name}</td><td>${key.score}</td><td>${key.game_round}</td><td>${key.kills}</td>`;
+          highscores.appendChild(scoreText);
+          i++;
+      }
     })
-  	
-
-    //start game text
-    var text = "Click to start new game";
-    var style = { font: "30px Arial", fill: "#fff", align: "center" };
-    var t = this.game.add.text(this.game.width/2, this.game.height/2 - 85, text, style);
-    t.anchor.set(0.5);
   },
   update: function() {
-    if(bool){
-      const style = { font: "15px Arial", fill: "#fff", align: "center" };
-      let height = -10;
-      let z = this.game.add.text(this.game.width/2, this.game.height/2 - 35, "High Scores", style);
-      z.anchor.set(0.5);
-      for(let x of results){
-        let text = (x.name || "player") + " | " + x.score.toString();
-        let t = this.game.add.text(this.game.width/2, this.game.height/2 + height, text, style);
-        t.anchor.set(0.5);
-        height += 19;
-      }
-      bool = false;
-    }
     if(this.game.input.activePointer.justPressed()) {
-      console.log('click')
+      menuText.style.display = 'none';
       this.game.state.start('Game');
     }
   }
