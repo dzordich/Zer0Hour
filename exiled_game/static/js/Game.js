@@ -473,7 +473,6 @@ Exiled.Game.prototype = {
 
         if(is_game_over){
             if(this.enter.isDown) {
-                
                 this.game.state.start('Boot');
             }
         }
