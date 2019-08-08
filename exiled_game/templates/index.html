@@ -5,11 +5,11 @@
 		<meta charset="utf-8" />
 		<title>Zero Hour</title>
  
-        <script type="text/javascript" src="{% static 'js/phaser.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/Boot.js' %}"></script>
-        <script type='text/javascript' src="{% static 'js/Preload.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/MainMenu.js' %}"></script>
-		<script type="text/javascript" src="{% static 'js/Game.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/phaser.js' %}" defer></script>
+        <script type="text/javascript" src="{% static 'js/Boot.js' %}" defer></script>
+        <script type='text/javascript' src="{% static 'js/Preload.js' %}" defer></script>
+        <script type="text/javascript" src="{% static 'js/MainMenu.js' %}" defer></script>
+		<script type="text/javascript" src="{% static 'js/Game.js' %}" defer></script>
 
  
 		<style>
@@ -32,6 +32,27 @@
 				z-index: 2;
 				pointer-events: none;			
 			}
+			#dialog {
+				font-family: 'Orbitron', sans-serif;
+				color:lightgreen;
+				position: fixed;
+				display: none;
+				justify-content: center;
+				width: 100%;
+				height: 20%;
+				bottom: 0;
+				z-index: 3;
+			}
+			#player-picture {
+				height: 50%;
+			}
+			#survivor-picture {
+				height: 50%;
+				display: none;
+			}
+			#dialog-content {
+				margin-left: 10px;
+			}
 			#HUD {
 				font-family: 'Orbitron', sans-serif;
 				position: fixed;
@@ -48,7 +69,13 @@
 	<body>
 		<p id="HUD"></p>  
 		<div id="overlay"></div>
+		<div id="dialog">
+			<img id="survivor-picture" src="{% static 'assets/images/survivorIcon.png'%}"/>
+			<img id="player-picture" src="{% static 'assets/images/playerIcon.png' %}"/>
+			<p id="dialog-content">Dialog Here</p>
+		</div>
+		</div>
 		<!-- include the main game file -->
-		<script src="{% static 'js/main.js' %}"></script>
+		<script src="{% static 'js/main.js' %}" defer></script>
 	</body>
 </html>
