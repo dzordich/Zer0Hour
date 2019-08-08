@@ -38,6 +38,7 @@ const SURVIVOR_SPAWN = [75, 600];
 const SURVIVOR_SPEED = 100;
 const SURVIVOR_DROP_TRIGGER_X = 763;
 var pickupsSpawned = false;
+var PICKUP_TIMER = 0;
 
 var dialogBox = document.querySelector('#dialog');
 var dialogContent = document.querySelector('#dialog-content');
@@ -369,11 +370,10 @@ Exiled.Game.prototype = {
                 this.spawnSurvivor();
                 restTime = true;
                 waveClearTime = this.game.time.now;
-                // this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
-                // this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
             }
             if(this.newSurvivor && this.newSurvivor.x > SURVIVOR_DROP_TRIGGER_X && !pickupsSpawned){
                 this.betweenRoundSurvivorDialog();
+                PICKUP_TIMER = this.game.time.now;
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
                 pickupsSpawned = true;
@@ -439,7 +439,7 @@ Exiled.Game.prototype = {
         }
         
         //pickup physics - needs item delay for scaling bug
-        if(this.game.time.now - waveClearTime > ITEM_DELAY_MS){
+        if(this.game.time.now - PICKUP_TIMER > ITEM_DELAY_MS){
             this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
             this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
         }
