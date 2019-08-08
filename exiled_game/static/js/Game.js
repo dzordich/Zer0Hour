@@ -100,6 +100,7 @@ Exiled.Game.prototype = {
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
         this.enter = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
         this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
+        this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
 
         // create sounds
         this.zombieDeathSound = this.game.add.audio('zombieDeath');
@@ -468,6 +469,9 @@ Exiled.Game.prototype = {
         this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
 
         this.player.events.onKilled.add(this.gameOver, this)
+        
+        this.pauseKey.onDown.add(this.pauseGame, this);
+
         if(is_game_over){
             if(this.enter.isDown) {
                 // clear cache
@@ -641,6 +645,13 @@ Exiled.Game.prototype = {
 
         //convert to down facing
         this.player.angle = newAngle - 90;
+    },
+    pauseGame: function(){
+        if(this.game.paused === true){
+            this.game.paused = false;
+            return;
+        }
+        this.game.paused = true;
     },
     annihilate: function(thing){
         thing.destroy();
