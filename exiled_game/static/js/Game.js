@@ -551,10 +551,16 @@ Exiled.Game.prototype = {
         newAmmo.scale.setTo(.15);
     },
     spawnSurvivor: function(){
+        // newBoss = this.boss.create(x, y, 'ZBoss');
+        // newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+        // newBoss.play('walk');
+        // newBoss.scale.set(.05);
         this.survivors.destroy(true, true);
         let newSurvivor;
         newSurvivor = this.survivors.create(this.player.x, this.player.y, 'survivor');
-        newSurvivor.scale.setTo(1);
+        newSurvivor.animations.add('walk', [0, 1, 2, 3, 4, 5], 5, true);
+        newSurvivor.play('walk');
+        newSurvivor.scale.setTo(0.4);
     },
     pickUpAmmo: function(player, ammoPickup){
         ammoPickup.destroy();
