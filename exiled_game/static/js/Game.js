@@ -130,13 +130,13 @@ Exiled.Game.prototype = {
         this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
 
         // create sounds
-        this.zombieDeathSound = this.game.add.audio('zombieDeath');
         this.collectSound = this.game.add.audio('collect');
         this.rifleShot = this.game.add.audio('laser_shot');
         this.knifeAttack = this.game.add.audio('knifeAttack');
         this.shellFalling = this.game.add.audio('shell_falling');
         this.chargeUp = this.game.add.audio('charge_up');
         this.shellFalling.allowMultiple = false;
+        this.zombieDeathSound = this.game.add.audio('zombieDeath');
         
         // emitter
         this.damageEmitter = this.game.add.emitter(0, 0, 25);
@@ -595,7 +595,7 @@ Exiled.Game.prototype = {
         // this.playerScore += 1;
         this.damageEmitter.explode(50, 3);
         if(enemy.health <= 0){
-            this.zombieDeathSound.play();
+            this.zombieDeathSound.play()
             this.damageEmitter.explode(100);
             this.playerScore += 1;
         }
@@ -607,7 +607,6 @@ Exiled.Game.prototype = {
         player.damage(30);
         this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
-            this.zombieDeathSound.play();
             this.damageEmitter.explode(100);
         }
     },
