@@ -313,7 +313,7 @@ Exiled.Game.prototype = {
         //check for end of wave and setup new rd
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             numSpawnsThisRd = 0;
-            currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
+            currentMessage = `New round beginning in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
             this.enemies.forEach(this.annihilate, this);
             if(!restTime){
                 //spawn health and ammo
@@ -325,7 +325,7 @@ Exiled.Game.prototype = {
             if (this.game.time.now - waveClearTime > ROUND_DELAY_MS){
                 //end rest time and spawn enemies
                 restTime = false;
-                currentMessage = "Fight!";
+                currentMessage = "";
                 this.numEnemies = Math.round(this.numEnemies * 1.5);
                 this.round += 1;
                 // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
