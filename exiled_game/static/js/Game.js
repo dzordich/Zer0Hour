@@ -4,7 +4,8 @@ var random = new Phaser.RandomDataGenerator()
 var invulnerable = 0;
 var waveClearTime = 0;
 var restTime = false;
-var roundTextTimer = 0;
+var spawnTimer = 0;
+var numSpawnsThisRd = 0;
 
 // find enemy spawn points
 var enemySpawn1 = [752, 17.5];
@@ -84,7 +85,14 @@ Exiled.Game.prototype = {
         this.enemies = this.game.add.group();
         this.enemies.enableBody = true;
         this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
-        this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+        // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
+        for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
+            if(this.game.time.now - spawnTimer > 3000){
+                this.spawnEnemies(1, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+            }
+        }
+        numSpawnsThisRd++;
+        this.spawnEnemies(1, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
         // we will keep track of different types of enemies' stats in this object (e.g. speed, health, etc)
         this.enemies.stats = {};
         // create boss
@@ -211,6 +219,8 @@ Exiled.Game.prototype = {
             newEnemy.health = 45;
             newEnemy.play('walk');
         }
+        this.enemies.forEach(this.killOobZombies, this);
+        spawnTimer = this.game.time.now;
     },
     spawnBoss: function(x, y){
         invulnerable  = this.game.time.now;
@@ -289,6 +299,10 @@ Exiled.Game.prototype = {
         this.rifle.bulletSpeed = BULLET_SPEED;
         this.activeGun = this.rifle;
     },
+    killOobZombies: function(enemy){
+        enemy.checkWorldBounds = true;
+        enemy.outOfBoundsKill = true;
+    },
     update: function() {
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
@@ -296,9 +310,10 @@ Exiled.Game.prototype = {
         <p>Round: ${this.round}</p>
         <p>Score: ${this.playerScore}</p>
         <p>${currentMessage}</p>`;
-        //check for end of wave and react
+        //check for end of wave and setup new rd
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
-            currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
+            numSpawnsThisRd = 0;
+            currentMessage = `New round beginning in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
             this.enemies.forEach(this.annihilate, this);
             if(!restTime){
                 //spawn health and ammo
@@ -310,15 +325,36 @@ Exiled.Game.prototype = {
             if (this.game.time.now - waveClearTime > ROUND_DELAY_MS){
                 //end rest time and spawn enemies
                 restTime = false;
-                currentMessage = "Fight!";
+                currentMessage = "";
                 this.numEnemies = Math.round(this.numEnemies * 1.5);
                 this.round += 1;
-                this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+                // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
+                for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
+                    if(this.game.time.now - spawnTimer > 3000){
+                        this.spawnEnemies(1, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
+                    }
+                }
+                numSpawnsThisRd++;    
                 // spawn boss every 3 rounds
                 if(this.round % 3 === 0){
                     this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
                 }
             }
+        }
+        // spawns more enemies w/in round when there are only 2 enemies left
+        if(this.enemies.countLiving() <= 2 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
+            let tlSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
+            let trSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
+            let blSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
+            let brSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
+
+            // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
+            for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
+                if(this.game.time.now - spawnTimer > 3000){
+                    this.spawnEnemies(1, tlSpawn, trSpawn, blSpawn, brSpawn);
+                }
+            }
+            numSpawnsThisRd++; 
         }
 
         //update HUD (old)
