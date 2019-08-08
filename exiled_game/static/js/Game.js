@@ -473,9 +473,8 @@ Exiled.Game.prototype = {
 
         if(is_game_over){
             if(this.enter.isDown) {
-                // clear cache
-                this.cache.destroy();
-                this.game.state.start('Preload');
+                
+                this.game.state.start('Boot');
             }
         }
     },

@@ -4,6 +4,8 @@ var Exiled = Exiled || {};
 Exiled.Boot = function(){};
 Exiled.Boot.prototype = {
     preload: function() {
+        // clear cache
+        this.cache.destroy();
     },
     create: function(){
         this.game.stage.backgroundColor = '#fff';
