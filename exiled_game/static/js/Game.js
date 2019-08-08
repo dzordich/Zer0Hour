@@ -100,6 +100,7 @@ Exiled.Game.prototype = {
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
         this.enter = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
         this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
+        this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
 
         // create sounds
         this.zombieDeathSound = this.game.add.audio('zombieDeath');
@@ -110,6 +111,14 @@ Exiled.Game.prototype = {
         this.chargeUp = this.game.add.audio('charge_up');
         this.shellFalling.allowMultiple = false;
         
+        // emitter
+        this.damageEmitter = this.game.add.emitter(0, 0, 25);
+        this.damageEmitter.makeParticles('blood');
+        this.damageEmitter.particleDrag.setTo(150, 150);
+        this.damageEmitter.minParticleSpeed.setTo(-180, -150);
+        this.damageEmitter.maxParticleSpeed.setTo(180, 150);
+        this.damageEmitter.gravity = 0;
+
         // player's gun
         this.rifle = this.add.weapon(10, 'bullet');
         this.rifle.fireRate = 250;
@@ -159,7 +168,7 @@ Exiled.Game.prototype = {
         // newEnemy.anchor.setTo(0.5, 0.5);
 
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn1[0]+random.integerInRange(-24, 24), spawn1[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn1[0], spawn1[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -170,7 +179,7 @@ Exiled.Game.prototype = {
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn2[0]+random.integerInRange(-24, 24), spawn2[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn2[0], spawn2[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -181,7 +190,7 @@ Exiled.Game.prototype = {
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn3[0]+random.integerInRange(-24, 24), spawn3[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn3[0], spawn3[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -192,7 +201,7 @@ Exiled.Game.prototype = {
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
-            newEnemy = this.enemies.create(spawn4[0]+random.integerInRange(-24, 24), spawn4[1]+random.integerInRange(-24, 24), 'zombie');
+            newEnemy = this.enemies.create(spawn4[0], spawn4[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             // newEnemy.animations.add('left', [0,1], 5, true);
@@ -290,6 +299,7 @@ Exiled.Game.prototype = {
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
+            this.enemies.forEach(this.annihilate, this);
             if(!restTime){
                 //spawn health and ammo
                 restTime = true;
@@ -301,9 +311,8 @@ Exiled.Game.prototype = {
                 //end rest time and spawn enemies
                 restTime = false;
                 currentMessage = "Fight!";
-                this.numEnemies = Math.round(this.numEnemies * 1.25);
+                this.numEnemies = Math.round(this.numEnemies * 1.5);
                 this.round += 1;
-                this.numEnemies = Math.round(this.numEnemies * 1.25);
                 this.spawnEnemies(this.numEnemies, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4);
                 // spawn boss every 3 rounds
                 if(this.round % 3 === 0){
@@ -465,9 +474,12 @@ Exiled.Game.prototype = {
         this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
 
         this.player.events.onKilled.add(this.gameOver, this)
+        
+        this.pauseKey.onDown.add(this.pauseGame, this);
+
         if(is_game_over){
             if(this.enter.isDown) {
-                this.game.state.start('MainMenu');
+                this.game.state.start('Boot');
             }
         }
     },
@@ -478,50 +490,38 @@ Exiled.Game.prototype = {
     },
     // handles bullet collision with enemy
     bulletHitEnemy: function(bullet, enemy){
-        var emitter = this.game.add.emitter(enemy.x, enemy.y, 25);
-        emitter.makeParticles('blood');
-        emitter.particleDrag.setTo(150, 150);
-        emitter.minParticleSpeed.setTo(-180, -150);
-        emitter.maxParticleSpeed.setTo(180, 150);
-        emitter.gravity = 0;
+        this.damageEmitter.x = enemy.centerX;
+        this.damageEmitter.y = enemy.centerY;
         bullet.kill();
         enemy.damage(15);
         // this.playerScore += 1;
-        emitter.explode(50, 3);
+        this.damageEmitter.explode(50, 3);
         if(enemy.health <= 0){
             this.zombieDeathSound.play();
-            emitter.explode(100);
+            this.damageEmitter.explode(100);
             this.playerScore += 1;
         }
     },
     enemyHitPlayer: function(player, enemy){
         invulnerable  = this.game.time.now;
-        var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
+        this.damageEmitter.x = player.centerX;
+        this.damageEmitter.y = player.centerY;
         player.damage(30);
-        emitter.makeParticles('blood');
-        emitter.particleDrag.setTo(150, 150);
-        emitter.minParticleSpeed.setTo(-180, -150);
-        emitter.maxParticleSpeed.setTo(180, 150);
-        emitter.gravity = 0;
-        emitter.explode(50, 3);
+        this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
             this.zombieDeathSound.play();
-            emitter.explode(100);
+            this.damageEmitter.explode(100);
         }
     },
     bossHitPlayer: function(player, boss){
         invulnerable = this.game.time.now;
-        var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
+        this.damageEmitter.x = player.centerX;
+        this.damageEmitter.y = player.centerY;
         player.damage(50);
-        emitter.makeParticles('blood');
-        emitter.particleDrag.setTo(150, 150);
-        emitter.minParticleSpeed.setTo(-180, -150);
-        emitter.maxParticleSpeed.setTo(180, 150);
-        emitter.gravity = 0;
-        emitter.explode(50, 3);
+        this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
             this.zombieDeathSound.play();
-            emitter.explode(100);
+            this.damageEmitter.explode(100);
         }
     },
     spawnHealth: function(x,y){
@@ -649,6 +649,16 @@ Exiled.Game.prototype = {
         //convert to down facing
         this.player.angle = newAngle - 90;
     },
+    pauseGame: function(){
+        if(this.game.paused === true){
+            this.game.paused = false;
+            return;
+        }
+        this.game.paused = true;
+    },
+    annihilate: function(thing){
+        thing.destroy();
+    },
     gameOver: function(){
         // stop all sounds. window alerts mess them up
         this.zombieDeathSound.stop();
@@ -665,7 +675,7 @@ Exiled.Game.prototype = {
         t.fixedToCamera = true;
         // get high scores from db
         let results = []
-        fetch('http://127.0.0.1:8000/api/all_scores')
+        fetch('/api/all_scores')
         .then(function (response) {
             return response.json()
         })
@@ -690,7 +700,7 @@ Exiled.Game.prototype = {
             "name": name
         }
         // post new score to db
-        fetch('http://127.0.0.1:8000/api/all_scores', {
+        fetch('/api/all_scores', {
             method: 'POST',
             body: JSON.stringify(scoreDict),
             headers: {
