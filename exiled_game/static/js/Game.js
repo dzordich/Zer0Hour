@@ -31,6 +31,8 @@ var recentlyFired = false;
 var recentlyFiredTimer = 0;
 const RECENTLY_FIRED_DELAY = 500;
 var CURRENT_WEAPON = 'gun';
+const SURVIVOR_SPAWN = [75, 600];
+const SURVIVOR_SPEED = 100;
 
 var is_game_over = false;
 
@@ -82,6 +84,7 @@ Exiled.Game.prototype = {
         this.survivors = this.game.add.group();
         this.survivors.enableBody = true;
         this.survivors.physicsBodyType = Phaser.Physics.ARCADE;
+        //this.spawnSurvivor();
 
         // create enemies
         // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
@@ -295,6 +298,7 @@ Exiled.Game.prototype = {
         this.activeGun = this.rifle;
     },
     update: function() {
+        //console.log(`${this.player.x}, ${this.player.y}`);
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
@@ -303,11 +307,11 @@ Exiled.Game.prototype = {
         <p>${currentMessage}</p>`;
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
-            this.spawnSurvivor();
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
             this.enemies.forEach(this.annihilate, this);
             if(!restTime){
                 //spawn health and ammo
+                this.spawnSurvivor();
                 restTime = true;
                 waveClearTime = this.game.time.now;
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
@@ -557,10 +561,12 @@ Exiled.Game.prototype = {
         // newBoss.scale.set(.05);
         this.survivors.destroy(true, true);
         let newSurvivor;
-        newSurvivor = this.survivors.create(this.player.x, this.player.y, 'survivor');
-        newSurvivor.animations.add('walk', [0, 1, 2, 3, 4, 5], 5, true);
+        newSurvivor = this.survivors.create(SURVIVOR_SPAWN[0], SURVIVOR_SPAWN[1], 'survivor');
+        newSurvivor.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
         newSurvivor.play('walk');
         newSurvivor.scale.setTo(0.4);
+        newSurvivor.body.velocity.x = SURVIVOR_SPEED;
+        newSurvivor.angle = 90;
     },
     pickUpAmmo: function(player, ammoPickup){
         ammoPickup.destroy();
