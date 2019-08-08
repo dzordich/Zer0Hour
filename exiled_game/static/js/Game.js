@@ -15,6 +15,8 @@ var enemySpawn2 = [37.5, 600];
 var enemySpawn3 = [777, 1134];
 var enemySpawn4 = [498, 586];
 
+const DIALOG_DELAY = 3000;
+var DIALOG_TIMESTAMP = 0;
 const BULLET_SPEED = 2500;
 const KNIFE_SPEED = 1000;
 var MAX_CHASE_SPEED = 30;
@@ -23,8 +25,8 @@ const BOSS_CHASE_SPEED = 16;
 const PLAYER_SPEED = 100;
 var ENEMY_NUMBER = 2;
 const START_BULLETS = 120;
-const HEALTH_SPAWN = [637, 592];
-const AMMO_SPAWN = [889, 592];
+const HEALTH_SPAWN = [737, 592];
+const AMMO_SPAWN = [789, 592];
 const PLAYER_MAX_HEALTH = 100;
 const PICKUP_HEALTH_AMOUNT = 40;
 const PICKUP_AMMO_AMOUNT = 80;
@@ -35,6 +37,17 @@ var recentlyFired = false;
 var recentlyFiredTimer = 0;
 const RECENTLY_FIRED_DELAY = 500;
 var CURRENT_WEAPON = 'gun';
+const SURVIVOR_SPAWN = [75, 600];
+const SURVIVOR_SPEED = 100;
+const SURVIVOR_DROP_TRIGGER_X = 763;
+var pickupsSpawned = false;
+var PICKUP_TIMER = 0;
+
+var dialogBox = document.querySelector('#dialog');
+var dialogContent = document.querySelector('#dialog-content');
+var playerImage = document.querySelector('#player-picture');
+var survivorImage = document.querySelector('#survivor-picture');
+
 
 var KILLS = 0;
 
@@ -83,6 +96,12 @@ Exiled.Game.prototype = {
         this.ammoPickups = this.game.add.group();
         this.ammoPickups.enableBody = true;
         this.ammoPickups.physicsBodyType = Phaser.Physics.ARCADE;
+
+        //create group for survivors
+        this.survivors = this.game.add.group();
+        this.survivors.enableBody = true;
+        //this.survivors.physicsBodyType = Phaser.Physics.ARCADE;
+        //this.spawnSurvivor();
 
         // create enemies
         // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
@@ -142,9 +161,32 @@ Exiled.Game.prototype = {
         this.activeGun = this.rifle;
 
         this.round = 1;
-        // HUD (old)
-        //this.showHUD(this.playerScore, null);
-        //this.showRoundText();
+        this.openingDialog();
+    },
+    openingDialog: function(){
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
+        dialogContent.innerText = "I have to clear out these zombies to let the survivors escape.";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
+    },
+    closeDialogBox: function(){
+        dialogContent.innerText = "";
+        dialogBox.style.display="none";
+    },
+    betweenRoundPlayerDialog: function(){
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
+        dialogContent.innerText = "The coast is clear! Run for the shuttle!";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
+    },
+    betweenRoundSurvivorDialog: function(){
+        playerImage.style.display = "none";
+        survivorImage.style.display = "block";
+        dialogContent.innerText = "Thank you! Take this!";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
     },
     switchWeapon: function() {
         if (CURRENT_WEAPON == 'gun'){
@@ -309,12 +351,18 @@ Exiled.Game.prototype = {
         enemy.outOfBoundsKill = true;
     },
     update: function() {
+        //console.log(`${this.player.x}, ${this.player.y}`);
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
         <p>Round: ${this.round}</p>
         <p>Score: ${this.playerScore}</p>
         <p>${currentMessage}</p>`;
+        //close dialog box after delay
+        if(this.game.time.now - DIALOG_TIMESTAMP > DIALOG_DELAY){
+            this.closeDialogBox();
+        }
+        //check for end of wave and react
         //check for end of wave and setup new rd
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
             numSpawnsThisRd = 0;
@@ -322,15 +370,24 @@ Exiled.Game.prototype = {
             this.enemies.forEach(this.annihilate, this);
             this.boss.forEach(this.annihilate, this);
             if(!restTime){
+                //call to the survivor
+                this.betweenRoundPlayerDialog();
                 //spawn health and ammo
+                this.spawnSurvivor();
                 restTime = true;
                 waveClearTime = this.game.time.now;
+            }
+            if(this.newSurvivor && this.newSurvivor.x > SURVIVOR_DROP_TRIGGER_X && !pickupsSpawned){
+                this.betweenRoundSurvivorDialog();
+                PICKUP_TIMER = this.game.time.now;
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
+                pickupsSpawned = true;
             }
             if (this.game.time.now - waveClearTime > ROUND_DELAY_MS){
                 //end rest time and spawn enemies
                 restTime = false;
+                pickupsSpawned = false;
                 currentMessage = "";
                 if(this.round % 2 === 0){
                     this.numEnemies += 1;
@@ -392,9 +449,14 @@ Exiled.Game.prototype = {
         this.game.physics.arcade.collide(this.boss, this.blockedLayer);
         this.game.physics.arcade.overlap(this.boss, this.enemies);
         this.game.physics.arcade.collide(this.blockedLayer, this.activeGun.bullets, this.bulletHitBlock, null, this);
+
+        //survivor removal
+        if (this.newSurvivor && this.newSurvivor.x >= 1483) {
+            this.removeSurvivor();
+        }
         
         //pickup physics - needs item delay for scaling bug
-        if(this.game.time.now - waveClearTime > ITEM_DELAY_MS){
+        if(this.game.time.now - PICKUP_TIMER > ITEM_DELAY_MS){
             this.game.physics.arcade.overlap(this.player, this.healthPickups, this.pickUpHealth, null, this);
             this.game.physics.arcade.overlap(this.player, this.ammoPickups, this.pickUpAmmo, null, this);
         }
@@ -545,7 +607,7 @@ Exiled.Game.prototype = {
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
-        console.log(bullet)
+        //console.log(bullet)
         bullet.kill();
     },
     // handles bullet collision with enemy
@@ -607,6 +669,22 @@ Exiled.Game.prototype = {
         let newAmmo;
         newAmmo = this.ammoPickups.create(x, y, 'energyAmmo');
         newAmmo.scale.setTo(.15);
+    },
+    spawnSurvivor: function(){
+        // newBoss = this.boss.create(x, y, 'ZBoss');
+        // newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+        // newBoss.play('walk');
+        // newBoss.scale.set(.05);
+        this.survivors.destroy(true, true);
+        this.newSurvivor = this.survivors.create(SURVIVOR_SPAWN[0], SURVIVOR_SPAWN[1], 'survivor');
+        this.newSurvivor.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
+        this.newSurvivor.play('walk');
+        this.newSurvivor.scale.setTo(0.4);
+        this.newSurvivor.body.velocity.x = SURVIVOR_SPEED;
+        this.newSurvivor.angle = 90;
+    },
+    removeSurvivor: function(){
+        this.survivors.destroy(true, true);
     },
     pickUpAmmo: function(player, ammoPickup){
         ammoPickup.destroy();
