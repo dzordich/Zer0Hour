@@ -24,6 +24,7 @@ Exiled.Preload.prototype = {
         this.load.spritesheet('enemy', 'static/assets/images/BadGuySprite.png', 32, 32);
         this.load.spritesheet('ZBoss', 'static/assets/images/ZBoss.png', 1610, 1446);
         this.load.spritesheet('zombie', 'static/assets/images/zombie.png', 663, 637);
+        this.load.image('survivor', 'static/assets/images/survivor.png', 113, 125);
         this.load.image('playerParticle', 'static/assets/images/player-particle.png');
         //this.load.audio('explosion', 'static/assets/audio/explosion.ogg');
         this.load.audio('knifeAttack', 'static/assets/audio/knifeAttack.ogg');

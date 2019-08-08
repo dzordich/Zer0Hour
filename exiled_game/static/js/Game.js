@@ -78,6 +78,11 @@ Exiled.Game.prototype = {
         this.ammoPickups.enableBody = true;
         this.ammoPickups.physicsBodyType = Phaser.Physics.ARCADE;
 
+        //create group for survivors
+        this.survivors = this.game.add.group();
+        this.survivors.enableBody = true;
+        this.survivors.physicsBodyType = Phaser.Physics.ARCADE;
+
         // create enemies
         // this is the number of enemies per spawn point. currently we have 4 so this number would be quarter the number of enemies in a round.
         this.numEnemies = ENEMY_NUMBER; 
@@ -298,6 +303,7 @@ Exiled.Game.prototype = {
         <p>${currentMessage}</p>`;
         //check for end of wave and react
         if(!this.enemies.getFirstAlive() && !this.boss.getFirstAlive()){
+            this.spawnSurvivor();
             currentMessage = `Wave Clear! New Round in ${Math.round((ROUND_DELAY_MS - (this.game.time.now - waveClearTime))/1000)}`;
             this.enemies.forEach(this.annihilate, this);
             if(!restTime){
@@ -543,6 +549,12 @@ Exiled.Game.prototype = {
         let newAmmo;
         newAmmo = this.ammoPickups.create(x, y, 'energyAmmo');
         newAmmo.scale.setTo(.15);
+    },
+    spawnSurvivor: function(){
+        this.survivors.destroy(true, true);
+        let newSurvivor;
+        newSurvivor = this.survivors.create(this.player.x, this.player.y, 'survivor');
+        newSurvivor.scale.setTo(1);
     },
     pickUpAmmo: function(player, ammoPickup){
         ammoPickup.destroy();
