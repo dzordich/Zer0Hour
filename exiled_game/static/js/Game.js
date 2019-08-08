@@ -110,6 +110,14 @@ Exiled.Game.prototype = {
         this.chargeUp = this.game.add.audio('charge_up');
         this.shellFalling.allowMultiple = false;
         
+        // emitter
+        this.damageEmitter = this.game.add.emitter(0, 0, 25);
+        this.damageEmitter.makeParticles('blood');
+        this.damageEmitter.particleDrag.setTo(150, 150);
+        this.damageEmitter.minParticleSpeed.setTo(-180, -150);
+        this.damageEmitter.maxParticleSpeed.setTo(180, 150);
+        this.damageEmitter.gravity = 0;
+
         // player's gun
         this.rifle = this.add.weapon(10, 'bullet');
         this.rifle.fireRate = 250;
@@ -462,6 +470,8 @@ Exiled.Game.prototype = {
         this.player.events.onKilled.add(this.gameOver, this)
         if(is_game_over){
             if(this.enter.isDown) {
+                // clear cache
+                this.cache.destroy();
                 this.game.state.start('MainMenu');
             }
         }
@@ -473,53 +483,39 @@ Exiled.Game.prototype = {
     },
     // handles bullet collision with enemy
     bulletHitEnemy: function(bullet, enemy){
-        var emitter = this.game.add.emitter(enemy.x, enemy.y, 25);
-        emitter.makeParticles('blood');
-        emitter.particleDrag.setTo(150, 150);
-        emitter.minParticleSpeed.setTo(-180, -150);
-        emitter.maxParticleSpeed.setTo(180, 150);
-        emitter.gravity = 0;
+        this.damageEmitter.x = enemy.centerX;
+        this.damageEmitter.y = enemy.centerY;
         bullet.kill();
         enemy.damage(15);
         // this.playerScore += 1;
-        emitter.explode(50, 3);
+        this.damageEmitter.explode(50, 3);
         if(enemy.health <= 0){
             this.zombieDeathSound.play();
-            emitter.explode(100);
+            this.damageEmitter.explode(100);
             this.playerScore += 1;
         }
     },
     enemyHitPlayer: function(player, enemy){
         invulnerable  = this.game.time.now;
-        var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
+        this.damageEmitter.x = player.centerX;
+        this.damageEmitter.y = player.centerY;
         player.damage(30);
-        emitter.makeParticles('blood');
-        emitter.particleDrag.setTo(150, 150);
-        emitter.minParticleSpeed.setTo(-180, -150);
-        emitter.maxParticleSpeed.setTo(180, 150);
-        emitter.gravity = 0;
-        emitter.explode(50, 3);
+        this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
             this.zombieDeathSound.play();
-            emitter.explode(100);
+            this.damageEmitter.explode(100);
         }
-        emitter.destroy();
     },
     bossHitPlayer: function(player, boss){
         invulnerable = this.game.time.now;
-        var emitter = this.game.add.emitter(player.centerX, player.centerY, 25);
+        this.damageEmitter.x = player.centerX;
+        this.damageEmitter.y = player.centerY;
         player.damage(50);
-        emitter.makeParticles('blood');
-        emitter.particleDrag.setTo(150, 150);
-        emitter.minParticleSpeed.setTo(-180, -150);
-        emitter.maxParticleSpeed.setTo(180, 150);
-        emitter.gravity = 0;
-        emitter.explode(50, 3);
+        this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
             this.zombieDeathSound.play();
-            emitter.explode(100);
+            this.damageEmitter.explode(100);
         }
-        emitter.destroy();
     },
     spawnHealth: function(x,y){
         this.healthPickups.destroy(true, true);
