@@ -56,6 +56,7 @@ Exiled.MainMenu.prototype = {
       bool = false;
     }
     if(this.game.input.activePointer.justPressed()) {
+      console.log('click')
       this.game.state.start('Game');
     }
   }

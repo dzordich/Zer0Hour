@@ -821,6 +821,7 @@ Exiled.Game.prototype = {
         <p>Enter your name to save your score</p>
         <input type="text" id="searchInput" placeholder="Player" maxlength="10"><button id="submitScore" type="submit">Save Score</button>
         </div>`;
+        submit.style.display = 'block';
         let submitButton = document.querySelector("#submitScore");
         submitButton.addEventListener('click', function(){
             let name = document.querySelector('input').value;
@@ -830,6 +831,7 @@ Exiled.Game.prototype = {
                 "kills": KILLS,
                 "game_round": this.round
             }
+            submit.style.display = 'none';
             // post new score to db
             fetch('/api/all_scores', {
                 method: 'POST',
