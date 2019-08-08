@@ -672,7 +672,7 @@ Exiled.Game.prototype = {
         t.fixedToCamera = true;
         // get high scores from db
         let results = []
-        fetch('http://127.0.0.1:8000/api/all_scores')
+        fetch('/api/all_scores')
         .then(function (response) {
             return response.json()
         })
@@ -697,7 +697,7 @@ Exiled.Game.prototype = {
             "name": name
         }
         // post new score to db
-        fetch('http://127.0.0.1:8000/api/all_scores', {
+        fetch('/api/all_scores', {
             method: 'POST',
             body: JSON.stringify(scoreDict),
             headers: {

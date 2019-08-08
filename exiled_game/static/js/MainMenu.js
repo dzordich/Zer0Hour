@@ -16,7 +16,7 @@ Exiled.MainMenu.prototype = {
 
     // fetch high scores from db
     results = [];
-    fetch('http://127.0.0.1:8000/api/all_scores')
+    fetch('/api/all_scores')
     .then(function (response) {
         return response.json()
     })
@@ -31,6 +31,7 @@ Exiled.MainMenu.prototype = {
         results.reverse();
         results = results.slice(0, 10);
         bool = true;
+        console.log('go')
     })
   	
 
