@@ -125,12 +125,13 @@ Exiled.Game.prototype = {
         this.boss.physicsBodyType = Phaser.Physics.ARCADE;
 
         // create controls
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.ENTER);
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.upKey = this.game.input.keyboard.addKey(Phaser.KeyCode.W);
         this.downKey = this.game.input.keyboard.addKey(Phaser.KeyCode.S);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.KeyCode.A);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
-        this.returnToMenu = this.game.input.keyboard.addKey(Phaser.KeyCode.F);
+        this.returnToMenu = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
         this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
         this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
 
@@ -357,6 +358,7 @@ Exiled.Game.prototype = {
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
         <p>Round: ${this.round}</p>
+        <p>Kills: ${KILLS}</p>
         <p>Score: ${this.playerScore}</p>
         <p>${currentMessage}</p>`;
         //close dialog box after delay
@@ -602,6 +604,7 @@ Exiled.Game.prototype = {
 
         if(is_game_over){
             if(this.returnToMenu.isDown) {
+                document.querySelector("#scoresubmit").style.display = 'none';
                 this.game.state.start('Boot');
             }
         }
@@ -810,28 +813,32 @@ Exiled.Game.prototype = {
         this.knifeAttack.stop();
         this.shellFalling.stop();
 
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.W);
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.A);
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.S);
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.D);
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.E);
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.ESC);
+        
+        const score = this.playerScore;
+        const game_round = this.round;
         const submit = document.querySelector("#scoresubmit");
+        const menuButton = document.querySelector('#backToMenu');
 
         let place;
-
-        submit.innerHTML = `
-        <div class="gameText">
-        <h1>GAME OVER</h1>
-        <p>Press F to return to menu</p>
-        <p>Enter your name to save your score</p>
-        <input type="text" id="searchInput" placeholder="Player" maxlength="10"><button id="submitScore" type="submit">Save Score</button>
-        </div>`;
         submit.style.display = 'block';
+
         let submitButton = document.querySelector("#submitScore");
         submitButton.addEventListener('click', function(){
-            let name = document.querySelector('input').value;
+            const name = document.querySelector('#searchInput').value;
+            console.log(name);
             let scoreDict = {
-                "score": this.playerScore,
-                "name": name,
+                "score": score,
+                "name": name.toString(),
                 "kills": KILLS,
-                "game_round": this.round
+                "game_round": game_round
             }
-            submit.style.display = 'none';
+            console.log(scoreDict)
             // post new score to db
             fetch('/api/all_scores', {
                 method: 'POST',
@@ -848,26 +855,9 @@ Exiled.Game.prototype = {
                 if(place <= 10){
                     alert("Congratulations. Your score is in the top 10!");
                 }
+                location.reload();
+
             })
         })
-        // get high scores from db
-        // let results = []
-        // fetch('/api/all_scores')
-        // .then(function (response) {
-        //     return response.json()
-        // })
-        // .then(function (data) {
-        //     for (let key of data) {
-        //         results.push(key)
-        //     }
-        //     // console.log(results);
-        //     results.sort(function(a, b){
-        //         return a.score-b.score;
-        //     })
-        //     results.reverse();
-        //     if(results.findIndex(x => x.score === this.playerScore) <= 10){
-        //         alert("Congratulations. Your score is in the top 10!");
-        //     }
-        // })
     }
 }

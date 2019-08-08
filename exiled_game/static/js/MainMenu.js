@@ -15,7 +15,7 @@ Exiled.MainMenu.prototype = {
     //give it speed in x
     this.background.autoScroll(-20, 0);
 
-    
+    this.startGame = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
 
     menuText.style.display = 'block';
     // fetch high scores from db
@@ -37,7 +37,7 @@ Exiled.MainMenu.prototype = {
     })
   },
   update: function() {
-    if(this.game.input.activePointer.justPressed()) {
+    if(this.startGame.isDown) {
       menuText.style.display = 'none';
       this.game.state.start('Game');
     }
