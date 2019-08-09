@@ -858,13 +858,14 @@ Exiled.Game.prototype = {
         const game_round = this.round;
         const submit = document.querySelector("#scoresubmit");
         const menuButton = document.querySelector('#backToMenu');
+        const searchInput = document.querySelector('#searchInput');
 
         let place;
         submit.style.display = 'block';
-
+        searchInput.focus();
         let submitButton = document.querySelector("#submitScore");
         submitButton.addEventListener('click', function(){
-            const name = document.querySelector('#searchInput').value;
+            const name = searchInput.value;
             console.log(name);
             let scoreDict = {
                 "score": score,
