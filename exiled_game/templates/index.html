@@ -14,10 +14,14 @@
  
 		<style>
 			@import url('https://fonts.googleapis.com/css?family=Orbitron&display=swap');
-			body {
+			@import url('https://fonts.googleapis.com/css?family=Libre+Barcode+39+Extended+Text|Monoton|Press+Start+2P|VT323&display=swap');			body {
+				
 				padding: 0px;
 				margin: 0px;
 				cursor: crosshair;
+			}
+			body{
+				background-color: #000;
 			}
 			#overlay {
 				position: fixed;
@@ -87,20 +91,63 @@
 				color: lightgreen;
 				justify-content: center;
 				margin: auto;
-				padding: 20% 25%;
+				padding: 10% 25%;
 				/* flex-wrap:wrap; */
 				display: none;
 				
 			}
 			#mainMenu h1{
-				font-size: 2rem;
+				/* font-family: 'Monoton', cursive; */
+				font-family: 'Libre Barcode 39 Extended Text', cursive;
+
+				font-size: 5rem;
+				font-weight: 100;
 			}
 			#mainMenu ol{
 				padding-bottom: 20px;
 			}
+			#mainMenu p{
+				font-family: 'Orbitron', sans-serif;
+				text-align: left;
+				justify-content: left;
+				overflow: hidden; /* Ensures the content is not revealed until the animation */
+    			border-right: .3em solid white; /* The typwriter cursor */
+    			white-space: nowrap; /* Keeps the content on a single line */
+   				margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+   				letter-spacing: .17em; /* Adjust as needed */
+    			animation: 
+      				typing 3.5s steps(31, end),
+      				blink-caret .75s steps(31, end) infinite;
+  			}
+			/* The typing effect */
+			@keyframes typing {
+				from { width: 0 }
+				to { width: 100% }
+			}
+			
+			/* The typewriter cursor effect */
+			@keyframes blink-caret {
+				from, to { border-color: transparent }
+				50% { border-color: white; }
+			}
+			#highscores{
+				font-family: 'Orbitron', sans-serif;
+				font-weight: lighter;
+				font-size: 1.2rem;
+			}
+			#highscorelabel{
+				/* font-family: 'Press Start 2P', cursive; */
+				font-family: 'Orbitron', sans-serif;
+				color: #F44336;
+				font-size: 1.2rem;
+			}
+			#highscores td{
+				padding-right: 35px;
+			}
 			#scoresubmit {
 				display: none;
 			}
+			
 	  	</style>
 	</head>
 	<body>
@@ -117,7 +164,7 @@
 			<p>press ENTER to start a new game</p>
 			<br>
 			<table>
-				<thead><tr><th colspan="4">HIGH SCORES</th></tr></thead>
+				<thead id="highscorelabel"><tr><th colspan="4">HIGH SCORES</th></tr></thead>
 				<tbody id="highscores"><tr><td>name</td><td>score</td><td>round</td><td>kills</td></tr></tbody>
 			</table>
 		</div>
