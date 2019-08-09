@@ -61,7 +61,7 @@ var TIME_EXPIRED = false;
 var KILLS = 0;
 
 var is_game_over = false;
-
+var OLD_SCHOOL = false;
 
 Exiled.Game.prototype = {
     create: function() {
@@ -147,6 +147,7 @@ Exiled.Game.prototype = {
         this.returnToMenu = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
         this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
         this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
+        this.fireKey = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
         // create sounds
         this.collectSound = this.game.add.audio('collect');
@@ -558,7 +559,9 @@ Exiled.Game.prototype = {
         }
         
         //player facing
-        this.playerTurnToFace();
+        if(!OLD_SCHOOL){
+            this.playerTurnToFace();
+        }
         
         //choose correct weapon
         this.switchWeaponKey.onDown.add(this.switchWeapon, this);
@@ -667,6 +670,7 @@ Exiled.Game.prototype = {
         }
 
         // shoot gun
+        this.fireKey.onDown.add(this.spaceFire, this);
         this.input.onDown.add(this.shootRifle, this);
         this.rifle.onFireLimit.add(this.reloadGun, this);
         
@@ -819,6 +823,7 @@ Exiled.Game.prototype = {
         moveDelay = this.game.time.now;
     },
     shootRifle: function(){
+        OLD_SCHOOL = false
         recentlyFired = true;
         recentlyFiredTimer = this.game.time.now;
         this.rifle.x = this.player.centerX;
@@ -836,6 +841,54 @@ Exiled.Game.prototype = {
             this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
             this.rifle.bulletKillDistance = 20;
             this.rifle.fireAtPointer(this.game.input.activePointer);
+        }
+    },
+    spaceFire: function(){
+        OLD_SCHOOL = true;
+        // recentlyFired = true;
+        // recentlyFiredTimer = this.game.time.now;
+        this.rifle.x = this.player.centerX;
+        this.rifle.y = this.player.centerY;
+        var targetX;
+        var targetY;
+        if(this.player.angle == 0){
+            targetX = this.rifle.x;
+            targetY = this.rifle.y+1;
+        } else if (this.player.angle == 45){
+            targetX = this.rifle.x-1;
+            targetY = this.rifle.y+1;
+        } else if (this.player.angle == 90){
+            targetX = this.rifle.x-1;
+            targetY = this.rifle.y;
+        } else if (this.player.angle == 135){
+            targetX = this.rifle.x-1;
+            targetY = this.rifle.y-1;
+        } else if (this.player.angle == -180){
+            targetX = this.rifle.x;
+            targetY = this.rifle.y-1;
+        } else if (this.player.angle == -135){
+            targetX = this.rifle.x+1;
+            targetY = this.rifle.y-1;
+        } else if (this.player.angle == -90){
+            targetX = this.rifle.x+1;
+            targetY = this.rifle.y;
+        } else if (this.player.angle == -45){
+            targetX = this.rifle.x+1;
+            targetY = this.rifle.y+1;
+        }
+        if(this.totalAmmo > 0){
+            //this.rifle.bulletSpeed = BULLET_SPEED;
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
+            this.rifle.fireAtXY(targetX, targetY);
+            this.rifleShot.play();
+            this.totalAmmo -= 1;
+        } else {
+            //melee attack goes here
+            //this.rifle.bulletSpeed = KNIFE_SPEED;
+            this.knifeAttack.play();
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 20;
+            this.rifle.fireAtXY(targetX, targetY);
         }
     },
     reloadGun: function(){
