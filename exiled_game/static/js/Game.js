@@ -11,10 +11,10 @@ var moveDelay = 0;
 var takeHitFlashTime = 0;
 
 // find enemy spawn points
-var enemySpawn1 = [752, 17.5];
-var enemySpawn2 = [37.5, 600];
-var enemySpawn3 = [777, 30];
-var enemySpawn4 = [498, 586];
+var enemySpawn1 = [786, 72];
+var enemySpawn2 = [1475, 592];
+var enemySpawn3 = [760, 1083];
+var enemySpawn4 = [82, 602];
 
 const DIALOG_DELAY = 3000;
 var DIALOG_TIMESTAMP = 0;
@@ -246,6 +246,8 @@ Exiled.Game.prototype = {
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             newEnemy.body.setSize(396, 482, 151, 83);
+            newEnemy.checkWorldBounds = true;
+            newEnemy.outOfBoundsKill = true;
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -254,6 +256,8 @@ Exiled.Game.prototype = {
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             newEnemy.body.setSize(396, 482, 151, 83);
+            newEnemy.checkWorldBounds = true;
+            newEnemy.outOfBoundsKill = true;
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -262,6 +266,8 @@ Exiled.Game.prototype = {
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             newEnemy.body.setSize(396, 482, 151, 83);
+            newEnemy.checkWorldBounds = true;
+            newEnemy.outOfBoundsKill = true;
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -270,6 +276,8 @@ Exiled.Game.prototype = {
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
             newEnemy.body.setSize(396, 482, 151, 83);
+            newEnemy.checkWorldBounds = true;
+            newEnemy.outOfBoundsKill = true;
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -285,6 +293,8 @@ Exiled.Game.prototype = {
         newBoss.play('walk');
         newBoss.scale.set(.07);
         newBoss.anchor.setTo(0.5, 0.5);
+        newBoss.checkWorldBounds = true;
+        newBoss.outOfBoundsKill = true;
         newBoss.health = BOSS_HEALTH;
         bossSpawnTimer = this.game.time.now;
     },
@@ -361,6 +371,7 @@ Exiled.Game.prototype = {
     },
     update: function() {
         console.log(this.enemies.countLiving());
+        console.log(this.player.centerX, this.player.centerY);
         this.enemies.forEachAlive(this.logPosition, this);
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
@@ -435,33 +446,33 @@ Exiled.Game.prototype = {
         }
         // spawns more enemies w/in round when there are only 3 enemies left
         if(this.enemies.countLiving() <= 3 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
-            let tlSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
+            let tlSpawn = [this.player.centerX - (this.game.camera.width/2 - 15.5), this.player.centerY - (this.game.camera.height/2 - 15.5)];
             if(tlSpawn[0]<0){
                 tlSpawn[0] += Math.abs(0 - tlSpawn[0]) + 30;
             }
             if(tlSpawn[1]<0){
                 tlSpawn[1] += Math.abs(0 - tlSpawn[1]) + 30;
             }
-            let trSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
+            let trSpawn = [this.player.centerX + (this.game.camera.width/2 - 15.5), this.player.centerY - (this.game.camera.height/2 - 15.5)];
             if(trSpawn[0]<0){
                 trSpawn[0] += Math.abs(0 - trSpawn[0]) + 30;
             }
-            if(trSpawn[1]>this.game.world._width){
-                trSpawn[1] += Math.abs(trSpawn[1] - this.game.world._width) + 30;
+            if(trSpawn[1]<0){
+                trSpawn[1] += Math.abs(0 - trSpawn[1]) + 30;
             }
-            let blSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
-            if(blSpawn[1]<0){
-                blSpawn[1] += Math.abs(0 - blSpawn[1]) + 30;
+            let blSpawn = [this.player.centerX - (this.game.camera.width/2 - 15.5), this.player.centerY + (this.game.camera.height/2 - 15.5)];
+            if(blSpawn[1]>this.game.world._height){
+                blSpawn[1] += Math.abs(this.game.world._height - blSpawn[1]) + 30;
             }
-            if(blSpawn[0]>this.game.world._height){
-                blSpawn[0] += Math.abs(blSpawn[0] - this.game.world._height) + 30;
+            if(blSpawn[0]<0){
+                blSpawn[0] += Math.abs(0 - blSpawn[0]) + 30;
             }
-            let brSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
-            if(brSpawn[0]>0){
-                brSpawn[0] -= Math.abs(0 - brSpawn[0]) + 30;
+            let brSpawn = [this.player.centerX + (this.game.camera.width/2 - 15.5), this.player.centerY + (this.game.camera.height/2 - 15.5)];
+            if(brSpawn[0]>this.game.world._width){
+                brSpawn[0] -= Math.abs(this.game.world._width - brSpawn[0]) + 30;
             }
-            if(brSpawn[1]>0){
-                brSpawn[1] -= Math.abs(0 - brSpawn[1]) + 30;
+            if(brSpawn[1]>this.game.world._height){
+                brSpawn[1] -= Math.abs(this.game.world._height - brSpawn[1]) + 30;
             }
             // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
             for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
@@ -652,7 +663,7 @@ Exiled.Game.prototype = {
         }
     },
     logPosition: function(enemy){
-        console.log(enemy.x, enemy.y);
+        console.log(enemy.x, enemy.y)
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
