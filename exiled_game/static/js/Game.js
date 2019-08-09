@@ -283,7 +283,7 @@ Exiled.Game.prototype = {
         newBoss.play('walk');
         newBoss.scale.set(.07);
         newBoss.anchor.setTo(0.5, 0.5);
-        newBoss.health = 300;
+        newBoss.health = BOSS_HEALTH;
         bossSpawnTimer = this.game.time.now;
     },
     createKnifePlayer: function(){
@@ -345,7 +345,7 @@ Exiled.Game.prototype = {
         this.game.camera.follow(this.player);
 
         this.rifle = this.add.weapon(10, 'bullet');
-        // this.rifle.fireRate = 1000;
+        this.rifle.fireRate = 100;
         this.rifle.bulletRotateToVelocity = true;
         this.magCap = 10;
         //this.totalAmmo = START_BULLETS;
@@ -427,13 +427,36 @@ Exiled.Game.prototype = {
                 }
             }
         }
-        // spawns more enemies w/in round when there are only 2 enemies left
-        if(this.enemies.countLiving() <= 2 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
+        // spawns more enemies w/in round when there are only 3 enemies left
+        if(this.enemies.countLiving() <= 3 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
             let tlSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
+            if(tlSpawn[0]<0){
+                tlSpawn[0] += Math.abs(0 - tlSpawn[0]) + 30;
+            }
+            if(tlSpawn[1]<0){
+                tlSpawn[1] += Math.abs(0 - tlSpawn[1]) + 30;
+            }
             let trSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
+            if(trSpawn[0]<0){
+                trSpawn[0] += Math.abs(0 - trSpawn[0]) + 30;
+            }
+            if(trSpawn[1]>this.game.world._width){
+                trSpawn[1] += Math.abs(trSpawn[1] - this.game.world._width) + 30;
+            }
             let blSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
+            if(blSpawn[1]<0){
+                blSpawn[1] += Math.abs(0 - blSpawn[1]) + 30;
+            }
+            if(blSpawn[0]>this.game.world._height){
+                blSpawn[0] += Math.abs(blSpawn[0] - this.game.world._height) + 30;
+            }
             let brSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
-
+            if(brSpawn[0]>0){
+                brSpawn[0] -= Math.abs(0 - brSpawn[0]) + 30;
+            }
+            if(brSpawn[1]>0){
+                brSpawn[1] -= Math.abs(0 - brSpawn[1]) + 30;
+            }
             // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
             for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
                 if(this.game.time.now - spawnTimer > 3000){
