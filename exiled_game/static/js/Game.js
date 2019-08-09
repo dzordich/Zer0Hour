@@ -5,6 +5,7 @@ var invulnerable = 0;
 var waveClearTime = 0;
 var restTime = false;
 var spawnTimer = 0;
+var bossSpawnTimer = 0;
 var numSpawnsThisRd = 0;
 var moveDelay = 0;
 var takeHitFlashTime = 0;
@@ -20,16 +21,19 @@ var DIALOG_TIMESTAMP = 0;
 const BULLET_SPEED = 2500;
 const KNIFE_SPEED = 1000;
 var MAX_CHASE_SPEED = 30;
-var ENEMY_CHASE_SPEED = 24;
-const BOSS_CHASE_SPEED = 16;
+var ENEMY_CHASE_SPEED = 30;
+const BOSS_CHASE_SPEED = 19;
 const PLAYER_SPEED = 100;
 var ENEMY_NUMBER = 2;
-const START_BULLETS = 120;
+var ENEMY_HEALTH = 45;
+var BOSS_HEALTH = 300;
+var NUM_BOSSES = 1;
+var START_BULLETS = 120;
 const HEALTH_SPAWN = [737, 592];
 const AMMO_SPAWN = [789, 592];
 const PLAYER_MAX_HEALTH = 100;
-const PICKUP_HEALTH_AMOUNT = 40;
-const PICKUP_AMMO_AMOUNT = 80;
+const PICKUP_HEALTH_AMOUNT = 60;
+var PICKUP_AMMO_AMOUNT = 80;
 var currentMessage = '';
 const ROUND_DELAY_MS = 10000;
 const ITEM_DELAY_MS = 1000;
@@ -156,8 +160,9 @@ Exiled.Game.prototype = {
 
         // player's gun
         this.rifle = this.add.weapon(10, 'bullet');
-        this.rifle.fireRate = 500;
+        this.rifle.fireRate = 100;
         this.rifle.bulletRotateToVelocity = true;
+        this.rifle.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
         this.magCap = 10;
         this.totalAmmo = START_BULLETS;
         this.rifle.bulletSpeed = BULLET_SPEED;
@@ -233,7 +238,7 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
@@ -244,7 +249,7 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
@@ -255,7 +260,7 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
@@ -266,7 +271,7 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         this.enemies.forEach(this.killOobZombies, this);
@@ -275,13 +280,13 @@ Exiled.Game.prototype = {
     spawnBoss: function(x, y){
         invulnerable  = this.game.time.now;
         let newBoss;
-        // need sprite for boss
         newBoss = this.boss.create(x, y, 'ZBoss');
         newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
         newBoss.play('walk');
         newBoss.scale.set(.07);
         newBoss.anchor.setTo(0.5, 0.5);
-        newBoss.health = 300;
+        newBoss.health = BOSS_HEALTH;
+        bossSpawnTimer = this.game.time.now;
     },
     createKnifePlayer: function(){
         playerX = this.player.x;
@@ -342,8 +347,9 @@ Exiled.Game.prototype = {
         this.game.camera.follow(this.player);
 
         this.rifle = this.add.weapon(10, 'bullet');
-        this.rifle.fireRate = 250;
+        this.rifle.fireRate = 100;
         this.rifle.bulletRotateToVelocity = true;
+        this.rifle.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
         this.magCap = 10;
         //this.totalAmmo = START_BULLETS;
         this.rifle.bulletSpeed = BULLET_SPEED;
@@ -396,9 +402,6 @@ Exiled.Game.prototype = {
                 if(this.round % 2 === 0){
                     this.numEnemies += 1;
                 }
-                // if(this.round % 4 === 0){
-                //     MAX_CHASE_SPEED
-                // }
                 this.round += 1;
                 // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
                 for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
@@ -409,23 +412,54 @@ Exiled.Game.prototype = {
                 numSpawnsThisRd++;    
                 // spawn boss every 3 rounds
                 if(this.round % 3 === 0){
-                    this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
-                    if(this.round > 6){
-                        this.spawnBoss(enemySpawn2[0], enemySpawn2[1]);
+                    for(let i = 0; i <= NUM_BOSSES; i++){
+                        if(this.game.time.now - bossSpawnTimer > 20000){
+                            this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
+                        }
                     }
+                    NUM_BOSSES++;
                 }
-                if(this.round === 4 || this.round === 7 || this.round === 10){
-                    ENEMY_CHASE_SPEED += 2;
+                if(this.round > 4 && (this.round-1) % 3 === 0){
+                    ENEMY_CHASE_SPEED += 3;
+                }
+                if(this.round % 4 === 0){
+                    ENEMY_HEALTH += 15;
+                    BOSS_HEALTH += 45;
+                    START_BULLETS += 30;
+                    PICKUP_AMMO_AMOUNT += 10;
                 }
             }
         }
-        // spawns more enemies w/in round when there are only 2 enemies left
-        if(this.enemies.countLiving() <= 2 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
+        // spawns more enemies w/in round when there are only 3 enemies left
+        if(this.enemies.countLiving() <= 3 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
             let tlSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
+            if(tlSpawn[0]<0){
+                tlSpawn[0] += Math.abs(0 - tlSpawn[0]) + 30;
+            }
+            if(tlSpawn[1]<0){
+                tlSpawn[1] += Math.abs(0 - tlSpawn[1]) + 30;
+            }
             let trSpawn = [this.player.centerX - (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
+            if(trSpawn[0]<0){
+                trSpawn[0] += Math.abs(0 - trSpawn[0]) + 30;
+            }
+            if(trSpawn[1]>this.game.world._width){
+                trSpawn[1] += Math.abs(trSpawn[1] - this.game.world._width) + 30;
+            }
             let blSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY - (this.game.camera.height/2 - 1)];
+            if(blSpawn[1]<0){
+                blSpawn[1] += Math.abs(0 - blSpawn[1]) + 30;
+            }
+            if(blSpawn[0]>this.game.world._height){
+                blSpawn[0] += Math.abs(blSpawn[0] - this.game.world._height) + 30;
+            }
             let brSpawn = [this.player.centerX + (this.game.camera.width/2 - 1), this.player.centerY + (this.game.camera.height/2 - 1)];
-
+            if(brSpawn[0]>0){
+                brSpawn[0] -= Math.abs(0 - brSpawn[0]) + 30;
+            }
+            if(brSpawn[1]>0){
+                brSpawn[1] -= Math.abs(0 - brSpawn[1]) + 30;
+            }
             // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
             for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
                 if(this.game.time.now - spawnTimer > 3000){
@@ -468,11 +502,11 @@ Exiled.Game.prototype = {
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
         this.game.physics.arcade.overlap(this.rifle.bullets, this.boss, this.bulletHitEnemy, null, this);
-        if (this.game.time.now - invulnerable > 2000){
+        if (this.game.time.now - invulnerable > 1000){
             this.game.physics.arcade.collide(this.enemies, this.player, this.enemyHitPlayer, null, this);
             this.game.physics.arcade.collide(this.boss, this.player, this.bossHitPlayer, null, this);
         } else {
-            this.game.physics.arcade.overlap(this.enemies, this.player);
+            this.game.physics.arcade.collide(this.enemies, this.player);
         }
         
         //player facing
@@ -591,7 +625,7 @@ Exiled.Game.prototype = {
         //call the enemy patrol function
         // this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
         // this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
-        if(this.game.time.now - moveDelay > 800){
+        if(this.game.time.now - moveDelay > 600){
             this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
             this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
         }
@@ -825,13 +859,14 @@ Exiled.Game.prototype = {
         const game_round = this.round;
         const submit = document.querySelector("#scoresubmit");
         const menuButton = document.querySelector('#backToMenu');
+        const searchInput = document.querySelector('#searchInput');
 
         let place;
         submit.style.display = 'block';
-
+        searchInput.focus();
         let submitButton = document.querySelector("#submitScore");
         submitButton.addEventListener('click', function(){
-            const name = document.querySelector('#searchInput').value;
+            const name = searchInput.value;
             console.log(name);
             let scoreDict = {
                 "score": score,
