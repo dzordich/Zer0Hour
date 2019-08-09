@@ -42,6 +42,7 @@ const SURVIVOR_SPEED = 100;
 const SURVIVOR_DROP_TRIGGER_X = 763;
 var pickupsSpawned = false;
 var PICKUP_TIMER = 0;
+var GAME_LENGTH_MIN = 15;
 
 var dialogBox = document.querySelector('#dialog');
 var dialogContent = document.querySelector('#dialog-content');
