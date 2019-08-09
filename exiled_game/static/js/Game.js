@@ -16,7 +16,7 @@ var enemySpawn2 = [37.5, 600];
 var enemySpawn3 = [777, 1134];
 var enemySpawn4 = [498, 586];
 
-const DIALOG_DELAY = 3000;
+const DIALOG_DELAY = 5000;
 var DIALOG_TIMESTAMP = 0;
 const BULLET_SPEED = 2500;
 const KNIFE_SPEED = 1000;
@@ -46,6 +46,9 @@ const SURVIVOR_SPEED = 100;
 const SURVIVOR_DROP_TRIGGER_X = 763;
 var pickupsSpawned = false;
 var PICKUP_TIMER = 0;
+var GAME_LENGTH_MINUTES = 10;
+var startTime;
+var timerDisplay = document.querySelector('#timer');
 var ammoInWorld = false;
 var healthInWorld = false;
 
@@ -53,7 +56,7 @@ var dialogBox = document.querySelector('#dialog');
 var dialogContent = document.querySelector('#dialog-content');
 var playerImage = document.querySelector('#player-picture');
 var survivorImage = document.querySelector('#survivor-picture');
-
+var TIME_EXPIRED = false;
 
 var KILLS = 0;
 
@@ -178,7 +181,35 @@ Exiled.Game.prototype = {
         // this.pickupIndicator.fixedToCamera = true;
         this.round = 1;
         this.openingDialog();
-        // this.lineToPickup = new Phaser.Line();
+        startTime = this.game.time.now;
+        console.log(startTime);
+        timerDisplay.style.display = "block";
+    },
+    updateTimer: function(){
+        var game_length_ms = GAME_LENGTH_MINUTES * 60000;
+        var ms_remaining = -(this.game.time.now-startTime-game_length_ms);
+        var minutes_remaining = Math.floor(ms_remaining / 60000);
+        var seconds_remaining = Math.floor((ms_remaining - (minutes_remaining*60000)) / 1000);
+        if (seconds_remaining < 10){
+            seconds_remaining = "0" + seconds_remaining.toString();
+        }
+        var timeString = `${minutes_remaining}:${seconds_remaining}`;
+        if (ms_remaining <= 0){
+            timerDisplay.innerText = `Time Until Shuttle Leaves 0:00`;
+            this.escapeDialog();
+            this.pauseGame();
+            this.gameOver();
+        } else {
+            timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}
+            Clear out Zombies so Survivors can Escape`;
+        }
+    },
+    escapeDialog(){
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
+        dialogContent.innerText = "We have to go. I'm sorry...";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
     },
     openingDialog: function(){
         playerImage.style.display = "block";
@@ -370,6 +401,12 @@ Exiled.Game.prototype = {
     },
     update: function() {
         //console.log(`${this.player.x}, ${this.player.y}`);
+        if(!TIME_EXPIRED){
+            this.updateTimer();
+        } else {
+            //escape function call
+            this.gameOver();
+        }
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
