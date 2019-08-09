@@ -21,19 +21,19 @@ var DIALOG_TIMESTAMP = 0;
 const BULLET_SPEED = 2500;
 const KNIFE_SPEED = 1000;
 var MAX_CHASE_SPEED = 30;
-var ENEMY_CHASE_SPEED = 32;
+var ENEMY_CHASE_SPEED = 30;
 const BOSS_CHASE_SPEED = 16;
 const PLAYER_SPEED = 100;
 var ENEMY_NUMBER = 2;
 var ENEMY_HEALTH = 45;
 var BOSS_HEALTH = 300;
 var NUM_BOSSES = 1;
-const START_BULLETS = 120;
+var START_BULLETS = 120;
 const HEALTH_SPAWN = [737, 592];
 const AMMO_SPAWN = [789, 592];
 const PLAYER_MAX_HEALTH = 100;
 const PICKUP_HEALTH_AMOUNT = 60;
-const PICKUP_AMMO_AMOUNT = 80;
+var PICKUP_AMMO_AMOUNT = 80;
 var currentMessage = '';
 const ROUND_DELAY_MS = 10000;
 const ITEM_DELAY_MS = 1000;
@@ -236,7 +236,7 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
@@ -247,7 +247,7 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
@@ -258,7 +258,7 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         for(let i=0; i<numEnemies; i++){
@@ -269,13 +269,13 @@ Exiled.Game.prototype = {
             // newEnemy.animations.add('right', [4,5], 5, true);
             // newEnemy.animations.add('up', [6,7], 5, true);
             // newEnemy.animations.add('down', [2,3], 5, true);
-            newEnemy.health = 45;
+            newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
         this.enemies.forEach(this.killOobZombies, this);
         spawnTimer = this.game.time.now;
     },
-    spawnBoss: function(num, x, y){
+    spawnBoss: function(x, y){
         invulnerable  = this.game.time.now;
         let newBoss;
         newBoss = this.boss.create(x, y, 'ZBoss');
@@ -409,15 +409,15 @@ Exiled.Game.prototype = {
                 numSpawnsThisRd++;    
                 // spawn boss every 3 rounds
                 if(this.round % 3 === 0){
-                    for(let i = 0; i <= num; i++){
+                    for(let i = 0; i <= NUM_BOSSES; i++){
                         if(this.game.time.now - bossSpawnTimer > 20000){
-                            this.spawnBoss(NUM_BOSSES, enemySpawn1[0], enemySpawn1[1]);
+                            this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
                         }
                     }
                     NUM_BOSSES++;
                 }
                 if(this.round > 4 && (this.round-1) % 3 === 0){
-                    ENEMY_CHASE_SPEED += 2;
+                    ENEMY_CHASE_SPEED += 3;
                 }
                 if(this.round % 4 === 0){
                     ENEMY_HEALTH += 15;
@@ -476,11 +476,11 @@ Exiled.Game.prototype = {
         //combat physics
         this.game.physics.arcade.overlap(this.rifle.bullets, this.enemies, this.bulletHitEnemy, null, this);
         this.game.physics.arcade.overlap(this.rifle.bullets, this.boss, this.bulletHitEnemy, null, this);
-        if (this.game.time.now - invulnerable > 2000){
+        if (this.game.time.now - invulnerable > 1000){
             this.game.physics.arcade.collide(this.enemies, this.player, this.enemyHitPlayer, null, this);
             this.game.physics.arcade.collide(this.boss, this.player, this.bossHitPlayer, null, this);
         } else {
-            this.game.physics.arcade.overlap(this.enemies, this.player);
+            this.game.physics.arcade.collide(this.enemies, this.player);
         }
         
         //player facing
@@ -599,7 +599,7 @@ Exiled.Game.prototype = {
         //call the enemy patrol function
         // this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
         // this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
-        if(this.game.time.now - moveDelay > 800){
+        if(this.game.time.now - moveDelay > 600){
             this.enemies.forEachAlive(this.chase, this, ENEMY_CHASE_SPEED);
             this.boss.forEachAlive(this.chase, this, BOSS_CHASE_SPEED);
         }
