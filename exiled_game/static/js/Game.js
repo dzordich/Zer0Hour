@@ -149,6 +149,7 @@ Exiled.Game.prototype = {
         this.chargeUp = this.game.add.audio('charge_up');
         this.shellFalling.allowMultiple = false;
         this.zombieDeathSound = this.game.add.audio('zombieDeath');
+        this.playerDeathSound = this.game.add.audio('playerDeath');
         this.zombieDeathSound.volume = 0.4;
         
         // emitter
@@ -676,6 +677,7 @@ Exiled.Game.prototype = {
         player.damage(30);
         this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
+            this.playerDeathSound.play();
             this.damageEmitter.explode(100);
         }
     },
@@ -687,7 +689,7 @@ Exiled.Game.prototype = {
         player.damage(50);
         this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
-            this.zombieDeathSound.play();
+            this.playerDeathSound.play();
             this.damageEmitter.explode(100);
         }
     },
@@ -850,6 +852,8 @@ Exiled.Game.prototype = {
         this.rifleShot.stop();
         this.knifeAttack.stop();
         this.shellFalling.stop();
+        this.playerDeathSound.play();
+        
 
         this.game.input.keyboard.removeKey(Phaser.KeyCode.W);
         this.game.input.keyboard.removeKey(Phaser.KeyCode.A);
