@@ -149,6 +149,7 @@ Exiled.Game.prototype = {
         this.zombieDeathSound = this.game.add.audio('zombieDeath');
         this.playerDeathSound = this.game.add.audio('playerDeath');
         this.zombieDeathSound.volume = 0.4;
+        this.scaryBossSound = this.game.add.audio('scaryBoss');
         
         // emitter
         this.damageEmitter = this.game.add.emitter(0, 0, 25);
@@ -287,6 +288,7 @@ Exiled.Game.prototype = {
         newBoss.anchor.setTo(0.5, 0.5);
         newBoss.health = BOSS_HEALTH;
         bossSpawnTimer = this.game.time.now;
+        this.scaryBossSound = this.game.add.audio('scaryBoss');
     },
     createKnifePlayer: function(){
         playerX = this.player.x;
@@ -697,6 +699,7 @@ Exiled.Game.prototype = {
     },
     pickUpHealth: function(player, healthPickup){
         healthPickup.destroy();
+        this.chargeUp.play();
         if (this.player.health <= (PLAYER_MAX_HEALTH-PICKUP_HEALTH_AMOUNT)){
             this.player.health += PICKUP_HEALTH_AMOUNT;
         } else {
