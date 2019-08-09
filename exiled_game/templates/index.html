@@ -147,12 +147,24 @@
 			#scoresubmit {
 				display: none;
 			}
+			#timer {
+				display: none;
+				position: fixed;
+				font-family: 'Orbitron', sans-serif;
+				color: lightgreen;
+				z-index: 4;
+				width: 400px;
+				height: 40px;
+				top: 3%;
+				left: 30%;
+				margin-top: 0px;
+			}
 			
 	  	</style>
 	</head>
 	<body>
 		<p id="HUD"></p>
-		<p id="timer">Timer Goes Here</p>
+		<p id="timer">Time Until Shuttle Leaves 15:15:999</p>
 		<div id="scoresubmit"><div class="gameText">
 			<h1>GAME OVER</h1>
 			<br><button id="backToMenu">BACK TO MENU</button><br>
