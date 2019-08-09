@@ -830,7 +830,8 @@ Exiled.Game.prototype = {
         this.rifle.y = this.player.centerY;
         if(this.totalAmmo > 0 && CURRENT_WEAPON == 'gun'){
             //this.rifle.bulletSpeed = BULLET_SPEED;
-            this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 500;
             this.rifle.fireAtPointer(this.game.input.activePointer);
             this.rifleShot.play();
             this.totalAmmo -= 1;
@@ -878,13 +879,23 @@ Exiled.Game.prototype = {
         }
         if(this.totalAmmo > 0){
             //this.rifle.bulletSpeed = BULLET_SPEED;
-            this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
+            if(CURRENT_WEAPON == "knife"){
+                CURRENT_WEAPON = "gun";
+                this.createGunPlayer();
+            }
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 500;
             this.rifle.fireAtXY(targetX, targetY);
             this.rifleShot.play();
             this.totalAmmo -= 1;
         } else {
             //melee attack goes here
             //this.rifle.bulletSpeed = KNIFE_SPEED;
+            if(CURRENT_WEAPON == "gun"){
+                CURRENT_WEAPON = "knife";
+                this.createKnifePlayer();
+            }
+            CURRENT_WEAPON = "knife";
             this.knifeAttack.play();
             this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
             this.rifle.bulletKillDistance = 20;
