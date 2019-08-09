@@ -46,6 +46,8 @@ const SURVIVOR_SPEED = 100;
 const SURVIVOR_DROP_TRIGGER_X = 763;
 var pickupsSpawned = false;
 var PICKUP_TIMER = 0;
+var ammoInWorld = true;
+var healthInWorld = false;
 
 var dialogBox = document.querySelector('#dialog');
 var dialogContent = document.querySelector('#dialog-content');
@@ -167,8 +169,12 @@ Exiled.Game.prototype = {
         this.rifle.bulletSpeed = BULLET_SPEED;
         this.activeGun = this.rifle;
 
+        this.pickupIndicator = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'pickupIndicator');
+        this.pickupIndicator.anchor.setTo(0.5, 0.5);
+        // this.pickupIndicator.fixedToCamera = true;
         this.round = 1;
         this.openingDialog();
+        this.lineToPickup = new Phaser.Line();
     },
     openingDialog: function(){
         playerImage.style.display = "block";
@@ -392,6 +398,8 @@ Exiled.Game.prototype = {
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
                 pickupsSpawned = true;
+                ammoInWorld = true;
+                healthInWorld = true;
             }
             if (this.game.time.now - waveClearTime > ROUND_DELAY_MS){
                 //end rest time and spawn enemies
@@ -632,6 +640,12 @@ Exiled.Game.prototype = {
         if(this.game.time.now - takeHitFlashTime > 100){
             this.player.tint = 0xFFFFFF;
         }
+
+        if(ammoInWorld || healthInWorld){
+            this.pickupIndicator.x = (50/(this.game.camera.centerX-this.game.world.centerX)) + this.game.camera.centerX;
+            this.pickupIndicator.y = (50/(this.game.camera.centerY-this.game.world.centerY)) + this.game.camera.centerY;
+        }
+
         this.player.events.onKilled.add(this.gameOver, this)
         
         this.pauseKey.onDown.add(this.pauseGame, this);
@@ -700,6 +714,7 @@ Exiled.Game.prototype = {
         } else {
             this.player.health = PLAYER_MAX_HEALTH;
         }
+        healthInWorld = false;
     },
     spawnAmmo: function(x,y){
         this.ammoPickups.destroy(true, true);
@@ -731,6 +746,7 @@ Exiled.Game.prototype = {
         } else {
             this.totalAmmo = START_BULLETS;
         }
+        ammoInWorld = false;
     },
     // enemy movement
     chase: function(enemy, speed){
