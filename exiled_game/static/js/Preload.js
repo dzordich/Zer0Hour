@@ -38,6 +38,7 @@ Exiled.Preload.prototype = {
         //this.load.image('bullet', 'static/assets/images/bullet.png');
         this.load.image('bullet', 'static/assets/images/energy_bullet.png');
         this.load.image('knife_slash', 'static/assets/images/knife_slash.png');
+        this.load.image('pickupIndicator', 'static/assets/images/pickupIndicator.png');
     },
     create: function() {
         this.state.start('MainMenu');
