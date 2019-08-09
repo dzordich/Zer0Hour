@@ -13,15 +13,13 @@ var takeHitFlashTime = 0;
 // find enemy spawn points
 var enemySpawn1 = [752, 17.5];
 var enemySpawn2 = [37.5, 600];
-var enemySpawn3 = [777, 1134];
+var enemySpawn3 = [777, 30];
 var enemySpawn4 = [498, 586];
 
 const DIALOG_DELAY = 3000;
 var DIALOG_TIMESTAMP = 0;
 const BULLET_SPEED = 2500;
-const KNIFE_SPEED = 1000;
-var MAX_CHASE_SPEED = 30;
-var ENEMY_CHASE_SPEED = 30;
+var ENEMY_CHASE_SPEED = 31;
 const BOSS_CHASE_SPEED = 19;
 const PLAYER_SPEED = 100;
 var ENEMY_NUMBER = 2;
@@ -98,6 +96,10 @@ Exiled.Game.prototype = {
         this.player.health = PLAYER_MAX_HEALTH;
         this.playerScore = 0;
         this.game.camera.follow(this.player);
+        // player hitbox
+        console.log(this.player.width, this.player.height)
+        // this.player.body.setSize(206, 281, 46, 22);
+        this.player.body.setSize(190, 219, 29, 60);
 
         //create groups for pickups
         this.healthPickups = this.game.add.group();
@@ -243,10 +245,7 @@ Exiled.Game.prototype = {
             newEnemy = this.enemies.create(spawn1[0], spawn1[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
-            // newEnemy.animations.add('left', [0,1], 5, true);
-            // newEnemy.animations.add('right', [4,5], 5, true);
-            // newEnemy.animations.add('up', [6,7], 5, true);
-            // newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.body.setSize(396, 482, 151, 83);
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -254,10 +253,7 @@ Exiled.Game.prototype = {
             newEnemy = this.enemies.create(spawn2[0], spawn2[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
-            // newEnemy.animations.add('left', [0,1], 5, true);
-            // newEnemy.animations.add('right', [4,5], 5, true);
-            // newEnemy.animations.add('up', [6,7], 5, true);
-            // newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.body.setSize(396, 482, 151, 83);
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -265,10 +261,7 @@ Exiled.Game.prototype = {
             newEnemy = this.enemies.create(spawn3[0], spawn3[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
-            // newEnemy.animations.add('left', [0,1], 5, true);
-            // newEnemy.animations.add('right', [4,5], 5, true);
-            // newEnemy.animations.add('up', [6,7], 5, true);
-            // newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.body.setSize(396, 482, 151, 83);
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -276,10 +269,7 @@ Exiled.Game.prototype = {
             newEnemy = this.enemies.create(spawn4[0], spawn4[1], 'zombie');
             newEnemy.scale.setTo(0.07);
             newEnemy.animations.add('walk', [0,1,2,3,4,5,6,7,8], 5, true);
-            // newEnemy.animations.add('left', [0,1], 5, true);
-            // newEnemy.animations.add('right', [4,5], 5, true);
-            // newEnemy.animations.add('up', [6,7], 5, true);
-            // newEnemy.animations.add('down', [2,3], 5, true);
+            newEnemy.body.setSize(396, 482, 151, 83);
             newEnemy.health = ENEMY_HEALTH;
             newEnemy.play('walk');
         }
@@ -291,6 +281,7 @@ Exiled.Game.prototype = {
         let newBoss;
         newBoss = this.boss.create(x, y, 'ZBoss');
         newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+        newBoss.body.setSize(1107, 943, 242, 200);
         newBoss.play('walk');
         newBoss.scale.set(.07);
         newBoss.anchor.setTo(0.5, 0.5);
@@ -369,7 +360,8 @@ Exiled.Game.prototype = {
         enemy.outOfBoundsKill = true;
     },
     update: function() {
-        //console.log(`${this.player.x}, ${this.player.y}`);
+        console.log(this.enemies.countLiving());
+        this.enemies.forEachAlive(this.logPosition, this);
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
@@ -479,13 +471,6 @@ Exiled.Game.prototype = {
             }
             numSpawnsThisRd++; 
         }
-
-        //update HUD (old)
-        // this.scoreLabel.text = `Kills: ${this.playerScore.toString()}`;
-        // this.healthHUD.text = `Health: ${this.player.health.toString()}`;
-        // this.bulletsHUD.text = `Energy: ${this.totalAmmo}`;
-        // this.roundLabel.text = `Round: ${this.round}`;
-        // this.playerHUDMessage.text = currentMessage;
 
         //stop the player if they're not moving
         this.player.body.velocity.x = 0;
@@ -666,6 +651,9 @@ Exiled.Game.prototype = {
             }
         }
     },
+    logPosition: function(enemy){
+        console.log(enemy.x, enemy.y);
+    },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
         //console.log(bullet)
@@ -764,6 +752,9 @@ Exiled.Game.prototype = {
         enemy.anchor.setTo(0.5, 0.5); 
         enemy.play('down');
 
+        if(!enemy.inCamera){
+            speed = speed * 2;
+        }
         if (Math.round(enemy.y) == Math.round(this.player.y)) {
             enemy.body.velocity.y = 0;
         } else if (Math.round(enemy.y) > Math.round(this.player.y)){
