@@ -15,9 +15,13 @@
 		<style>
 			@import url('https://fonts.googleapis.com/css?family=Orbitron&display=swap');
 			@import url('https://fonts.googleapis.com/css?family=Libre+Barcode+39+Extended+Text|Monoton|Press+Start+2P|VT323&display=swap');			body {
+				
 				padding: 0px;
 				margin: 0px;
 				cursor: crosshair;
+			}
+			body{
+				background-color: #000;
 			}
 			#overlay {
 				position: fixed;
@@ -103,7 +107,7 @@
 				padding-bottom: 20px;
 			}
 			#mainMenu p{
-				font-family: 'Press Start 2P', cursive;
+				font-family: 'Orbitron', sans-serif;
 				text-align: left;
 				justify-content: left;
 				overflow: hidden; /* Ensures the content is not revealed until the animation */
@@ -113,7 +117,7 @@
    				letter-spacing: .17em; /* Adjust as needed */
     			animation: 
       				typing 3.5s steps(31, end),
-      				blink-caret .75s steps(40, end) infinite;
+      				blink-caret .75s steps(31, end) infinite;
   			}
 			/* The typing effect */
 			@keyframes typing {
@@ -127,14 +131,18 @@
 				50% { border-color: white; }
 			}
 			#highscores{
-				font-family: 'VT323', monospace;
+				font-family: 'Orbitron', sans-serif;
 				font-weight: lighter;
 				font-size: 1.2rem;
 			}
 			#highscorelabel{
-				font-family: 'Press Start 2P', cursive;
+				/* font-family: 'Press Start 2P', cursive; */
+				font-family: 'Orbitron', sans-serif;
 				color: #F44336;
 				font-size: 1.2rem;
+			}
+			#highscores td{
+				padding-right: 35px;
 			}
 			#scoresubmit {
 				display: none;
