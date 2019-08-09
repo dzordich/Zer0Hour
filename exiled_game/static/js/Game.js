@@ -46,7 +46,7 @@ const SURVIVOR_SPEED = 100;
 const SURVIVOR_DROP_TRIGGER_X = 763;
 var pickupsSpawned = false;
 var PICKUP_TIMER = 0;
-var ammoInWorld = true;
+var ammoInWorld = false;
 var healthInWorld = false;
 
 var dialogBox = document.querySelector('#dialog');
@@ -73,7 +73,11 @@ Exiled.Game.prototype = {
         this.map.setCollisionBetween(1, 1020, true, 'blockedLayer');
         this.groundLayer.resizeWorld();
 
-        this.timer = new Phaser.Timer(this.game, false);
+        this.pickupIndicator = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'pickupIndicator');
+        this.pickupIndicator.anchor.setTo(0.5, 0.5);
+        this.pickupIndicator.alpha = .4;
+        this.pickupIndicator.scale.setTo(1.2)
+        this.pickupIndicator.visible = false;
         
         // create player
         this.player = this.game.add.sprite(770, 599, 'zPlayer');
@@ -170,12 +174,11 @@ Exiled.Game.prototype = {
         this.rifle.bulletSpeed = BULLET_SPEED;
         this.activeGun = this.rifle;
 
-        this.pickupIndicator = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'pickupIndicator');
-        this.pickupIndicator.anchor.setTo(0.5, 0.5);
+        
         // this.pickupIndicator.fixedToCamera = true;
         this.round = 1;
         this.openingDialog();
-        this.lineToPickup = new Phaser.Line();
+        // this.lineToPickup = new Phaser.Line();
     },
     openingDialog: function(){
         playerImage.style.display = "block";
@@ -643,8 +646,13 @@ Exiled.Game.prototype = {
         }
 
         if(ammoInWorld || healthInWorld){
-            this.pickupIndicator.x = (50/(this.game.camera.centerX-this.game.world.centerX)) + this.game.camera.centerX;
-            this.pickupIndicator.y = (50/(this.game.camera.centerY-this.game.world.centerY)) + this.game.camera.centerY;
+            this.pickupIndicator.visible = true;
+            this.pickupIndicator.x = this.player.centerX;
+            this.pickupIndicator.y = this.player.centerY;
+            var lineToPickup = new Phaser.Line(this.pickupIndicator.x, this.pickupIndicator.y, this.game.world.centerX, this.game.world.centerY);
+            this.pickupIndicator.rotation = lineToPickup.angle;
+        } else{
+            this.pickupIndicator.visible = false;
         }
 
         this.player.events.onKilled.add(this.gameOver, this)
