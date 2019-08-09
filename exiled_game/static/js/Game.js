@@ -188,6 +188,8 @@ Exiled.Game.prototype = {
         startTime = this.game.time.now;
         console.log(startTime);
         timerDisplay.style.display = "block";
+
+        this.game.camera.shake(.005, 3000);
     },
     updateTimer: function(){
         var game_length_ms = GAME_LENGTH_MINUTES * 60000;
@@ -319,6 +321,7 @@ Exiled.Game.prototype = {
     },
     spawnBoss: function(x, y){
         invulnerable  = this.game.time.now;
+        this.game.camera.shake(.007, 1050);
         let newBoss;
         newBoss = this.boss.create(x, y, 'ZBoss');
         newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
@@ -738,6 +741,7 @@ Exiled.Game.prototype = {
     },
     bossHitPlayer: function(player, boss){
         invulnerable = this.game.time.now;
+        this.game.camera.shake(.01, 300);
         player.tint = 0xff0000;
         this.damageEmitter.x = player.centerX;
         this.damageEmitter.y = player.centerY;
@@ -975,6 +979,7 @@ Exiled.Game.prototype = {
         this.shellFalling.stop();
         this.playerDeathSound.play();
         
+        this.game.camera.fade(0x00000, 5000, false, .85)
 
         this.game.input.keyboard.removeKey(Phaser.KeyCode.W);
         this.game.input.keyboard.removeKey(Phaser.KeyCode.A);
