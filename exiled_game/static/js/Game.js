@@ -329,7 +329,7 @@ Exiled.Game.prototype = {
         newBoss.anchor.setTo(0.5, 0.5);
         newBoss.health = BOSS_HEALTH;
         bossSpawnTimer = this.game.time.now;
-        this.scaryBossSound = this.game.add.audio('scaryBoss');
+        this.scaryBossSound.play();
     },
     createKnifePlayer: function(){
         playerX = this.player.x;
