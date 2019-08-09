@@ -16,7 +16,7 @@ var enemySpawn2 = [1475, 592];
 var enemySpawn3 = [760, 1083];
 var enemySpawn4 = [82, 602];
 
-const DIALOG_DELAY = 3000;
+const DIALOG_DELAY = 5000;
 var DIALOG_TIMESTAMP = 0;
 const BULLET_SPEED = 2500;
 var ENEMY_CHASE_SPEED = 31;
@@ -44,6 +44,9 @@ const SURVIVOR_SPEED = 100;
 const SURVIVOR_DROP_TRIGGER_X = 763;
 var pickupsSpawned = false;
 var PICKUP_TIMER = 0;
+var GAME_LENGTH_MINUTES = 10;
+var startTime;
+var timerDisplay = document.querySelector('#timer');
 var ammoInWorld = false;
 var healthInWorld = false;
 
@@ -51,12 +54,12 @@ var dialogBox = document.querySelector('#dialog');
 var dialogContent = document.querySelector('#dialog-content');
 var playerImage = document.querySelector('#player-picture');
 var survivorImage = document.querySelector('#survivor-picture');
-
+var TIME_EXPIRED = false;
 
 var KILLS = 0;
 
 var is_game_over = false;
-
+var OLD_SCHOOL = false;
 
 Exiled.Game.prototype = {
     create: function() {
@@ -146,6 +149,7 @@ Exiled.Game.prototype = {
         this.returnToMenu = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
         this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
         this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
+        this.fireKey = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
         // create sounds
         this.collectSound = this.game.add.audio('collect');
@@ -157,6 +161,7 @@ Exiled.Game.prototype = {
         this.zombieDeathSound = this.game.add.audio('zombieDeath');
         this.playerDeathSound = this.game.add.audio('playerDeath');
         this.zombieDeathSound.volume = 0.4;
+        this.scaryBossSound = this.game.add.audio('scaryBoss');
         
         // emitter
         this.damageEmitter = this.game.add.emitter(0, 0, 25);
@@ -180,7 +185,35 @@ Exiled.Game.prototype = {
         // this.pickupIndicator.fixedToCamera = true;
         this.round = 1;
         this.openingDialog();
-        // this.lineToPickup = new Phaser.Line();
+        startTime = this.game.time.now;
+        console.log(startTime);
+        timerDisplay.style.display = "block";
+    },
+    updateTimer: function(){
+        var game_length_ms = GAME_LENGTH_MINUTES * 60000;
+        var ms_remaining = -(this.game.time.now-startTime-game_length_ms);
+        var minutes_remaining = Math.floor(ms_remaining / 60000);
+        var seconds_remaining = Math.floor((ms_remaining - (minutes_remaining*60000)) / 1000);
+        if (seconds_remaining < 10){
+            seconds_remaining = "0" + seconds_remaining.toString();
+        }
+        var timeString = `${minutes_remaining}:${seconds_remaining}`;
+        if (ms_remaining <= 0){
+            timerDisplay.innerText = `Time Until Shuttle Leaves 0:00`;
+            this.escapeDialog();
+            this.pauseGame();
+            this.gameOver();
+        } else {
+            timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}
+            Clear out Zombies so Survivors can Escape`;
+        }
+    },
+    escapeDialog(){
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
+        dialogContent.innerText = "We have to go. I'm sorry...";
+        dialogBox.style.display="flex";
+        DIALOG_TIMESTAMP = this.game.time.now;
     },
     openingDialog: function(){
         playerImage.style.display = "block";
@@ -297,6 +330,7 @@ Exiled.Game.prototype = {
         newBoss.outOfBoundsKill = true;
         newBoss.health = BOSS_HEALTH;
         bossSpawnTimer = this.game.time.now;
+        this.scaryBossSound.play();
     },
     createKnifePlayer: function(){
         playerX = this.player.x;
@@ -370,9 +404,13 @@ Exiled.Game.prototype = {
         enemy.outOfBoundsKill = true;
     },
     update: function() {
-        console.log(this.enemies.countLiving());
-        console.log(this.player.centerX, this.player.centerY);
-        this.enemies.forEachAlive(this.logPosition, this);
+        //console.log(`${this.player.x}, ${this.player.y}`);
+        if(!TIME_EXPIRED){
+            this.updateTimer();
+        } else {
+            //escape function call
+            this.gameOver();
+        }
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
         <p>Health: ${this.player.health}</p>
@@ -517,7 +555,9 @@ Exiled.Game.prototype = {
         }
         
         //player facing
-        this.playerTurnToFace();
+        if(!OLD_SCHOOL){
+            this.playerTurnToFace();
+        }
         
         //choose correct weapon
         this.switchWeaponKey.onDown.add(this.switchWeapon, this);
@@ -626,6 +666,7 @@ Exiled.Game.prototype = {
         }
 
         // shoot gun
+        this.fireKey.onDown.add(this.spaceFire, this);
         this.input.onDown.add(this.shootRifle, this);
         this.rifle.onFireLimit.add(this.reloadGun, this);
         
@@ -661,9 +702,6 @@ Exiled.Game.prototype = {
                 this.game.state.start('Boot');
             }
         }
-    },
-    logPosition: function(enemy){
-        console.log(enemy.x, enemy.y)
     },
     // bullets die when they hit blocks
     bulletHitBlock: function(bullet, block){
@@ -718,6 +756,7 @@ Exiled.Game.prototype = {
     },
     pickUpHealth: function(player, healthPickup){
         healthPickup.destroy();
+        this.chargeUp.play();
         if (this.player.health <= (PLAYER_MAX_HEALTH-PICKUP_HEALTH_AMOUNT)){
             this.player.health += PICKUP_HEALTH_AMOUNT;
         } else {
@@ -784,13 +823,15 @@ Exiled.Game.prototype = {
         moveDelay = this.game.time.now;
     },
     shootRifle: function(){
+        OLD_SCHOOL = false
         recentlyFired = true;
         recentlyFiredTimer = this.game.time.now;
         this.rifle.x = this.player.centerX;
         this.rifle.y = this.player.centerY;
         if(this.totalAmmo > 0 && CURRENT_WEAPON == 'gun'){
             //this.rifle.bulletSpeed = BULLET_SPEED;
-            this.rifle.bulletKillType = Phaser.Weapon.KILL_NEVER;
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 500;
             this.rifle.fireAtPointer(this.game.input.activePointer);
             this.rifleShot.play();
             this.totalAmmo -= 1;
@@ -801,6 +842,64 @@ Exiled.Game.prototype = {
             this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
             this.rifle.bulletKillDistance = 20;
             this.rifle.fireAtPointer(this.game.input.activePointer);
+        }
+    },
+    spaceFire: function(){
+        OLD_SCHOOL = true;
+        // recentlyFired = true;
+        // recentlyFiredTimer = this.game.time.now;
+        this.rifle.x = this.player.centerX;
+        this.rifle.y = this.player.centerY;
+        var targetX;
+        var targetY;
+        if(this.player.angle == 0){
+            targetX = this.rifle.x;
+            targetY = this.rifle.y+1;
+        } else if (this.player.angle == 45){
+            targetX = this.rifle.x-1;
+            targetY = this.rifle.y+1;
+        } else if (this.player.angle == 90){
+            targetX = this.rifle.x-1;
+            targetY = this.rifle.y;
+        } else if (this.player.angle == 135){
+            targetX = this.rifle.x-1;
+            targetY = this.rifle.y-1;
+        } else if (this.player.angle == -180){
+            targetX = this.rifle.x;
+            targetY = this.rifle.y-1;
+        } else if (this.player.angle == -135){
+            targetX = this.rifle.x+1;
+            targetY = this.rifle.y-1;
+        } else if (this.player.angle == -90){
+            targetX = this.rifle.x+1;
+            targetY = this.rifle.y;
+        } else if (this.player.angle == -45){
+            targetX = this.rifle.x+1;
+            targetY = this.rifle.y+1;
+        }
+        if(this.totalAmmo > 0){
+            //this.rifle.bulletSpeed = BULLET_SPEED;
+            if(CURRENT_WEAPON == "knife"){
+                CURRENT_WEAPON = "gun";
+                this.createGunPlayer();
+            }
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 500;
+            this.rifle.fireAtXY(targetX, targetY);
+            this.rifleShot.play();
+            this.totalAmmo -= 1;
+        } else {
+            //melee attack goes here
+            //this.rifle.bulletSpeed = KNIFE_SPEED;
+            if(CURRENT_WEAPON == "gun"){
+                CURRENT_WEAPON = "knife";
+                this.createKnifePlayer();
+            }
+            CURRENT_WEAPON = "knife";
+            this.knifeAttack.play();
+            this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+            this.rifle.bulletKillDistance = 20;
+            this.rifle.fireAtXY(targetX, targetY);
         }
     },
     reloadGun: function(){

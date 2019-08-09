@@ -33,7 +33,8 @@ Exiled.Preload.prototype = {
         this.load.audio('charge_up', 'static/assets/audio/ChargeUp.ogg');
         this.load.audio('shell_falling', 'static/assets/audio/shell_falling.mp3');
         this.load.audio('playerDeath', 'static/assets/audio/player_death.ogg');
-        this.load.audio('zombieDeath', 'static/assets/audio/zombie_hurt.ogg');
+        this.load.audio('zombieDeath', 'static/assets/audio/zombie_hurt.ogg'); 
+        this.load.audio('scaryBoss', 'static/assets/audio/scary_boss_sound.ogg');
         this.load.image('blood', 'static/assets/images/blood.png');
         //this.load.image('bullet', 'static/assets/images/bullet.png');
         this.load.image('bullet', 'static/assets/images/energy_bullet.png');
