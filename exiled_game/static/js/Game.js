@@ -167,6 +167,7 @@ Exiled.Game.prototype = {
         this.zombieDeathSound.volume = 0.4;
         this.scaryBossSound = this.game.add.audio('scaryBoss');
         this.backgroundMusic = this.game.add.audio('backgroundMusic');
+        this.backgroundMusic.loop = true;
         this.backgroundMusic.volume =2.0;
         // emitter
         this.damageEmitter = this.game.add.emitter(0, 0, 25);
