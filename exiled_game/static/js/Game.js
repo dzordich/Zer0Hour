@@ -26,7 +26,7 @@ var ENEMY_NUMBER = 2;
 var ENEMY_HEALTH = 45;
 var BOSS_HEALTH = 300;
 var NUM_BOSSES = 1;
-var START_BULLETS = 120;
+var START_BULLETS = 130;
 const HEALTH_SPAWN = [737, 592];
 const AMMO_SPAWN = [789, 592];
 const PLAYER_MAX_HEALTH = 100;
@@ -494,10 +494,10 @@ Exiled.Game.prototype = {
                 restTime = false;
                 pickupsSpawned = false;
                 currentMessage = "";
-                if(this.round % 2 === 0){
-                    this.numEnemies += 1;
-                }
                 this.round += 1;
+                if(this.round % 2 === 0){
+                    this.numEnemies += 2;
+                }
                 // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
                 for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
                     if(this.game.time.now - spawnTimer > 3000){
@@ -555,6 +555,7 @@ Exiled.Game.prototype = {
             for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
                 if(this.game.time.now - spawnTimer > 3000){
                     this.spawnEnemies(1, tlSpawn, trSpawn, blSpawn, brSpawn);
+                    this.spawnEnemies(1, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4)
                 }
             }
             numSpawnsThisRd++; 
