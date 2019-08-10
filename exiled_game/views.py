@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,6 +9,8 @@ from exiled_game.serializers import ScoreSerializer
 def index(request):
     return render(request, 'index.html')
 
+def credits(request):
+    return render(request, 'credits.html')
 
 # API views
 class AllScores(generics.ListCreateAPIView):

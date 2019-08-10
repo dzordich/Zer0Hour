@@ -159,7 +159,14 @@
 				left: 30%;
 				margin-top: 0px;
 			}
-			
+			#credits-link{
+				position: fixed;
+				color:lightgreen;
+				font-family: 'Orbitron', sans-serif;
+				z-index: 4;
+				left: 700px;
+				top: 15px;
+			}
 	  	</style>
 	</head>
 	<body>
@@ -174,6 +181,7 @@
 		<div id="overlay"></div>
 		<div id="mainMenu">
 			<h1 id="title">ZER0 HOUR</h1>
+			<script src="{% static 'js/main.js' %}" defer></script>
 			<p>press ENTER to start a new game</p>
 			<br>
 			<table>
@@ -187,6 +195,7 @@
 			<p id="dialog-content">Dialog Here</p>
 		</div>
 		</div>
+		<a href="{% url 'credits' %}" target="_blank" id="credits-link">Credits</a>
 		<!-- include the main game file -->
 		<script src="{% static 'js/main.js' %}" defer></script>
 	</body>
