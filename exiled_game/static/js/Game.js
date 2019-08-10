@@ -512,14 +512,11 @@ Exiled.Game.prototype = {
                 }
                 if(this.round > 4 && (this.round-1) % 3 === 0){
                     ENEMY_CHASE_SPEED += 3;
-                }
-                if(this.round % 4 === 0){
                     ENEMY_HEALTH += 15;
                     BOSS_HEALTH += 45;
                     START_BULLETS += 30;
-                    PICKUP_AMMO_AMOUNT += 10;
+                    PICKUP_AMMO_AMOUNT += 25;
                 }
-            }
         }
         // spawns more enemies w/in round when there are only 3 enemies left
         if(this.enemies.countLiving() <= 3 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
