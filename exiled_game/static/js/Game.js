@@ -160,7 +160,8 @@ Exiled.Game.prototype = {
         this.playerDeathSound = this.game.add.audio('playerDeath');
         this.zombieDeathSound.volume = 0.4;
         this.scaryBossSound = this.game.add.audio('scaryBoss');
-        
+        this.backgroundMusic = this.game.add.audio('backgroundMusic');
+        this.backgroundMusic.volume =2.0;
         // emitter
         this.damageEmitter = this.game.add.emitter(0, 0, 25);
         this.damageEmitter.makeParticles('blood');
@@ -219,6 +220,7 @@ Exiled.Game.prototype = {
         dialogContent.innerText = "I have to clear out these zombies to let the survivors escape.";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
+        this.backgroundMusic.play()
     },
     closeDialogBox: function(){
         dialogContent.innerText = "";

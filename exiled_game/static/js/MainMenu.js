@@ -17,6 +17,9 @@ Exiled.MainMenu.prototype = {
 
     this.startGame = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
 
+    this.titlemenuMusic = this.game.add.audio('titlemenuMusic');
+    this.titlemenuMusic.play()
+
     menuText.style.display = 'block';
     // fetch high scores from db
     fetch('/api/all_scores')
@@ -38,6 +41,7 @@ Exiled.MainMenu.prototype = {
   },
   update: function() {
     if(this.startGame.isDown) {
+      this.titlemenuMusic.stop()
       menuText.style.display = 'none';
       this.game.state.start('Game');
     }
