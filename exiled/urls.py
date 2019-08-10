@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('api/all_scores', views.AllScores.as_view()),
-    path('credits/', views.credits, name='credits')
+    path('credits/', views.showCredits, name='credits')
 ] 
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
