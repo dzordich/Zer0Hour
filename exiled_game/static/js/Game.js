@@ -911,9 +911,7 @@ Exiled.Game.prototype = {
             // switch to melee
         }
         else{
-            //this.totalAmmo -= this.magCap;
             this.rifle.resetShots();
-            // this.rifle.createBullets(10, 'bullet')
         }
         
     },
