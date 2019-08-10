@@ -209,7 +209,7 @@ Exiled.Game.prototype = {
         if (ms_remaining <= 0){
             timerDisplay.innerText = `Time Until Shuttle Leaves 0:00`;
             this.escapeDialog();
-            this.pauseGame();
+            this.game.paused = true;
             this.gameOver();
         } else {
             timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}
