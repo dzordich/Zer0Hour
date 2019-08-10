@@ -989,7 +989,6 @@ Exiled.Game.prototype = {
         const score = this.playerScore;
         const game_round = this.round;
         const submit = document.querySelector("#scoresubmit");
-        const menuButton = document.querySelector('#backToMenu');
         const searchInput = document.querySelector('#searchInput');
 
         let place;
