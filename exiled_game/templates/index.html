@@ -14,7 +14,8 @@
  
 		<style>
 			@import url('https://fonts.googleapis.com/css?family=Orbitron&display=swap');
-			@import url('https://fonts.googleapis.com/css?family=Libre+Barcode+39+Extended+Text|Monoton|Press+Start+2P|VT323&display=swap');			body {
+			@import url('https://fonts.googleapis.com/css?family=Libre+Barcode+39+Extended+Text|Monoton|Press+Start+2P|VT323&display=swap');
+			@import url('https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap');			body {
 				
 				padding: 0px;
 				margin: 0px;
@@ -91,7 +92,7 @@
 				color: lightgreen;
 				justify-content: center;
 				margin: auto;
-				padding: 10% 25%;
+				padding: 8% 25%;
 				/* flex-wrap:wrap; */
 				display: none;
 				
@@ -143,6 +144,12 @@
 			}
 			#highscores td{
 				padding-right: 35px;
+				font-family: 'Share Tech Mono', monospace;
+				font-size: .95rem;
+
+			}
+			#highscores .legend{
+				color: #F44336;
 			}
 			#scoresubmit {
 				display: none;
@@ -196,7 +203,7 @@
 			<br>
 			<table>
 				<thead id="highscorelabel"><tr><th colspan="4">HIGH SCORES</th></tr></thead>
-				<tbody id="highscores"><tr><td>name</td><td>score</td><td>round</td><td>kills</td></tr></tbody>
+				<tbody id="highscores"><tr><td class="legend">name</td><td class="legend">score</td><td class="legend">round</td><td class="legend">kills</td></tr></tbody>
 			</table>
 		</div>
 		<div id="dialog">
