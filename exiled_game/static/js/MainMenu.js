@@ -17,8 +17,23 @@ Exiled.MainMenu.prototype = {
 
     this.startGame = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
 
-    this.titlemenuMusic = this.game.add.audio('titlemenuMusic');
-    this.titlemenuMusic.play()
+    // console.log(this.game.sound.context.state);
+    // if (this.game.sound.context.state === 'suspended') {
+    //       this.game.sound.context.resume();
+    // }
+    // console.log(this.game.sound.context.state);
+
+    // this.input.addDownCallback(function() {
+    // console.log(this.game.sound.context.state);
+    // if (this.game.sound.context.state === 'suspended') {
+    //     this.game.sound.context.state = 'running';
+    // }
+    // console.log(this.game.sound.context.state);
+    // });
+    // document.querySelector('#mainMenu').click()
+    // this.titleMenuMusic = this.game.add.audio('titleMenuMusic');
+    // this.titleMenuMusic.volume =1.0;
+    // this.titleMenuMusic.play()
 
     menuText.style.display = 'block';
     // fetch high scores from db
@@ -40,10 +55,15 @@ Exiled.MainMenu.prototype = {
           }
       }
     })
+    document.querySelector('#mainMenu').click()
+    this.titleMenuMusic = this.game.add.audio('titleMenuMusic');
+    this.titleMenuMusic.volume =1.0;
+    this.titleMenuMusic.play()
   },
   update: function() {
+    // console.log(this.game.sound.context.state);
     if(this.startGame.isDown) {
-      this.titlemenuMusic.stop()
+      this.titleMenuMusic.stop()
       menuText.style.display = 'none';
       this.game.state.start('Game');
     }
