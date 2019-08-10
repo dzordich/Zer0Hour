@@ -1,14 +1,14 @@
 var Exiled = Exiled || {};
-console.log('got here');
 
 Exiled.Preload = function(){};
-
+var clicked = false;
 Exiled.Preload.prototype = {
     preload: function() {
         this.splash = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'logo');
+        this.splash.scale.setTo(0.4);
         this.splash.anchor.setTo(0.5);
 
-        this.preloadBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 128, 'preloadbar');
+        this.preloadBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 70, 'preloadbar');
         this.preloadBar.anchor.setTo(0.5);
 
         this.load.setPreloadSprite(this.preloadBar);
@@ -40,6 +40,13 @@ Exiled.Preload.prototype = {
         this.load.audio('titleMenuMusic', 'static/assets/audio/prologue_titlemenu_music.ogg');
     },
     create: function() {
-        this.state.start('MainMenu');
+        document.addEventListener("click", function () {
+            clicked = true;
+        });
+    },
+    update: function(){
+        if (clicked){
+            this.state.start('MainMenu');
+        }
     }
 };

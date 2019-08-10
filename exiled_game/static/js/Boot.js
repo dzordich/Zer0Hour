@@ -4,12 +4,15 @@ var Exiled = Exiled || {};
 Exiled.Boot = function(){};
 Exiled.Boot.prototype = {
     preload: function() {
-        
+        this.load.image('logo', 'static/assets/images/logo.png');
+        this.load.image('preloadbar', 'static/assets/images/preloadBar.png');
     },
     create: function(){
         // clear cache
-        this.cache.destroy();
+        //this.cache.destroy();
         this.game.stage.backgroundColor = '#fff';
+        
+
 
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
