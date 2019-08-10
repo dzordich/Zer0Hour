@@ -24,14 +24,14 @@ Gameplay:
 + Pause with `ESC`
 
 __Old-School__:
-The old-school control scheme is reminiscent of a classic arcade game. It is much more simplified than the Modern controls, making it easier for users new to computer games.
+The old-school control scheme is reminiscent of a classic arcade game. It is much more simplified than the Modern controls, making it easier for users new to computer games or who prefer a classic experience.
 
 Movement:
 + Arrow keys or WASD
 
 Gameplay:
 + Shoot with `SPACEBAR`. The player will automaticaly shoot in the direction they are facing.
-+ Switch weapons with `E`
++ Weapons switch automatically
 + Pause with `ESC`
 
 ### Tech Stack ###
@@ -54,3 +54,16 @@ Creators:
 We made this game for our final project at [Momentum Learn](https://www.momentumlearn.com/), a code boot camp in Durham, NC. We hope you have as much fun playing it as we did making it.
 
 Art and Sound assets:
++ [Kenney Vleugels](http://www.kenny.nl)
++ [CraftPix.net](http://www.craftpix.net)
++ [Berklee](https://archive.org/details/Berklee44v13) 
++ [Osmic](https://opengameart.org/users/osmic) 
++ [tokka](https://opengameart.org/users/tokka) 
++ [Zenva](https://gamedevacademy.org/html5-phaser-tutorial-spacehipster-a-space-exploration-game/) 
++ [Oryx Design Lab](https://www.oryxdesignlab.com/) 
++ [Yannick Lung](https://www.iconfinder.com/icons/183343/geo_location_icon) 
++ [Nicholas Judy](https://opengameart.org/content/attack-of-the-angry-dogs-screams-rips) 
++ [brandon75689](https://opengameart.org/content/espionage) 
++ [artisticdude](https://opengameart.org/content/zombies-sound-pack) 
++ [Telaron](https://opengameart.org/content/prologue) 
++ [Darsycho](https://opengameart.org/content/monster-snarls) 
