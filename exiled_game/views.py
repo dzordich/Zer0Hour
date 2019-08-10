@@ -9,7 +9,7 @@ from exiled_game.serializers import ScoreSerializer
 def index(request):
     return render(request, 'index.html')
 
-def credits(request):
+def showCredits(request):
     return render(request, 'credits.html')
 
 # API views
