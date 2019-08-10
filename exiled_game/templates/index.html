@@ -159,6 +159,20 @@
 				left: 30%;
 				margin-top: 0px;
 			}
+			#pausescreen{
+				display: none;
+				position: fixed;
+				font-family: 'Orbitron', sans-serif;
+				z-index: 4;
+				color: whitesmoke;
+				justify-content: center;
+				margin: auto;
+				padding: 20% 30%;
+			}
+			#pausescreen h1{
+				font-size: 6rem;
+				font-weight: bolder;
+			}
 			
 	  	</style>
 	</head>
@@ -171,6 +185,10 @@
 			<input type="text" id="searchInput" placeholder="Player" maxlength="10"><button id="submitScore" type="submit">Save Score</button>
 			</div>
 		</div>  
+		<div id="pausescreen">
+			<h1>PAUSED</h1>
+			<p>Press ESC to resume</p>
+		</div>
 		<div id="overlay"></div>
 		<div id="mainMenu">
 			<h1 id="title">ZER0 HOUR</h1>
