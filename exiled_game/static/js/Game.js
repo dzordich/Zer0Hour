@@ -959,11 +959,14 @@ Exiled.Game.prototype = {
         this.player.angle = newAngle - 90;
     },
     pauseGame: function(){
+        let pauseScreen = document.querySelector('#pausescreen');
         if(this.game.paused === true){
+            pauseScreen.style.display = 'none';
             this.game.paused = false;
             return;
         }
         this.game.paused = true;
+        pauseScreen.style.display = 'block';
     },
     annihilate: function(thing){
         thing.destroy();
