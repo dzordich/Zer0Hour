@@ -8,7 +8,7 @@ The player, armed with a laser gun and a knife,  must hold off an onslaught of a
 
 Zero Hour gives the player two different control styles to choose from:
 
-__Modern__
+__Modern__:
 The modern control scheme gives the user the most control over aiming and shooting. It will immediately feel familiar to anyone who has played FPS games on the computer.
 
 Movement:
@@ -23,7 +23,7 @@ Gameplay:
 + Switch weapons with `E`
 + Pause with `ESC`
 
-__Old-School__
+__Old-School__:
 The old-school control scheme is reminiscent of a classic arcade game. It is much more simplified than the Modern controls, making it easier for users new to computer games.
 
 Movement:
@@ -47,9 +47,9 @@ If you wish to clone the Zero Hour repo, clone it, then run `pipenv install`, th
 ### Credits ###
 
 Creators:
-[**Andy Dearing**](https://github.com/ANDYDEARING)
-[**Greg Dickson**](https://github.com/gdickson52)
-[**David Zordich**](https://github.com/dzordich)
++ [**Andy Dearing**](https://github.com/ANDYDEARING)
++ [**Greg Dickson**](https://github.com/gdickson52)
++ [**David Zordich**](https://github.com/dzordich)
 
 We made this game for our final project at [Momentum Learn](https://www.momentumlearn.com/), a code boot camp in Durham, NC. We hope you have as much fun playing it as we did making it.
 
