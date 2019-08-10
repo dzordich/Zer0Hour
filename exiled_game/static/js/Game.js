@@ -339,6 +339,39 @@ Exiled.Game.prototype = {
         newBoss.checkWorldBounds = true;
         newBoss.outOfBoundsKill = true;
         newBoss.health = BOSS_HEALTH;
+        if(NUM_BOSSES>1){
+            newBoss = this.boss.create(enemySpawn2[0], enemySpawn2[1], 'ZBoss');
+            newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.play('walk');
+            newBoss.scale.set(.07);
+            newBoss.anchor.setTo(0.5, 0.5);
+            newBoss.checkWorldBounds = true;
+            newBoss.outOfBoundsKill = true;
+            newBoss.health = BOSS_HEALTH;
+        }
+        if(NUM_BOSSES>2){
+            newBoss = this.boss.create(enemySpawn3[0], enemySpawn3[1], 'ZBoss');
+            newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.play('walk');
+            newBoss.scale.set(.07);
+            newBoss.anchor.setTo(0.5, 0.5);
+            newBoss.checkWorldBounds = true;
+            newBoss.outOfBoundsKill = true;
+            newBoss.health = BOSS_HEALTH;
+        }
+        if(NUM_BOSSES>3){
+            newBoss = this.boss.create(enemySpawn3[0], enemySpawn3[1], 'ZBoss');
+            newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.play('walk');
+            newBoss.scale.set(.07);
+            newBoss.anchor.setTo(0.5, 0.5);
+            newBoss.checkWorldBounds = true;
+            newBoss.outOfBoundsKill = true;
+            newBoss.health = BOSS_HEALTH;
+        }
         bossSpawnTimer = this.game.time.now;
         this.scaryBossSound.play();
     },
@@ -474,11 +507,7 @@ Exiled.Game.prototype = {
                 numSpawnsThisRd++;    
                 // spawn boss every 3 rounds
                 if(this.round % 3 === 0){
-                    for(let i = 0; i <= NUM_BOSSES; i++){
-                        if(this.game.time.now - bossSpawnTimer > 20000){
-                            this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
-                        }
-                    }
+                    this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
                     NUM_BOSSES++;
                 }
                 if(this.round > 4 && (this.round-1) % 3 === 0){
