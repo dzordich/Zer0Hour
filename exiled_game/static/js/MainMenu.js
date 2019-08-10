@@ -32,10 +32,12 @@ Exiled.MainMenu.prototype = {
           if(i>10){
             return;
           }
-          let scoreText = document.createElement('tr');
-          scoreText.innerHTML = `<td>${key.name}</td><td>${key.score}</td><td>${key.game_round}</td><td>${key.kills}</td>`;
-          highscores.appendChild(scoreText);
-          i++;
+          else if(key.index_of_score === i){
+            let scoreText = document.createElement('tr');
+            scoreText.innerHTML = `<td>${key.name}</td><td>${key.score}</td><td>${key.game_round}</td><td>${key.kills}</td>`;
+            highscores.appendChild(scoreText);
+            i++;
+          }
       }
     })
   },

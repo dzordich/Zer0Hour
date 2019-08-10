@@ -14,7 +14,8 @@
  
 		<style>
 			@import url('https://fonts.googleapis.com/css?family=Orbitron&display=swap');
-			@import url('https://fonts.googleapis.com/css?family=Libre+Barcode+39+Extended+Text|Monoton|Press+Start+2P|VT323&display=swap');			body {
+			@import url('https://fonts.googleapis.com/css?family=Libre+Barcode+39+Extended+Text|Monoton|Press+Start+2P|VT323&display=swap');
+			@import url('https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap');			body {
 				
 				padding: 0px;
 				margin: 0px;
@@ -91,7 +92,7 @@
 				color: lightgreen;
 				justify-content: center;
 				margin: auto;
-				padding: 10% 25%;
+				padding: 8% 25%;
 				/* flex-wrap:wrap; */
 				display: none;
 				
@@ -143,6 +144,12 @@
 			}
 			#highscores td{
 				padding-right: 35px;
+				font-family: 'Share Tech Mono', monospace;
+				font-size: .95rem;
+
+			}
+			#highscores .legend{
+				color: #F44336;
 			}
 			#scoresubmit {
 				display: none;
@@ -159,7 +166,29 @@
 				left: 30%;
 				margin-top: 0px;
 			}
+			#pausescreen{
+				display: none;
+				position: fixed;
+				font-family: 'Orbitron', sans-serif;
+				z-index: 4;
+				color: whitesmoke;
+				justify-content: center;
+				margin: auto;
+				padding: 20% 30%;
+			}
+			#pausescreen h1{
+				font-size: 6rem;
+				font-weight: bolder;
+			}
 			
+			#credits-link{
+				position: fixed;
+				color:lightgreen;
+				font-family: 'Orbitron', sans-serif;
+				z-index: 4;
+				left: 20px;
+				top: 20px;
+			}
 	  	</style>
 	</head>
 	<body>
@@ -167,11 +196,14 @@
 		<p id="timer">Time Until Shuttle Leaves 15:15:999</p>
 		<div id="scoresubmit"><div class="gameText">
 			<h1>GAME OVER</h1>
-			<br><button id="backToMenu">BACK TO MENU</button><br>
 			<p>Enter your name to save your score</p>
 			<input type="text" id="searchInput" placeholder="Player" maxlength="10"><button id="submitScore" type="submit">Save Score</button>
 			</div>
 		</div>  
+		<div id="pausescreen">
+			<h1>PAUSED</h1>
+			<p>Press ESC to resume</p>
+		</div>
 		<div id="overlay"></div>
 		<div id="mainMenu">
 			<h1 id="title">ZER0 HOUR</h1>
@@ -179,7 +211,7 @@
 			<br>
 			<table>
 				<thead id="highscorelabel"><tr><th colspan="4">HIGH SCORES</th></tr></thead>
-				<tbody id="highscores"><tr><td>name</td><td>score</td><td>round</td><td>kills</td></tr></tbody>
+				<tbody id="highscores"><tr><td class="legend">name</td><td class="legend">score</td><td class="legend">round</td><td class="legend">kills</td></tr></tbody>
 			</table>
 		</div>
 		<div id="dialog">
@@ -188,6 +220,7 @@
 			<p id="dialog-content">Dialog Here</p>
 		</div>
 		</div>
+		<a href="{% url 'credits' %}" target="_blank" id="credits-link">Credits</a>
 		<!-- include the main game file -->
 		<script src="{% static 'js/main.js' %}" defer></script>
 	</body>
