@@ -26,7 +26,7 @@ var ENEMY_NUMBER = 2;
 var ENEMY_HEALTH = 45;
 var BOSS_HEALTH = 300;
 var NUM_BOSSES = 1;
-var START_BULLETS = 120;
+var START_BULLETS = 150;
 const HEALTH_SPAWN = [737, 592];
 const AMMO_SPAWN = [789, 592];
 const PLAYER_MAX_HEALTH = 100;
@@ -339,6 +339,39 @@ Exiled.Game.prototype = {
         newBoss.checkWorldBounds = true;
         newBoss.outOfBoundsKill = true;
         newBoss.health = BOSS_HEALTH;
+        if(NUM_BOSSES>1){
+            newBoss = this.boss.create(enemySpawn2[0], enemySpawn2[1], 'ZBoss');
+            newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.play('walk');
+            newBoss.scale.set(.07);
+            newBoss.anchor.setTo(0.5, 0.5);
+            newBoss.checkWorldBounds = true;
+            newBoss.outOfBoundsKill = true;
+            newBoss.health = BOSS_HEALTH;
+        }
+        if(NUM_BOSSES>2){
+            newBoss = this.boss.create(enemySpawn3[0], enemySpawn3[1], 'ZBoss');
+            newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.play('walk');
+            newBoss.scale.set(.07);
+            newBoss.anchor.setTo(0.5, 0.5);
+            newBoss.checkWorldBounds = true;
+            newBoss.outOfBoundsKill = true;
+            newBoss.health = BOSS_HEALTH;
+        }
+        if(NUM_BOSSES>3){
+            newBoss = this.boss.create(enemySpawn3[0], enemySpawn3[1], 'ZBoss');
+            newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
+            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.play('walk');
+            newBoss.scale.set(.07);
+            newBoss.anchor.setTo(0.5, 0.5);
+            newBoss.checkWorldBounds = true;
+            newBoss.outOfBoundsKill = true;
+            newBoss.health = BOSS_HEALTH;
+        }
         bossSpawnTimer = this.game.time.now;
         this.scaryBossSound.play();
     },
@@ -461,10 +494,10 @@ Exiled.Game.prototype = {
                 restTime = false;
                 pickupsSpawned = false;
                 currentMessage = "";
-                if(this.round % 2 === 0){
-                    this.numEnemies += 1;
-                }
                 this.round += 1;
+                if(this.round % 2 === 0){
+                    this.numEnemies += 2;
+                }
                 // spawns 1 enemy at each spawn point, numEnemies times, with a 3 sec delay in between
                 for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
                     if(this.game.time.now - spawnTimer > 3000){
@@ -474,21 +507,15 @@ Exiled.Game.prototype = {
                 numSpawnsThisRd++;    
                 // spawn boss every 3 rounds
                 if(this.round % 3 === 0){
-                    for(let i = 0; i <= NUM_BOSSES; i++){
-                        if(this.game.time.now - bossSpawnTimer > 20000){
-                            this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
-                        }
-                    }
+                    this.spawnBoss(enemySpawn1[0], enemySpawn1[1]);
                     NUM_BOSSES++;
                 }
                 if(this.round > 4 && (this.round-1) % 3 === 0){
                     ENEMY_CHASE_SPEED += 3;
-                }
-                if(this.round % 4 === 0){
                     ENEMY_HEALTH += 15;
                     BOSS_HEALTH += 45;
                     START_BULLETS += 30;
-                    PICKUP_AMMO_AMOUNT += 10;
+                    PICKUP_AMMO_AMOUNT += 25;
                 }
             }
         }
@@ -526,6 +553,7 @@ Exiled.Game.prototype = {
             for(let timesSpawned = 0; timesSpawned <= this.numEnemies; timesSpawned++){
                 if(this.game.time.now - spawnTimer > 3000){
                     this.spawnEnemies(1, tlSpawn, trSpawn, blSpawn, brSpawn);
+                    this.spawnEnemies(1, enemySpawn1, enemySpawn2, enemySpawn3, enemySpawn4)
                 }
             }
             numSpawnsThisRd++; 
