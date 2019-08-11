@@ -26,7 +26,7 @@ var ENEMY_NUMBER = 2;
 var ENEMY_HEALTH = 45;
 var BOSS_HEALTH = 300;
 var NUM_BOSSES = 1;
-var START_BULLETS = 130;
+var START_BULLETS = 150;
 const HEALTH_SPAWN = [737, 592];
 const AMMO_SPAWN = [789, 592];
 const PLAYER_MAX_HEALTH = 100;
@@ -517,6 +517,7 @@ Exiled.Game.prototype = {
                     START_BULLETS += 30;
                     PICKUP_AMMO_AMOUNT += 25;
                 }
+            }
         }
         // spawns more enemies w/in round when there are only 3 enemies left
         if(this.enemies.countLiving() <= 3 && numSpawnsThisRd !== 0 && numSpawnsThisRd <= 3){
