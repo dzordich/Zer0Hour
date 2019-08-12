@@ -67,7 +67,6 @@ Exiled.MainMenu.prototype = {
   update: function() {
     // console.log(this.game.sound.context.state);
     if(this.startGame.isDown) {
-      this.titleMenuMusic.stop()
       menuText.style.display = 'none';
       this.showIntroText();
       introTextShowing = true;
@@ -79,6 +78,7 @@ Exiled.MainMenu.prototype = {
     }
     if(this.game.time.now - introTextDelay > 7500 && introTextShowing){
       introText2.style.display = 'none';
+      this.titleMenuMusic.stop()
       this.game.state.start('Game');
     }
   },
