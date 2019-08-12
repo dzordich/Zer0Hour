@@ -54,7 +54,7 @@ var dialogBox = document.querySelector('#dialog');
 var dialogContent = document.querySelector('#dialog-content');
 var playerImage = document.querySelector('#player-picture');
 var survivorImage = document.querySelector('#survivor-picture');
-var creditLink = document.querySelector('#credits-link');
+var links = document.querySelector('#links');
 
 var TIME_EXPIRED = false;
 
@@ -65,8 +65,8 @@ var OLD_SCHOOL = false;
 
 Exiled.Game.prototype = {
     create: function() {
-        //hide credits link
-        creditLink.style.display="none";
+        //hide credits and controls links
+        links.style.display="none";
         // create map
         this.map = this.game.add.tilemap('map');
         this.map.addTilesetImage('oryx_16bit_scifi_world', 'world');
