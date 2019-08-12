@@ -36,6 +36,7 @@ Exiled.Preload.prototype = {
         this.load.audio('playerDeath', 'static/assets/audio/player_death.ogg');
         this.load.audio('zombieDeath', 'static/assets/audio/zombie_hurt.ogg'); 
         this.load.audio('scaryBoss', 'static/assets/audio/scary_boss_sound.ogg');
+        this.load.audio('femaleHurt', 'static/assets/audio/female_hurt_sound.ogg');
         this.load.audio('backgroundMusic', 'static/assets/audio/espionage_background_music.ogg');
         this.load.audio('titleMenuMusic', 'static/assets/audio/prologue_titlemenu_music.ogg');
     },
