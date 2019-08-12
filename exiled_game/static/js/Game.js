@@ -332,9 +332,9 @@ Exiled.Game.prototype = {
         let newBoss;
         newBoss = this.boss.create(x, y, 'ZBoss');
         newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
-        newBoss.body.setSize(1107, 943, 242, 200);
+        newBoss.body.setSize(553, 472, 121, 100);
         newBoss.play('walk');
-        newBoss.scale.set(.07);
+        newBoss.scale.set(.14);
         newBoss.anchor.setTo(0.5, 0.5);
         newBoss.checkWorldBounds = true;
         newBoss.outOfBoundsKill = true;
@@ -342,9 +342,9 @@ Exiled.Game.prototype = {
         if(NUM_BOSSES>1){
             newBoss = this.boss.create(enemySpawn2[0], enemySpawn2[1], 'ZBoss');
             newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
-            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.body.setSize(553, 472, 121, 100);
             newBoss.play('walk');
-            newBoss.scale.set(.07);
+            newBoss.scale.set(.14);
             newBoss.anchor.setTo(0.5, 0.5);
             newBoss.checkWorldBounds = true;
             newBoss.outOfBoundsKill = true;
@@ -353,9 +353,9 @@ Exiled.Game.prototype = {
         if(NUM_BOSSES>2){
             newBoss = this.boss.create(enemySpawn3[0], enemySpawn3[1], 'ZBoss');
             newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
-            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.body.setSize(553, 472, 121, 100);
             newBoss.play('walk');
-            newBoss.scale.set(.07);
+            newBoss.scale.set(.14);
             newBoss.anchor.setTo(0.5, 0.5);
             newBoss.checkWorldBounds = true;
             newBoss.outOfBoundsKill = true;
@@ -364,9 +364,9 @@ Exiled.Game.prototype = {
         if(NUM_BOSSES>3){
             newBoss = this.boss.create(enemySpawn3[0], enemySpawn3[1], 'ZBoss');
             newBoss.animations.add('walk', [0,1,2,3,4,5], 5, true);
-            newBoss.body.setSize(1107, 943, 242, 200);
+            newBoss.body.setSize(553, 472, 121, 100);
             newBoss.play('walk');
-            newBoss.scale.set(.07);
+            newBoss.scale.set(.14);
             newBoss.anchor.setTo(0.5, 0.5);
             newBoss.checkWorldBounds = true;
             newBoss.outOfBoundsKill = true;
