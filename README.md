@@ -20,7 +20,7 @@ Movement:
 Gameplay:
 + Aim with mouse
 + Shoot with left mouse button
-+ Switch weapons with `E`
++ Switch weapons with `E` or `SHIFT`
 + Pause with `ESC`
 
 __Old-School__:
@@ -31,7 +31,7 @@ Movement:
 
 Gameplay:
 + Shoot with `SPACEBAR`. The player will automaticaly shoot in the direction they are facing.
-+ Weapons switch automatically
++ Switch weapons with `E` or `SHIFT`
 + Pause with `ESC`
 
 ### Tech Stack ###

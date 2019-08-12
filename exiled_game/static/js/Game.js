@@ -773,7 +773,7 @@ Exiled.Game.prototype = {
         player.damage(30);
         this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
-            this.playerDeathSound.play();
+            //this.playerDeathSound.play();
             this.damageEmitter.explode(100);
         }
     },
@@ -786,7 +786,7 @@ Exiled.Game.prototype = {
         player.damage(50);
         this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
-            this.playerDeathSound.play();
+            //this.playerDeathSound.play();
             this.damageEmitter.explode(100);
         }
     },
@@ -919,12 +919,7 @@ Exiled.Game.prototype = {
             targetX = this.rifle.x+1;
             targetY = this.rifle.y+1;
         }
-        if(this.totalAmmo > 0){
-            //this.rifle.bulletSpeed = BULLET_SPEED;
-            if(CURRENT_WEAPON == "knife"){
-                CURRENT_WEAPON = "gun";
-                this.createGunPlayer();
-            }
+        if(this.totalAmmo > 0 && CURRENT_WEAPON == "gun"){
             this.rifle.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
             this.rifle.bulletKillDistance = 500;
             this.rifle.fireAtXY(targetX, targetY);
@@ -932,7 +927,6 @@ Exiled.Game.prototype = {
             this.totalAmmo -= 1;
         } else {
             //melee attack goes here
-            //this.rifle.bulletSpeed = KNIFE_SPEED;
             if(CURRENT_WEAPON == "gun"){
                 CURRENT_WEAPON = "knife";
                 this.createKnifePlayer();
@@ -1025,6 +1019,7 @@ Exiled.Game.prototype = {
         this.game.input.keyboard.removeKey(Phaser.KeyCode.S);
         this.game.input.keyboard.removeKey(Phaser.KeyCode.D);
         this.game.input.keyboard.removeKey(Phaser.KeyCode.E);
+        this.game.input.keyboard.removeKey(Phaser.KeyCode.SHIFT);
         this.game.input.keyboard.removeKey(Phaser.KeyCode.ESC);
         
         const score = this.playerScore;
