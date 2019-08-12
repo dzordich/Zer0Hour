@@ -12,6 +12,9 @@ def index(request):
 def showCredits(request):
     return render(request, 'credits.html')
 
+def showControls(request):
+    return render(request, 'controls.html')
+
 # API views
 class AllScores(generics.ListCreateAPIView):
     queryset = Score.objects.all()

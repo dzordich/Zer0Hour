@@ -181,13 +181,16 @@
 				font-weight: bolder;
 			}
 			
-			#credits-link{
+			#links{
 				position: fixed;
 				color:lightgreen;
 				font-family: 'Orbitron', sans-serif;
 				z-index: 4;
 				left: 20px;
 				top: 20px;
+			}
+			#credits-link, #controls-link{
+				color:lightgreen;
 			}
 	  	</style>
 	</head>
@@ -220,7 +223,11 @@
 			<p id="dialog-content">Dialog Here</p>
 		</div>
 		</div>
-		<a href="{% url 'credits' %}" target="_blank" id="credits-link">Credits</a>
+		<div id="links">
+			<a href="{% url 'credits' %}" target="_blank" id="credits-link">Credits</a>
+			<br>
+			<a href="{% url 'controls' %}" target="_blank" id="controls-link">Controls</a>
+		</div>
 		<!-- include the main game file -->
 		<script src="{% static 'js/main.js' %}" defer></script>
 	</body>
