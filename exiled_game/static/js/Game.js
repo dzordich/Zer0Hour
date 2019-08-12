@@ -152,6 +152,7 @@ Exiled.Game.prototype = {
         this.rightKey = this.game.input.keyboard.addKey(Phaser.KeyCode.D);
         this.returnToMenu = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
         this.switchWeaponKey = this.game.input.keyboard.addKey(Phaser.KeyCode.E);
+        this.switchWeaponKey2 = this.game.input.keyboard.addKey(Phaser.KeyCode.SHIFT);
         this.pauseKey = this.game.input.keyboard.addKey(Phaser.KeyCode.ESC);
         this.fireKey = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
@@ -599,6 +600,8 @@ Exiled.Game.prototype = {
         
         //choose correct weapon
         this.switchWeaponKey.onDown.add(this.switchWeapon, this);
+        this.switchWeaponKey2.onDown.add(this.switchWeapon, this);
+
 
         if(CURRENT_WEAPON == 'gun' && this.totalAmmo == 0){
             CURRENT_WEAPON = 'knife';
