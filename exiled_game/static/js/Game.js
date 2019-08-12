@@ -225,9 +225,9 @@ Exiled.Game.prototype = {
         DIALOG_TIMESTAMP = this.game.time.now;
     },
     openingDialog: function(){
-        playerImage.style.display = "block";
-        survivorImage.style.display = "none";
-        dialogContent.innerText = "I have to clear out these zombies to let the survivors escape.";
+        playerImage.style.display = "none";
+        survivorImage.style.display = "block";
+        dialogContent.innerText = "SURVIVOR: Help!! We need you to protect us from the zombies while we run to the escape shuttle!";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
         this.backgroundMusic.play()
@@ -246,7 +246,7 @@ Exiled.Game.prototype = {
     betweenRoundSurvivorDialog: function(){
         playerImage.style.display = "none";
         survivorImage.style.display = "block";
-        dialogContent.innerText = "Thank you! Take this!";
+        dialogContent.innerText = "SURVIVOR: Here's some ammo! There's still more survivors left. Stay here and defend them!";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
@@ -475,7 +475,7 @@ Exiled.Game.prototype = {
             this.boss.forEach(this.annihilate, this);
             if(!restTime){
                 //call to the survivor
-                this.betweenRoundPlayerDialog();
+                // this.betweenRoundPlayerDialog();
                 //spawn health and ammo
                 this.spawnSurvivor();
                 restTime = true;
