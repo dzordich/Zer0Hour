@@ -214,21 +214,20 @@ Exiled.Game.prototype = {
             TIME_EXPIRED = true;
             this.gameOver();
         } else {
-            timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}
-            Clear out Zombies so Survivors can Escape`;
+            timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}`;
         }
     },
     escapeDialog(){
         playerImage.style.display = "block";
         survivorImage.style.display = "none";
-        dialogContent.innerText = "YOU: We have to go. I'm sorry...";
+        dialogContent.innerText = "[YOU] We have to go. I'm sorry...";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
     openingDialog: function(){
-        playerImage.style.display = "none";
-        survivorImage.style.display = "block";
-        dialogContent.innerText = "SURVIVOR: Help Us!!!";
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
+        dialogContent.innerText = "( YOU ) : Stay back! I'll clear the way.";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
         this.backgroundMusic.play()
@@ -240,14 +239,14 @@ Exiled.Game.prototype = {
     betweenRoundPlayerDialog: function(){
         playerImage.style.display = "block";
         survivorImage.style.display = "none";
-        dialogContent.innerText = "YOU: The coast is clear! Run for the shuttle!";
+        dialogContent.innerText = "( YOU ) : The coast is clear! Run for the shuttle!";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
     betweenRoundSurvivorDialog: function(){
         playerImage.style.display = "none";
         survivorImage.style.display = "block";
-        dialogContent.innerText = "SURVIVOR: Here's some ammo! There's still more survivors left. Stay here and defend them!";
+        dialogContent.innerText = "( SURVIVOR ) : Take these! There's still more survivors left...";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
