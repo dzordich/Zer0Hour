@@ -24,7 +24,7 @@ Exiled.Preload.prototype = {
         this.load.image('knife_slash', 'static/assets/images/knife_slash.png');
         this.load.image('pickupIndicator', 'static/assets/images/pickupIndicator.png');
 
-        this.load.spritesheet('zPlayer', 'static/assets/images/ZPlayerChar.png', 271, 351);
+        this.load.spritesheet('zPlayer', 'static/assets/images/ZPlayerChar2.png', 271, 351);
         this.load.spritesheet('zPlayer_knife', 'static/assets/images/ZPlayerChar_knife.png', 438, 342);
         this.load.spritesheet('ZBoss', 'static/assets/images/ZBossSmall.png', 805, 723);
         this.load.spritesheet('zombie', 'static/assets/images/zombie.png', 663, 637);
