@@ -170,6 +170,7 @@ Exiled.Game.prototype = {
         this.backgroundMusic = this.game.add.audio('backgroundMusic');
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume =2.0;
+        this.femaleHurtSound = this.game.add.audio('femaleHurt');
         // emitter
         this.damageEmitter = this.game.add.emitter(0, 0, 25);
         this.damageEmitter.makeParticles('blood');
@@ -769,6 +770,7 @@ Exiled.Game.prototype = {
         this.damageEmitter.x = player.centerX;
         this.damageEmitter.y = player.centerY;
         player.damage(30);
+        this.femaleHurtSound.play()
         this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
             //this.playerDeathSound.play();
@@ -782,6 +784,7 @@ Exiled.Game.prototype = {
         this.damageEmitter.x = player.centerX;
         this.damageEmitter.y = player.centerY;
         player.damage(50);
+        this.femaleHurtSound.play()
         this.damageEmitter.explode(50, 3);
         if(player.health <= 0){
             //this.playerDeathSound.play();
