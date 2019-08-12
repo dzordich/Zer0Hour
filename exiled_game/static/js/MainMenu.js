@@ -84,7 +84,6 @@ Exiled.MainMenu.prototype = {
   },
   showIntroText: function(){
     introText1.style.display = 'block';
-    this.game.input.keyboard.removeKey(Phaser.KeyCode.ENTER);
     introTextDelay = this.game.time.now;
   }
 };

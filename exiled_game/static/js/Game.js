@@ -221,14 +221,14 @@ Exiled.Game.prototype = {
     escapeDialog(){
         playerImage.style.display = "block";
         survivorImage.style.display = "none";
-        dialogContent.innerText = "We have to go. I'm sorry...";
+        dialogContent.innerText = "YOU: We have to go. I'm sorry...";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
     openingDialog: function(){
         playerImage.style.display = "none";
         survivorImage.style.display = "block";
-        dialogContent.innerText = "SURVIVOR: Help!! We need you to protect us from the zombies while we run to the escape shuttle!";
+        dialogContent.innerText = "SURVIVOR: Help Us!!!";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
         this.backgroundMusic.play()
@@ -240,7 +240,7 @@ Exiled.Game.prototype = {
     betweenRoundPlayerDialog: function(){
         playerImage.style.display = "block";
         survivorImage.style.display = "none";
-        dialogContent.innerText = "The coast is clear! Run for the shuttle!";
+        dialogContent.innerText = "YOU: The coast is clear! Run for the shuttle!";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
@@ -473,7 +473,7 @@ Exiled.Game.prototype = {
             this.boss.forEach(this.annihilate, this);
             if(!restTime){
                 //call to the survivor
-                // this.betweenRoundPlayerDialog();
+                this.betweenRoundPlayerDialog();
                 //spawn health and ammo
                 this.spawnSurvivor();
                 restTime = true;
@@ -482,6 +482,7 @@ Exiled.Game.prototype = {
             if(this.newSurvivor && this.newSurvivor.x > SURVIVOR_DROP_TRIGGER_X && !pickupsSpawned){
                 this.betweenRoundSurvivorDialog();
                 PICKUP_TIMER = this.game.time.now;
+                this.playerScore += 1000;
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
                 pickupsSpawned = true;
@@ -573,7 +574,6 @@ Exiled.Game.prototype = {
         //survivor removal
         if (this.newSurvivor && this.newSurvivor.x >= 1483) {
             this.removeSurvivor();
-            this.playerScore += 1000;
         }
         
         //pickup physics - needs item delay for scaling bug
