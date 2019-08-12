@@ -154,6 +154,32 @@
 			#scoresubmit {
 				display: none;
 			}
+			.gameStartText{
+				position: fixed;
+				max-width: max-content;
+				max-height: max-content;
+				z-index: 7;
+				padding: 20% 10%;
+				font-family: 'Orbitron', sans-serif;
+				color: lightgreen;
+				font-size: 1.2rem;
+				justify-content: left;
+				text-align: left;
+				overflow: hidden; /* Ensures the content is not revealed until the animation */
+    			white-space: nowrap; /* Keeps the content on a single line */
+   				margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+				letter-spacing: .17em; /* Adjust as needed */
+				/* border-right: .3em solid white; The typwriter cursor    */
+    			animation: 
+      				typing 4s steps(60, end),
+					blink-caret .5s steps(60, end) infinite;
+			}
+			#gameStartText1{
+				display: none;
+			}
+			#gameStartText2{
+				display: none;
+			}
 			#timer {
 				display: none;
 				position: fixed;
@@ -222,6 +248,11 @@
 			<img id="player-picture" src="{% static 'assets/images/playerIcon.png' %}"/>
 			<p id="dialog-content">Dialog Here</p>
 		</div>
+		<div id="gameStartText1" class="gameStartText">
+			Your ship is being boarded by alien zombies.
+		</div>
+		<div id="gameStartText2" class="gameStartText">
+				You need to clear out the zombies so the surviving passengers can escape.
 		</div>
 		<div id="links">
 			<a href="{% url 'credits' %}" target="_blank" id="credits-link">Credits</a>

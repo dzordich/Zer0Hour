@@ -2,6 +2,10 @@ var Exiled = Exiled || {};
 
 const menuText = document.querySelector('#mainMenu');
 const highscores = document.querySelector('#highscores');
+const introText1 = document.querySelector('#gameStartText1');
+const introText2 = document.querySelector('#gameStartText2');
+var introTextDelay = 0;
+var introTextShowing = false;
 
 //title screen
 Exiled.MainMenu = function(){};
@@ -65,8 +69,22 @@ Exiled.MainMenu.prototype = {
     if(this.startGame.isDown) {
       this.titleMenuMusic.stop()
       menuText.style.display = 'none';
+      this.showIntroText();
+      introTextShowing = true;
+    }
+    if(this.game.time.now - introTextDelay > 3000 && introTextShowing){
+      introText1.style.display = 'none';
+      introText2.style.display = 'block';
+      // this.game.state.start('Game');
+    }
+    if(this.game.time.now - introTextDelay > 7500 && introTextShowing){
+      introText2.style.display = 'none';
       this.game.state.start('Game');
     }
+  },
+  showIntroText: function(){
+    introText1.style.display = 'block';
+    introTextDelay = this.game.time.now;
   }
 };
 
