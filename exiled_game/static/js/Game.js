@@ -779,8 +779,9 @@ Exiled.Game.prototype = {
     },
     bossHitPlayer: function(player, boss){
         invulnerable = this.game.time.now;
-        this.game.camera.shake(.01, 300);
+        takeHitFlashTime = this.game.time.now;
         player.tint = 0xff0000;
+        this.game.camera.shake(.01, 300);
         this.damageEmitter.x = player.centerX;
         this.damageEmitter.y = player.centerY;
         player.damage(50);
