@@ -211,23 +211,23 @@ Exiled.Game.prototype = {
             timerDisplay.innerText = `Time Until Shuttle Leaves 0:00`;
             this.escapeDialog();
             this.game.paused = true;
+            TIME_EXPIRED = true;
             this.gameOver();
         } else {
-            timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}
-            Clear out Zombies so Survivors can Escape`;
+            timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}`;
         }
     },
     escapeDialog(){
         playerImage.style.display = "block";
         survivorImage.style.display = "none";
-        dialogContent.innerText = "We have to go. I'm sorry...";
+        dialogContent.innerText = "[YOU] We have to go. I'm sorry...";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
     openingDialog: function(){
-        playerImage.style.display = "none";
-        survivorImage.style.display = "block";
-        dialogContent.innerText = "SURVIVOR: Help!! We need you to protect us from the zombies while we run to the escape shuttle!";
+        playerImage.style.display = "block";
+        survivorImage.style.display = "none";
+        dialogContent.innerText = "( YOU ) : Stay back! I'll clear the way.";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
         this.backgroundMusic.play()
@@ -239,14 +239,14 @@ Exiled.Game.prototype = {
     betweenRoundPlayerDialog: function(){
         playerImage.style.display = "block";
         survivorImage.style.display = "none";
-        dialogContent.innerText = "The coast is clear! Run for the shuttle!";
+        dialogContent.innerText = "( YOU ) : The coast is clear! Run for the shuttle!";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
     betweenRoundSurvivorDialog: function(){
         playerImage.style.display = "none";
         survivorImage.style.display = "block";
-        dialogContent.innerText = "SURVIVOR: Here's some ammo! There's still more survivors left. Stay here and defend them!";
+        dialogContent.innerText = "( SURVIVOR ) : Take these! There's still more survivors left...";
         dialogBox.style.display="flex";
         DIALOG_TIMESTAMP = this.game.time.now;
     },
@@ -451,9 +451,6 @@ Exiled.Game.prototype = {
         //console.log(`${this.player.x}, ${this.player.y}`);
         if(!TIME_EXPIRED){
             this.updateTimer();
-        } else {
-            //escape function call
-            this.gameOver();
         }
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
@@ -475,7 +472,7 @@ Exiled.Game.prototype = {
             this.boss.forEach(this.annihilate, this);
             if(!restTime){
                 //call to the survivor
-                // this.betweenRoundPlayerDialog();
+                this.betweenRoundPlayerDialog();
                 //spawn health and ammo
                 this.spawnSurvivor();
                 restTime = true;
@@ -484,6 +481,7 @@ Exiled.Game.prototype = {
             if(this.newSurvivor && this.newSurvivor.x > SURVIVOR_DROP_TRIGGER_X && !pickupsSpawned){
                 this.betweenRoundSurvivorDialog();
                 PICKUP_TIMER = this.game.time.now;
+                this.playerScore += 1000;
                 this.spawnHealth(HEALTH_SPAWN[0], HEALTH_SPAWN[1]);
                 this.spawnAmmo(AMMO_SPAWN[0], AMMO_SPAWN[1]);
                 pickupsSpawned = true;
@@ -1010,7 +1008,9 @@ Exiled.Game.prototype = {
         this.rifleShot.stop();
         this.knifeAttack.stop();
         this.shellFalling.stop();
-        this.playerDeathSound.play();
+        if (!TIME_EXPIRED){
+            this.playerDeathSound.play();
+        }
         
         this.game.camera.fade(0x00000, 5000, false, .85)
 
