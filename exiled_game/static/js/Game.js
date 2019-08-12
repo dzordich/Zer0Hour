@@ -211,6 +211,7 @@ Exiled.Game.prototype = {
             timerDisplay.innerText = `Time Until Shuttle Leaves 0:00`;
             this.escapeDialog();
             this.game.paused = true;
+            TIME_EXPIRED = true;
             this.gameOver();
         } else {
             timerDisplay.innerText = `Time Until Shuttle Leaves ${timeString}
@@ -451,9 +452,6 @@ Exiled.Game.prototype = {
         //console.log(`${this.player.x}, ${this.player.y}`);
         if(!TIME_EXPIRED){
             this.updateTimer();
-        } else {
-            //escape function call
-            this.gameOver();
         }
         //update HUD
         document.querySelector('#HUD').innerHTML = `<p>Energy: ${this.totalAmmo}</p>
@@ -575,6 +573,7 @@ Exiled.Game.prototype = {
         //survivor removal
         if (this.newSurvivor && this.newSurvivor.x >= 1483) {
             this.removeSurvivor();
+            this.playerScore += 1000;
         }
         
         //pickup physics - needs item delay for scaling bug
@@ -1010,7 +1009,9 @@ Exiled.Game.prototype = {
         this.rifleShot.stop();
         this.knifeAttack.stop();
         this.shellFalling.stop();
-        this.playerDeathSound.play();
+        if (!TIME_EXPIRED){
+            this.playerDeathSound.play();
+        }
         
         this.game.camera.fade(0x00000, 5000, false, .85)
 
